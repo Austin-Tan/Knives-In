@@ -13,6 +13,13 @@ class Knife extends FlxSprite {
       this.knifeColor = knifeColor;
 
       // make the knife spin...
-      loadGraphic("assets/images/knife.jpeg");
+      loadGraphic("assets/images/knife.png");
    }
+
+   @override
+   override public function update(elapsed:Float):Void
+      {
+         super.update(elapsed);     
+             
+      }
 }

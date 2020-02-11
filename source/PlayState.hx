@@ -19,7 +19,6 @@ class PlayState extends FlxState
 		// initialize to 0, 0, we'll center after
 		knife = new Knife(0, 0, FlxColor.BLUE);
 		knife.screenCenter();
-		knife.setGraphicSize(50, 50);
 		
 		// Welcome text
 		var text = new flixel.text.FlxText(0, 0, 0, "Level 0", 64);
@@ -39,13 +38,13 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		// knife.y += elapsed * 30;
 		if(thrown) {
-			knife.x += knife.thrownVelocity * elapsed * Math.sin(knife.angle);
-			knife.y += knife.thrownVelocity * elapsed * Math.cos(knife.angle);
+			knife.x += knife.thrownVelocity * elapsed * Math.cos(Math.PI * knife.angle / 180);
+			knife.y += knife.thrownVelocity * elapsed * Math.sin(Math.PI * knife.angle / 180);
 			if(knife.thrownVelocity > (knife.thrownVelocity / 2)) {
 				knife.thrownVelocity -= 300 * elapsed;
 			}
 		} else { // not thrown
-			knife.angle += elapsed * 120;
+			knife.angle += 140 * elapsed;
 		}
 
 		if(FlxG.keys.pressed.ESCAPE || knife.x > FlxG.width || knife.x < 0 || knife.y > FlxG.height || knife.y < 0) {
@@ -54,7 +53,7 @@ class PlayState extends FlxState
 		}
 		if(FlxG.keys.pressed.SPACE && !thrown) {
 			thrown = true;
-			knife.thrownVelocity = 550;
+			knife.thrownVelocity = 750;
 		}
 	}
 }
