@@ -36,24 +36,5 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		// knife.y += elapsed * 30;
-		if(thrown) {
-			knife.x += knife.thrownVelocity * elapsed * Math.cos(Math.PI * knife.angle / 180);
-			knife.y += knife.thrownVelocity * elapsed * Math.sin(Math.PI * knife.angle / 180);
-			if(knife.thrownVelocity > (knife.thrownVelocity / 2)) {
-				knife.thrownVelocity -= 300 * elapsed;
-			}
-		} else { // not thrown
-			knife.angle += 140 * elapsed;
-		}
-
-		if(FlxG.keys.pressed.ESCAPE || knife.x > FlxG.width || knife.x < 0 || knife.y > FlxG.height || knife.y < 0) {
-			thrown = false;
-			knife.screenCenter();
-		}
-		if(FlxG.keys.pressed.SPACE && !thrown) {
-			thrown = true;
-			knife.thrownVelocity = 750;
-		}
 	}
 }
