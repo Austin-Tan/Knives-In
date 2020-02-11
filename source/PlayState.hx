@@ -8,7 +8,6 @@ import flixel.FlxState;
 
 class PlayState extends FlxState
 {
-
 	var knife:Knife;
 	var thrown:Bool;
 	override public function create():Void
@@ -40,7 +39,11 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		// knife.y += elapsed * 30;
 		if(thrown) {
-			knife.x += elapsed * 200;
+			knife.x += knife.thrownVelocity * elapsed * Math.sin(knife.angle);
+			knife.y += knife.thrownVelocity * elapsed * Math.cos(knife.angle);
+			if(knife.thrownVelocity > (knife.thrownVelocity / 2)) {
+				knife.thrownVelocity -= 300 * elapsed;
+			}
 		} else { // not thrown
 			knife.angle += elapsed * 120;
 		}
@@ -49,8 +52,9 @@ class PlayState extends FlxState
 			thrown = false;
 			knife.screenCenter();
 		}
-		if(FlxG.keys.pressed.SPACE) {
+		if(FlxG.keys.pressed.SPACE && !thrown) {
 			thrown = true;
+			knife.thrownVelocity = 550;
 		}
 	}
 }
