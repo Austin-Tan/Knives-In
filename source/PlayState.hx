@@ -28,12 +28,12 @@ class PlayState extends FlxState
 		var text = getLevelMenu(level);
 		add(text);
 
-		// initialize to 0, 0, we'll center after
-		knife = new Knife(0, 0, FlxColor.BLUE);
-		knife.screenCenter();
+		// TODO: find a way to store the initial setup of each level
+		var x:Int = 150;
+		var y:Int = 150;
+		knife = new Knife(x, y, FlxColor.BLUE);
 		add(knife);
 		
-
 	}
 	
 	public function getLevelMenu(level:Int):flixel.text.FlxText {

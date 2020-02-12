@@ -1,44 +1,45 @@
 package;
 
 import flixel.util.FlxColor;
+import flixel.addons.nape.FlxNapeSprite;
 import flixel.FlxGame;
 import flixel.FlxSprite;
 import flixel.FlxG;
+import nape.geom.Vec2;
 
-class Knife extends FlxSprite {
+class Knife extends FlxNapeSprite {
 
    var knifeColor:FlxColor;
    var thrownVelocity:Float;
    var thrown:Bool;
+   var init_x:Float;
+   var init_y:Float;
+
    public function new(x:Float, y:Float, knifeColor:FlxColor) {
       super(x, y);
-      this.knifeColor = knifeColor;
 
-      // make the knife spin...
-      loadGraphic("assets/images/knife.png");
+      this.knifeColor = knifeColor;
+      this.init_x = x;
+      this.init_y = y;
+      this.thrown = false;
+
+      loadGraphic("assets/images/knife.png", true, 32, 16);
    }
 
-   @override
-   override public function update(elapsed:Float):Void
-      {
-         super.update(elapsed);     
-         if(thrown) {
-            x += thrownVelocity * elapsed * Math.cos(Math.PI * angle / 180);
-            y += thrownVelocity * elapsed * Math.sin(Math.PI * angle / 180);
-            if(thrownVelocity > (thrownVelocity / 2)) {
-               thrownVelocity -= 300 * elapsed;
-            }
-         } else { // not thrown
-            angle += 140 * elapsed;
-         }
-   
-         if(FlxG.keys.pressed.ESCAPE || x > FlxG.width || x < 0 || y > FlxG.height || y < 0) {
-            thrown = false;
-            screenCenter();
-         }
-         if(FlxG.keys.pressed.SPACE && !thrown) {
-            thrown = true;
-            thrownVelocity = 750;
-         }
+   override public function update(elapsed:Float):Void {
+      super.update(elapsed);
+      if(!thrown) {
+         body.rotate(new Vec2(150, 150), 2 * Math.PI / 360);
+      } else {
+         body.applyImpulse(new Vec2(-10, 0));
       }
+      
+      
+      if (FlxG.keys.pressed.SPACE && !thrown) {
+         this.thrown = true;
+
+         body.applyImpulse(new Vec2(-10, 0));
+      }
+
+   }
 }
