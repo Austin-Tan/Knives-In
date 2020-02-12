@@ -10,27 +10,37 @@ class PlayState extends FlxState
 {
 	var knife:Knife;
 	var thrown:Bool;
-	override public function create():Void
-	{
+	var curLevel:Int;
+
+	override public function create():Void {
 		super.create();
+
 		this.bgColor = FlxColor.WHITE;
+
+		curLevel = 0;
+		initLevel(curLevel);
+	}
+
+	public function initLevel(level:Int) {
 		thrown = false;
+
+		// Welcome text
+		var text = getLevelMenu(level);
+		add(text);
 
 		// initialize to 0, 0, we'll center after
 		knife = new Knife(0, 0, FlxColor.BLUE);
 		knife.screenCenter();
+		add(knife);
 		
-		// Welcome text
-		var text = new flixel.text.FlxText(0, 0, 0, "Level 0", 64);
+
+	}
+	
+	public function getLevelMenu(level:Int):flixel.text.FlxText {
+		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 64);
 		text.color = FlxColor.BLACK;
 		text.screenCenter(flixel.util.FlxAxes.X);
-		add(text);
-		add(knife);
-
-		// TODO: create a helper method for initialize a new level?
-		// TODO: add tilemap
-		// TODO: add sprites
-
+		return text;
 	}
 
 	override public function update(elapsed:Float):Void

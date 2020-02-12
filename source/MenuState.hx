@@ -19,10 +19,6 @@ class MenuState extends FlxState
 		// Start button
 		var playButton = new FlxButton(280, 300, "Play", clickPlay);
 		add(playButton);
-
-		// Testing knife sprite
-		// var knife = new Knife(0, 0 ,FlxColor.GREEN);
-		// add(knife);
 		
 	}
 
