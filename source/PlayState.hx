@@ -9,7 +9,6 @@ import flixel.FlxState;
 class PlayState extends FlxState
 {
 	var knife:Knife;
-	var thrown:Bool;
 	var curLevel:Int;
 
 	override public function create():Void {
@@ -22,7 +21,6 @@ class PlayState extends FlxState
 	}
 
 	public function initLevel(level:Int) {
-		thrown = false;
 
 		// Welcome text
 		var text = getLevelMenu(level);
@@ -46,5 +44,8 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (FlxG.keys.pressed.ESCAPE) {
+         FlxG.switchState(new PlayState());
+      }
 	}
 }

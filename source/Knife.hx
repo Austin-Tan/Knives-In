@@ -12,33 +12,37 @@ class Knife extends FlxNapeSprite {
    var knifeColor:FlxColor;
    var thrownVelocity:Float;
    var thrown:Bool;
-   var init_x:Float;
-   var init_y:Float;
+   var initX:Float;
+   var initY:Float;
+   var curAngle:Float;
 
    public function new(x:Float, y:Float, knifeColor:FlxColor) {
       super(x, y);
 
       this.knifeColor = knifeColor;
-      this.init_x = x;
-      this.init_y = y;
+      this.initX = x;
+      this.initY = y;
       this.thrown = false;
 
-      loadGraphic("assets/images/knife.png", true, 32, 16);
+      loadGraphic("assets/images/knife.png", true, 32, 16); // size of knife.png
    }
 
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
-      if(!thrown) {
-         body.rotate(new Vec2(150, 150), 2 * Math.PI / 360);
+
+      var impulse:Float = 20;
+
+      if (!thrown) {
+         var newAngle:Float = 2 * Math.PI / 360;
+         body.rotate(new Vec2(initX, initY), newAngle);
+         curAngle += newAngle;
       } else {
-         body.applyImpulse(new Vec2(-10, 0));
+         body.position.x = body.position.x + impulse * Math.cos(curAngle);
+         body.position.y = body.position.y + impulse * Math.sin(curAngle);
       }
-      
       
       if (FlxG.keys.pressed.SPACE && !thrown) {
          this.thrown = true;
-
-         body.applyImpulse(new Vec2(-10, 0));
       }
 
    }
