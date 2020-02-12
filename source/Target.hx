@@ -12,7 +12,7 @@ class Target extends FlxNapeSprite {
     public function new(x:Float, y:Float) {
         super(x, y);
   
-        loadGraphic("assets/images/Target1.png", false, 26, 32);
+        loadGraphic("assets/images/Target1.png", true, 26, 32);
      }
 
      override public function update(elapsed:Float):Void {
