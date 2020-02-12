@@ -1,10 +1,14 @@
 package;
 
+import nape.geom.Vec2;
+import lime.math.Vector2;
+import openfl.geom.Vector3D;
 import flixel.FlxG;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Template;
 import flixel.FlxState;
+import nape.space.Space;
 
 class PlayState extends FlxState
 {
@@ -13,6 +17,7 @@ class PlayState extends FlxState
 	var target:Target;
 	var target2:Target;
 	var targets:Array<Target>;
+	var space:Space;
 
 	override public function create():Void {
 		super.create();
@@ -34,9 +39,14 @@ class PlayState extends FlxState
 		var y:Int = 150;
 		knife = new Knife(x, y, FlxColor.BLUE);
 		add(knife);
+
+		space = new Space(new Vec2(0, 400));
 		
 		target = new Target(20, 20);
 		target2 = new Target(200, 200);
+		target.body.space = space;
+		// knife.body.space = space;
+		target2.body.space = space;
 		targets = new Array<Target>();
 		targets.push(target);
 		targets.push(target2);
@@ -57,6 +67,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		if (FlxG.keys.pressed.ESCAPE) {
          FlxG.switchState(new PlayState());
-      }
+	  }
+	  space.step(elapsed);
 	}
 }
