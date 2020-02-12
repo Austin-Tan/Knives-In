@@ -23,7 +23,7 @@ class Knife extends FlxNapeSprite {
       this.init_y = y;
       this.thrown = false;
 
-      loadGraphic("assets/images/knife.png", true, 32, 16);
+      loadGraphic("assets/images/knife.png", false, 32, 16);
    }
 
    override public function update(elapsed:Float):Void {

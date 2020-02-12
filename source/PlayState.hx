@@ -11,6 +11,7 @@ class PlayState extends FlxState
 	var knife:Knife;
 	var thrown:Bool;
 	var curLevel:Int;
+	var target:Target;
 
 	override public function create():Void {
 		super.create();
@@ -34,6 +35,8 @@ class PlayState extends FlxState
 		knife = new Knife(x, y, FlxColor.BLUE);
 		add(knife);
 		
+		// target = new Target(FlxG.width - target.width, FlxG.height - target.height);
+		// add(target);
 	}
 	
 	public function getLevelMenu(level:Int):flixel.text.FlxText {
