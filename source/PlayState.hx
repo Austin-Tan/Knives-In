@@ -1,5 +1,11 @@
 package;
 
+import nape.callbacks.InteractionCallback;
+import nape.callbacks.CbType;
+import nape.callbacks.OptionType;
+import nape.callbacks.InteractionType;
+import nape.callbacks.CbEvent;
+import nape.callbacks.InteractionListener;
 import nape.dynamics.InteractionFilter;
 import nape.shape.Polygon;
 import nape.phys.BodyType;
@@ -52,6 +58,23 @@ class PlayState extends FlxState
 		// Must load background before targets
 		loadBackground();
 		loadItems();
+		initializeListeners();
+	}
+
+	var knifeType:CbType = new CbType();
+	var targetType:CbType = new CbType();
+	var wallType:CbType = new CbType();
+	var listener:InteractionListener;
+	var knifeHitOption:OptionType;
+	var listener2:InteractionListener;
+	public function initializeListeners():Void {
+		knifeHitOption = new OptionType([targetType, wallType]);
+		listener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, new OptionType(knifeType), knifeHitOption, knifeHit);
+		listener2 = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, new OptionType(targetType), new OptionType(targetType), knifeHit);
+	}
+
+	public function knifeHit(cb:InteractionCallback):Void {
+		trace("Knife hit?");
 	}
 	
 	public function createLevelMenu():Void {
@@ -80,6 +103,7 @@ class PlayState extends FlxState
 
 		for (target in targets) {
 			target.body.space = this.space;
+			target.body.cbTypes.add(targetType);
 			add(target);
 		}
 	}
@@ -87,6 +111,8 @@ class PlayState extends FlxState
 
 	var COLLISION_GROUP:Int = 4;
 	var COLLISION_MASK:Int = ~1;
+	var SENSOR_GROUP:Int = 4;
+	var SENSOR_MASK:Int = ~6;
 	public function loadBackground():Void {
 		space = new Space(new Vec2(0, 200));
 		
@@ -99,8 +125,8 @@ class PlayState extends FlxState
 		floorBody.shapes.add(floorShape);
 		platformBody.shapes.add(platformShape);
 
-		floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
-		platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
+		floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+		platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
 
 		space.bodies.add(floorBody);
 		space.bodies.add(platformBody);
@@ -108,7 +134,7 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		if (FlxG.keys.pressed.FIVE) {
+		if (FlxG.keys.pressed.R) {
          FlxG.switchState(new PlayState());
 		}
 
@@ -125,6 +151,7 @@ class PlayState extends FlxState
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
 			newKnife.body.space = this.space;
 			newKnife.visible = true;
+			newKnife.body.cbTypes.add(knifeType);
 			add(newKnife);
 		}
 		if(cooldown > 0) {

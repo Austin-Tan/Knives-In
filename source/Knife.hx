@@ -1,5 +1,6 @@
 package;
 
+import nape.callbacks.CbType;
 import nape.dynamics.InteractionFilter;
 import haxe.zip.InflateImpl;
 import flixel.util.FlxColor;
@@ -18,6 +19,9 @@ class Knife extends FlxNapeSprite {
 
    var COLLISION_GROUP:Int = 1;
    var COLLISION_MASK:Int = ~7;
+   var SENSOR_GROUP:Int = 1;
+   var SENSOR_MASK:Int = ~1;
+
    public function new(x:Float, y:Float, angle:Float) {
       super(x, y, "assets/images/knife.png");
       this.visible = false;
