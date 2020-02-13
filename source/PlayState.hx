@@ -10,7 +10,6 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Template;
 import flixel.FlxState;
-import flixel.group.FlxGroup;
 import nape.space.Space;
 import nape.phys.Body;
 
@@ -18,21 +17,18 @@ class PlayState extends FlxState
 {
 	var curLevel:Int;
 
+	// Sprites
+	var thrower:Thrower;
 	var knife:Knife;
-	var target:Target;
-	var target2:Target;
+	var knivesLeft:Int;
 	var targets:Array<Target>;
+	var targetsLeft:Int;
+
+	// Background
 	var space:Space;
 
-	var floorBody:Body = new Body(BodyType.STATIC);
-	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
-	var platformBody:Body = new Body(BodyType.STATIC);
-	var platformShape:Polygon = new Polygon(Polygon.rect(220, 240, 50, 1));
-
-	var thrower:Thrower;
-	var targetsLeft:Int;
+	// Menu
 	var targetsLeftText:flixel.text.FlxText;
-	var knivesLeft:Int;
 	var knivesLeftText:flixel.text.FlxText;
 
 	override public function create():Void {
@@ -40,41 +36,18 @@ class PlayState extends FlxState
 
 		this.bgColor = FlxColor.WHITE;
 
-		curLevel = 0;
-		initLevel(curLevel);
+		this.curLevel = 0;
+		initializeLevel(curLevel);
 	}
 
-	public function initLevel(level:Int) {
+	public function initializeLevel(level:Int) {
 
 		// Display Level
 		createLevelMenu(level);
+		loadBackground(level);
 
 		// TODO: find a way to store the initial setup of each level
-		var x:Int = 150;
-		var y:Int = 150;
-		// knife = new Knife(x, y, FlxColor.BLUE);
-		// add(knife);
-		thrower = new Thrower(x, y);
-		add(thrower);
-
-		space = new Space(new Vec2(0, 200));
-		
-		target = new Target(20, 20);
-		target2 = new Target(240, 200);
-		this.targetsLeft = 2;
-		target.body.space = space;
-		target2.body.space = space;
-		targets = new Array<Target>();
-		targets.push(target);
-		targets.push(target2);
-		for(targ in targets) {
-			add(targ);
-		}
-		platformBody.shapes.add(platformShape);
-		space.bodies.add(platformBody);
-
-		floorBody.shapes.add(floorShape);
-		space.bodies.add(floorBody);
+		loadTargets(level);
 	}
 	
 	var cooldown:Float;
@@ -95,6 +68,47 @@ class PlayState extends FlxState
 		add(knivesLeftText);
 
 		cooldown = 0;
+	}
+
+	public function loadTargets(level:Int):Void {
+
+		var x:Int = 150;
+		var y:Int = 150;
+
+		this.thrower = new Thrower(x, y);
+		add(thrower);
+
+		
+		this.targets = new Array<Target>();
+		this.targetsLeft = 2;
+		var target:Target = new Target(20, 20);
+		var target2:Target = new Target(240, 200);
+		
+		target.body.space = this.space;
+		target2.body.space = this.space;
+		
+		targets.push(target);
+		targets.push(target2);
+
+		for(targ in targets) {
+			add(targ);
+		}
+	}
+
+	public function loadBackground(level:Int):Void {
+		space = new Space(new Vec2(0, 200));
+		
+		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
+		var platformShape:Polygon = new Polygon(Polygon.rect(220, 240, 50, 1));
+
+		var floorBody:Body = new Body(BodyType.STATIC);
+		var platformBody:Body = new Body(BodyType.STATIC);
+
+		platformBody.shapes.add(platformShape);
+		floorBody.shapes.add(floorShape);
+
+		space.bodies.add(platformBody);
+		space.bodies.add(floorBody);
 	}
 
 	override public function update(elapsed:Float):Void {
