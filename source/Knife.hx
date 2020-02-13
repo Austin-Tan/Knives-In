@@ -1,5 +1,7 @@
 package;
 
+import flixel.system.FlxSound;
+import nape.callbacks.InteractionType;
 import nape.callbacks.CbType;
 import nape.dynamics.InteractionFilter;
 import haxe.zip.InflateImpl;
@@ -22,6 +24,14 @@ class Knife extends FlxNapeSprite {
    var SENSOR_GROUP:Int = 1;
    var SENSOR_MASK:Int = ~1;
 
+   #if flash
+      var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.mp3");
+      var wood_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_wood.mp3");
+   #else
+      var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.wav");
+      var wood_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_wood.wav");
+   #end
+
    public function new(x:Float, y:Float, angle:Float) {
       super(x, y, "assets/images/knife.png");
       this.visible = false;
@@ -40,5 +50,22 @@ class Knife extends FlxNapeSprite {
       if (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0) {
          // remove object
       }
+      var list = this.body.interactingBodies(InteractionType.SENSOR);
+      if(list.length > 0) {
+         this.body.velocity.set(new Vec2(0, 0));
+         this.body.space = null;
+         var isDynamic = list.at(0).isDynamic();
+         trace(isDynamic);
+
+         // this is a wall
+         if(!isDynamic) {
+            metal_sound.play(true);
+
+         // this is a target
+         } else {
+            wood_sound.play(true);
+         }
+      }
+
    }
 }

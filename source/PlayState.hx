@@ -130,6 +130,9 @@ class PlayState extends FlxState
 		floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
 		platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
 
+		floorBody.cbTypes.push(wallType);
+		platformBody.cbTypes.push(wallType);
+
 		space.bodies.add(floorBody);
 		space.bodies.add(platformBody);
 	}
@@ -163,12 +166,12 @@ class PlayState extends FlxState
 		if(cooldown <= 0) {
 			thrower.visible = true;
 		}
-		for(knife in knives) {
-			var list = knife.body.interactingBodies(InteractionType.SENSOR);
-			if(list.length > 0) {
-				trace(list.length);
-			}
-		}
+		// for(knife in knives) {
+		// 	var list = knife.body.interactingBodies(InteractionType.SENSOR);
+		// 	if(list.length > 0) {
+		// 		trace(list.length);
+		// 	}
+		// }
 
 	  	space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.targetsLeft;

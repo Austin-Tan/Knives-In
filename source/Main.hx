@@ -11,6 +11,6 @@ class Main extends Sprite
 		super();
       // addChild(new FlxGame(0, 0, MenuState));
 		addChild(new FlxGame(0, 0, PlayState));
-		FlxG.sound.volume = 0;
+		FlxG.sound.volume = 0.5;
 	}
 }
