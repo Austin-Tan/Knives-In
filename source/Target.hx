@@ -13,13 +13,10 @@ class Target extends FlxNapeSprite {
 
     public function new(x:Float, y:Float) {
         super(x, y, "assets/images/Target1.png");
-      //   loadGraphic("assets/images/Target1.png", true, 26, 32);
-         // this.setBodyMaterial(0.2, 0.4, 0.6, 2);
-         // this.body.setShapeMaterials();
-         Material.wood();
+         this.body.setShapeMaterials(Material.wood());
      }
 
      override public function update(elapsed:Float):Void {
-        super.update(elapsed);  
+        super.update(elapsed);
      }
 }

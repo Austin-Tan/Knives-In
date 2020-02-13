@@ -55,13 +55,12 @@ class PlayState extends FlxState
 		thrower = new Thrower(x, y);
 		add(thrower);
 
-		space = new Space(new Vec2(0, 400));
+		space = new Space(new Vec2(0, 200));
 		
 		target = new Target(20, 20);
 		target2 = new Target(200, 200);
 		this.targetsLeft = 2;
 		target.body.space = space;
-		// knife.body.space = space;
 		target2.body.space = space;
 		targets = new Array<Target>();
 		targets.push(target);
@@ -73,6 +72,7 @@ class PlayState extends FlxState
 		space.bodies.add(floorBody);
 	}
 	
+	var cooldown:Float;
 	public function createLevelMenu(level:Int):Void {
 
 		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 30);
@@ -88,6 +88,8 @@ class PlayState extends FlxState
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
 		add(knivesLeftText);
+
+		cooldown = 0;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -97,12 +99,20 @@ class PlayState extends FlxState
 		}
 
 		// throw knife
-		if (FlxG.keys.pressed.SPACE) {
-			var newKnife = new Knife(thrower.x, thrower.y, Math.PI * (thrower.angle % 360) / 180);
-			trace(thrower.angle);
+		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
+			thrower.visible = false;
+			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
+			cooldown = 0.5;
 			newKnife.body.space = space;
 			add(newKnife);
-		}  
+			newKnife.visible = true;
+		}
+		if(cooldown > 0) {
+			cooldown -= elapsed;
+		}
+		if(cooldown <= 0) {
+			thrower.visible = true;
+		}
 	  	space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.targetsLeft;
 	}

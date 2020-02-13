@@ -1,5 +1,6 @@
 package;
 
+import haxe.zip.InflateImpl;
 import flixel.util.FlxColor;
 import flixel.addons.nape.FlxNapeSprite;
 import flixel.FlxGame;
@@ -12,20 +13,20 @@ class Knife extends FlxNapeSprite {
    var thrownVelocity:Float;
    var initX:Float;
    var initY:Float;
-   var initialSpeed:Float = 12;
+   var initialSpeed:Float = 500;
 
    public function new(x:Float, y:Float, angle:Float) {
       super(x, y, "assets/images/knife.png");
-      this.angle = angle;
+      this.visible = false;
       this.initX = x;
       this.initY = y;
       this.setBodyMaterial(0.05);
+      this.body.rotate(new Vec2(x, y), angle);
+      this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
    }
 
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
-      // body.position.x = body.position.x + initialSpeed * Math.cos(this.angle);
-      // body.position.y = body.position.y + initialSpeed * Math.sin(this.angle);
 
       if (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0) {
          // remove object
