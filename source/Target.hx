@@ -18,6 +18,7 @@ class Target extends FlxNapeSprite {
     var SENSOR_GROUP:Int = 2;
     var SENSOR_MASK:Int = ~6;
 
+    public var hit:Bool = false;
     public function new(x:Float, y:Float) {
         super(x, y, "assets/images/Target1.png");
          this.body.setShapeMaterials(Material.wood());
@@ -27,5 +28,8 @@ class Target extends FlxNapeSprite {
 
      override public function update(elapsed:Float):Void {
         super.update(elapsed);
+        if(!hit && body.constraints.length > 0) {
+            hit = true;
+        }
      }
 }

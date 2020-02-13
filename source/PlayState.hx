@@ -143,10 +143,18 @@ class PlayState extends FlxState
          FlxG.switchState(new PlayState());
 		}
 
+		for(target in targets) {
+			if (target.hit) {
+				targets.remove(target);
+				targetsLeft --;
+			}
+		}
+
 		if (targetsLeft == 0) {
 			curLevel += 1;
 			initializeLevel();
 		}
+		
 
 		// throw knife
 		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
@@ -166,12 +174,6 @@ class PlayState extends FlxState
 		if(cooldown <= 0) {
 			thrower.visible = true;
 		}
-		// for(knife in knives) {
-		// 	var list = knife.body.interactingBodies(InteractionType.SENSOR);
-		// 	if(list.length > 0) {
-		// 		trace(list.length);
-		// 	}
-		// }
 
 	  	space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.targetsLeft;

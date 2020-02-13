@@ -58,16 +58,16 @@ class Knife extends FlxNapeSprite {
          var list = this.body.interactingBodies(InteractionType.SENSOR);
          if(list.length > 0) {
             stuck = true;
+
+            // this is a bad way to differentiate between walls and targets
             var isDynamic = list.at(0).isDynamic();
-            trace(isDynamic);
             this.body.shapes.at(0).sensorEnabled = false;
-            // this.body.setShapeFilters(new InteractionFilter(15, 15, 0, 0));
 
             // this is a wall
             if(!isDynamic) {
                metal_sound.play(true);
-               // this.body.velocity.set(new Vec2(0, 0));
                this.body.space = null;
+
             // this is a target
             } else {
                var pivotJoint = new WeldJoint(this.body, list.at(0), 
@@ -75,9 +75,6 @@ class Knife extends FlxNapeSprite {
                this.body.space.constraints.add(pivotJoint);
                wood_sound.play(true);
             }
-
-            // this.body.velocity.set(new Vec2(0, 0));
-            // this.body.space = null;
          }
       }
    }
