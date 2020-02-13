@@ -16,15 +16,21 @@ import nape.phys.Body;
 
 class PlayState extends FlxState
 {
-	var knife:Knife;
 	var curLevel:Int;
+
+	var knife:Knife;
 	var target:Target;
 	var target2:Target;
 	var targets:Array<Target>;
 	var space:Space;
-	var targetsLeft:Int;
+
 	var floorBody:Body = new Body(BodyType.STATIC);
 	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
+
+	var targetsLeft:Int;
+	var targetsLeftText:flixel.text.FlxText;
+	var knivesLeft:Int;
+	var knivesLeftText:flixel.text.FlxText;
 
 	override public function create():Void {
 		super.create();
@@ -65,31 +71,30 @@ class PlayState extends FlxState
 	}
 	
 	public function createLevelMenu(level:Int):Void {
-		var gameStatus = new flixel.group.FlxTypedGroup(2);
 
 		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 30);
 		text.color = FlxColor.BLACK;
 		text.screenCenter(flixel.util.FlxAxes.X);
-		gameStatus.add(text);
+		add(text);
 
 		var x:Int = 10;
 		var y:Int = 10;
-		var targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.targetsLeft, 12);
-		// var knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: infinity", 12);
+		this.targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.targetsLeft, 12);
+		this.knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: infinity", 12);
 		targetsLeftText.color = FlxColor.BLACK;
-		// knivesLeftText.color = FlxColor.BLACK;
-		gameStatus.add(targetsLeftText);
-		// gameStatus.add(knivesLeftText);
-
-		add(gameStatus);
+		knivesLeftText.color = FlxColor.BLACK;
+		add(targetsLeftText);
+		add(knivesLeftText);
 	}
 
-	override public function update(elapsed:Float):Void
-	{
+	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if (FlxG.keys.pressed.FIVE) {
          FlxG.switchState(new PlayState());
 	  }
 	  space.step(elapsed);
+
+	  this.targetsLeftText.text = "Targets: " + this.targetsLeft;
+	  
 	}
 }
