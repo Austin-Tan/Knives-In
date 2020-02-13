@@ -40,21 +40,21 @@ class PlayState extends FlxState
 		this.bgColor = FlxColor.WHITE;
 
 		this.curLevel = 0;
-		initializeLevel(curLevel);
+		initializeLevel();
 	}
 
 	// to be called when loading a new level
-	public function initializeLevel(level:Int) {
-
+	public function initializeLevel() {
 		// Display Level
-		createLevelMenu(level);
+		createLevelMenu();
+
 		// Must load background before targets
-		loadBackground(level);
-		loadItems(level);
+		loadBackground();
+		loadItems();
 	}
 	
-	public function createLevelMenu(level:Int):Void {
-		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 30);
+	public function createLevelMenu():Void {
+		var text = new flixel.text.FlxText(0, 0, 0, "Level " + this.curLevel, 30);
 		text.color = FlxColor.BLACK;
 		text.screenCenter(flixel.util.FlxAxes.X);
 		add(text);
@@ -69,12 +69,12 @@ class PlayState extends FlxState
 		add(knivesLeftText);
 	}
 
-	public function loadItems(level:Int):Void {
-		this.thrower = Level.getThrower(level);
+	public function loadItems():Void {
+		this.thrower = Level.getThrower(this.curLevel);
 		add(thrower);
 		this.cooldown = 0;
 
-		this.targets = Level.getTargets(level);
+		this.targets = Level.getTargets(this.curLevel);
 		this.targetsLeft = this.targets.length;
 
 		for (target in targets) {
@@ -83,7 +83,7 @@ class PlayState extends FlxState
 		}
 	}
 
-	public function loadBackground(level:Int):Void {
+	public function loadBackground():Void {
 		space = new Space(new Vec2(0, 200));
 		
 		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
@@ -105,14 +105,20 @@ class PlayState extends FlxState
          FlxG.switchState(new PlayState());
 		}
 
+		if (targetsLeft == 0) {
+			curLevel += 1;
+			initializeLevel();
+		}
+
 		// throw knife
 		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
-			thrower.visible = false;
+			this.thrower.visible = false;
+			this.cooldown = 0.5;
+
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
-			cooldown = 0.5;
-			newKnife.body.space = space;
-			add(newKnife);
+			newKnife.body.space = this.space;
 			newKnife.visible = true;
+			add(newKnife);
 		}
 		if(cooldown > 0) {
 			cooldown -= elapsed;
