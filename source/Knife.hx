@@ -1,5 +1,7 @@
 package;
 
+import nape.constraint.WeldJoint;
+import nape.constraint.PivotJoint;
 import flixel.system.FlxSound;
 import nape.callbacks.InteractionType;
 import nape.callbacks.CbType;
@@ -18,6 +20,7 @@ class Knife extends FlxNapeSprite {
    var initX:Float;
    var initY:Float;
    var initialSpeed:Float = 500;
+   var stuck:Bool = false;  // if this has stuck into an object
 
    var COLLISION_GROUP:Int = 1;
    var COLLISION_MASK:Int = ~7;
@@ -50,22 +53,32 @@ class Knife extends FlxNapeSprite {
       if (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0) {
          // remove object
       }
-      var list = this.body.interactingBodies(InteractionType.SENSOR);
-      if(list.length > 0) {
-         this.body.velocity.set(new Vec2(0, 0));
-         this.body.space = null;
-         var isDynamic = list.at(0).isDynamic();
-         trace(isDynamic);
 
-         // this is a wall
-         if(!isDynamic) {
-            metal_sound.play(true);
+      if(!stuck) {
+         var list = this.body.interactingBodies(InteractionType.SENSOR);
+         if(list.length > 0) {
+            stuck = true;
+            var isDynamic = list.at(0).isDynamic();
+            trace(isDynamic);
+            this.body.shapes.at(0).sensorEnabled = false;
+            // this.body.setShapeFilters(new InteractionFilter(15, 15, 0, 0));
 
-         // this is a target
-         } else {
-            wood_sound.play(true);
+            // this is a wall
+            if(!isDynamic) {
+               metal_sound.play(true);
+               // this.body.velocity.set(new Vec2(0, 0));
+               this.body.space = null;
+            // this is a target
+            } else {
+               var pivotJoint = new WeldJoint(this.body, list.at(0), 
+                                             this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
+               this.body.space.constraints.add(pivotJoint);
+               wood_sound.play(true);
+            }
+
+            // this.body.velocity.set(new Vec2(0, 0));
+            // this.body.space = null;
          }
       }
-
    }
 }

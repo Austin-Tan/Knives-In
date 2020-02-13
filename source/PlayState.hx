@@ -87,7 +87,7 @@ class PlayState extends FlxState
 		var x:Int = 10;
 		var y:Int = 10;
 		this.targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.targetsLeft, 12);
-		this.knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: infinity", 12);
+		this.knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: Infinity", 12);
 		targetsLeftText.color = FlxColor.BLACK;
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
