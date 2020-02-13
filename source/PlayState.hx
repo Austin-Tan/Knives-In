@@ -30,6 +30,7 @@ class PlayState extends FlxState
 
 	var knife:Knife;
 	var knivesLeft:Int;
+	var knives:Array<Knife>;
 
 	var targets:Array<Target>;
 	var targetsLeft:Int;
@@ -106,6 +107,7 @@ class PlayState extends FlxState
 			target.body.cbTypes.add(targetType);
 			add(target);
 		}
+		knives = new Array<Knife>();
 	}
 
 
@@ -152,6 +154,7 @@ class PlayState extends FlxState
 			newKnife.body.space = this.space;
 			newKnife.visible = true;
 			newKnife.body.cbTypes.add(knifeType);
+			knives.push(newKnife);
 			add(newKnife);
 		}
 		if(cooldown > 0) {
@@ -160,6 +163,13 @@ class PlayState extends FlxState
 		if(cooldown <= 0) {
 			thrower.visible = true;
 		}
+		for(knife in knives) {
+			var list = knife.body.interactingBodies(InteractionType.SENSOR);
+			if(list.length > 0) {
+				trace(list.length);
+			}
+		}
+
 	  	space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.targetsLeft;
 	}

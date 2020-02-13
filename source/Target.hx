@@ -21,7 +21,8 @@ class Target extends FlxNapeSprite {
     public function new(x:Float, y:Float) {
         super(x, y, "assets/images/Target1.png");
          this.body.setShapeMaterials(Material.wood());
-         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
+         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+         this.body.shapes.at(0).sensorEnabled = true;
      }
 
      override public function update(elapsed:Float):Void {

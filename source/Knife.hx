@@ -30,7 +30,8 @@ class Knife extends FlxNapeSprite {
       this.setBodyMaterial(0.05);
       this.body.rotate(new Vec2(x, y), angle);
       this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
-      this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
+      this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+      this.body.shapes.at(0).sensorEnabled = true;
    }
 
    override public function update(elapsed:Float):Void {
