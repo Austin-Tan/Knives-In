@@ -82,10 +82,11 @@ class PlayState extends FlxState
 		this.targets = new Array<Target>();
 		this.targetsLeft = 2;
 		var target:Target = new Target(20, 20);
-		var target2:Target = new Target(240, 200);
+		var target2:Target = new Target(340, 200);
 		
 		target.body.space = this.space;
 		target2.body.space = this.space;
+		// target2.body.shapes.at(0).sensorEnabled = true;
 		
 		targets.push(target);
 		targets.push(target2);
@@ -99,7 +100,7 @@ class PlayState extends FlxState
 		space = new Space(new Vec2(0, 200));
 		
 		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
-		var platformShape:Polygon = new Polygon(Polygon.rect(220, 240, 50, 1));
+		var platformShape:Polygon = new Polygon(Polygon.rect(320, 240, 50, 1));
 
 		var floorBody:Body = new Body(BodyType.STATIC);
 		var platformBody:Body = new Body(BodyType.STATIC);
