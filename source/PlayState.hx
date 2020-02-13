@@ -26,6 +26,8 @@ class PlayState extends FlxState
 
 	var floorBody:Body = new Body(BodyType.STATIC);
 	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
+	var platformBody:Body = new Body(BodyType.STATIC);
+	var platformShape:Polygon = new Polygon(Polygon.rect(220, 240, 50, 1));
 
 	var thrower:Thrower;
 	var targetsLeft:Int;
@@ -58,7 +60,7 @@ class PlayState extends FlxState
 		space = new Space(new Vec2(0, 200));
 		
 		target = new Target(20, 20);
-		target2 = new Target(200, 200);
+		target2 = new Target(240, 200);
 		this.targetsLeft = 2;
 		target.body.space = space;
 		target2.body.space = space;
@@ -68,6 +70,9 @@ class PlayState extends FlxState
 		for(targ in targets) {
 			add(targ);
 		}
+		platformBody.shapes.add(platformShape);
+		space.bodies.add(platformBody);
+
 		floorBody.shapes.add(floorShape);
 		space.bodies.add(floorBody);
 	}
