@@ -30,10 +30,12 @@ class Knife extends FlxNapeSprite {
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
 
-      var impulse:Float = 20;
+      var impulse:Float = 12;
       var ROTATION_SPEED:Float = 2.5;
+      var zeroVector:Vec2 = new Vec2(0, 0);
 
       if (!thrown) {
+         body.velocity.set(zeroVector);
          var newAngle:Float = ROTATION_SPEED * 2 * Math.PI / 360;
          body.rotate(new Vec2(initX, initY), newAngle);
          curAngle += newAngle;
@@ -46,6 +48,7 @@ class Knife extends FlxNapeSprite {
          this.thrown = true;
       }
 
+      // curAngle = angle;
       if (thrown && (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0)) {
          thrown = false;
          body.position.x = initX;

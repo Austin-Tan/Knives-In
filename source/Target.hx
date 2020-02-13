@@ -11,7 +11,6 @@ class Target extends FlxNapeSprite {
 
     public function new(x:Float, y:Float) {
         super(x, y, "assets/images/Target1.png");
-  
       //   loadGraphic("assets/images/Target1.png", true, 26, 32);
      }
 

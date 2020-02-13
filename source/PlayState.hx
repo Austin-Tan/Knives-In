@@ -1,5 +1,7 @@
 package;
 
+import nape.shape.Polygon;
+import nape.phys.BodyType;
 import nape.geom.Vec2;
 import lime.math.Vector2;
 import openfl.geom.Vector3D;
@@ -9,6 +11,7 @@ import flixel.util.FlxColor;
 import haxe.Template;
 import flixel.FlxState;
 import nape.space.Space;
+import nape.phys.Body;
 
 class PlayState extends FlxState
 {
@@ -18,6 +21,8 @@ class PlayState extends FlxState
 	var target2:Target;
 	var targets:Array<Target>;
 	var space:Space;
+	var floorBody:Body = new Body(BodyType.STATIC);
+	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
 
 	override public function create():Void {
 		super.create();
@@ -45,7 +50,7 @@ class PlayState extends FlxState
 		target = new Target(20, 20);
 		target2 = new Target(200, 200);
 		target.body.space = space;
-		// knife.body.space = space;
+		knife.body.space = space;
 		target2.body.space = space;
 		targets = new Array<Target>();
 		targets.push(target);
@@ -53,6 +58,8 @@ class PlayState extends FlxState
 		for(targ in targets) {
 			add(targ);
 		}
+		floorBody.shapes.add(floorShape);
+		space.bodies.add(floorBody);
 	}
 	
 	public function getLevelMenu(level:Int):flixel.text.FlxText {
@@ -65,7 +72,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		if (FlxG.keys.pressed.ESCAPE) {
+		if (FlxG.keys.pressed.FIVE) {
          FlxG.switchState(new PlayState());
 	  }
 	  space.step(elapsed);
