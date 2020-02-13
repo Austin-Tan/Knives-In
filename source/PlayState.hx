@@ -19,8 +19,11 @@ class PlayState extends FlxState
 
 	// Sprites
 	var thrower:Thrower;
+	var cooldown:Float;
+
 	var knife:Knife;
 	var knivesLeft:Int;
+
 	var targets:Array<Target>;
 	var targetsLeft:Int;
 
@@ -40,19 +43,17 @@ class PlayState extends FlxState
 		initializeLevel(curLevel);
 	}
 
+	// to be called when loading a new level
 	public function initializeLevel(level:Int) {
 
 		// Display Level
 		createLevelMenu(level);
+		// Must load background before targets
 		loadBackground(level);
-
-		// TODO: find a way to store the initial setup of each level
-		loadTargets(level);
+		loadItems(level);
 	}
 	
-	var cooldown:Float;
 	public function createLevelMenu(level:Int):Void {
-
 		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 30);
 		text.color = FlxColor.BLACK;
 		text.screenCenter(flixel.util.FlxAxes.X);
@@ -66,33 +67,19 @@ class PlayState extends FlxState
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
 		add(knivesLeftText);
-
-		cooldown = 0;
 	}
 
-	public function loadTargets(level:Int):Void {
-
-		var x:Int = 150;
-		var y:Int = 150;
-
-		this.thrower = new Thrower(x, y);
+	public function loadItems(level:Int):Void {
+		this.thrower = Level.getThrower(level);
 		add(thrower);
+		this.cooldown = 0;
 
-		
-		this.targets = new Array<Target>();
-		this.targetsLeft = 2;
-		var target:Target = new Target(20, 20);
-		var target2:Target = new Target(340, 200);
-		
-		target.body.space = this.space;
-		target2.body.space = this.space;
-		// target2.body.shapes.at(0).sensorEnabled = true;
-		
-		targets.push(target);
-		targets.push(target2);
+		this.targets = Level.getTargets(level);
+		this.targetsLeft = this.targets.length;
 
-		for(targ in targets) {
-			add(targ);
+		for (target in targets) {
+			target.body.space = this.space;
+			add(target);
 		}
 	}
 
@@ -105,11 +92,11 @@ class PlayState extends FlxState
 		var floorBody:Body = new Body(BodyType.STATIC);
 		var platformBody:Body = new Body(BodyType.STATIC);
 
-		platformBody.shapes.add(platformShape);
 		floorBody.shapes.add(floorShape);
+		platformBody.shapes.add(platformShape);
 
-		space.bodies.add(platformBody);
 		space.bodies.add(floorBody);
+		space.bodies.add(platformBody);
 	}
 
 	override public function update(elapsed:Float):Void {
