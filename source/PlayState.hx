@@ -1,5 +1,6 @@
 package;
 
+import nape.dynamics.InteractionFilter;
 import nape.shape.Polygon;
 import nape.phys.BodyType;
 import nape.geom.Vec2;
@@ -65,7 +66,10 @@ class PlayState extends FlxState
 		target.body.space = space;
 		target2.body.space = space;
 
-		target2.body.shapes.at(0).sensorEnabled = true;
+		target2.body.shapes.at(0).sensorEnabled = false;
+		target2.body.setShapeFilters(new InteractionFilter(2, ~1, 1, ~(2|4)));
+
+		// target2.body.set
 		targets = new Array<Target>();
 		targets.push(target);
 		targets.push(target2);
@@ -74,6 +78,7 @@ class PlayState extends FlxState
 		}
 		platformBody.shapes.add(platformShape);
 		space.bodies.add(platformBody);
+		platformBody.setShapeFilters(new InteractionFilter(4));
 
 		floorBody.shapes.add(floorShape);
 		space.bodies.add(floorBody);
@@ -111,6 +116,7 @@ class PlayState extends FlxState
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
 			cooldown = 0.5;
 			newKnife.body.space = space;
+			newKnife.body.setShapeFilters(new InteractionFilter(1, ~(2|4), 1, ~(2|4)));
 			add(newKnife);
 			newKnife.visible = true;
 		}
