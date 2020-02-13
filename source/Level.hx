@@ -14,7 +14,7 @@ class Level {
       var targets:Array<Target> = new Array<Target>();
       switch (level) {
          case 0: 
-            coordinates = [[20, 20], [340, 200], [400, 400]];
+            coordinates = [[20, 20], [340, 200], [400, 400], [340, 160]];
          default:
             coordinates = [[150, 150]];
       }

@@ -1,5 +1,6 @@
 package;
 
+import nape.dynamics.InteractionFilter;
 import haxe.zip.InflateImpl;
 import flixel.util.FlxColor;
 import flixel.addons.nape.FlxNapeSprite;
@@ -15,6 +16,8 @@ class Knife extends FlxNapeSprite {
    var initY:Float;
    var initialSpeed:Float = 500;
 
+   var COLLISION_GROUP:Int = 1;
+   var COLLISION_MASK:Int = ~7;
    public function new(x:Float, y:Float, angle:Float) {
       super(x, y, "assets/images/knife.png");
       this.visible = false;
@@ -23,6 +26,7 @@ class Knife extends FlxNapeSprite {
       this.setBodyMaterial(0.05);
       this.body.rotate(new Vec2(x, y), angle);
       this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
+      this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
    }
 
    override public function update(elapsed:Float):Void {

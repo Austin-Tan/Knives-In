@@ -84,6 +84,9 @@ class PlayState extends FlxState
 		}
 	}
 
+
+	var COLLISION_GROUP:Int = 4;
+	var COLLISION_MASK:Int = ~1;
 	public function loadBackground():Void {
 		space = new Space(new Vec2(0, 200));
 		
@@ -95,6 +98,9 @@ class PlayState extends FlxState
 
 		floorBody.shapes.add(floorShape);
 		platformBody.shapes.add(platformShape);
+
+		floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
+		platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK));
 
 		space.bodies.add(floorBody);
 		space.bodies.add(platformBody);
