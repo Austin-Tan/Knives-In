@@ -32,13 +32,15 @@ class PlayState extends FlxState
 	var knivesLeft:Int;
 	var knives:Array<Knife>;
 
-	var targets:Array<Target>;
-	var targetsLeft:Int;
+	var activeTargets:Array<Target>;
+	var hitTargets:Array<Target>;
+	var numTargetsLeft:Int;
 
 	// Background
 	var space:Space;
 
 	// Menu
+	var levelText:flixel.text.FlxText;
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
 
@@ -53,6 +55,7 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
+
 		// Display Level
 		createLevelMenu();
 
@@ -79,14 +82,18 @@ class PlayState extends FlxState
 	}
 	
 	public function createLevelMenu():Void {
-		var text = new flixel.text.FlxText(0, 0, 0, "Level " + this.curLevel, 30);
-		text.color = FlxColor.BLACK;
-		text.screenCenter(flixel.util.FlxAxes.X);
-		add(text);
+		remove(levelText);
+		remove(targetsLeftText);
+		remove(knivesLeftText);
+
+		this.levelText = new flixel.text.FlxText(0, 0, 0, "Level " + this.curLevel, 30);
+		levelText.color = FlxColor.BLACK;
+		levelText.screenCenter(flixel.util.FlxAxes.X);
+		add(levelText);
 
 		var x:Int = 10;
 		var y:Int = 10;
-		this.targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.targetsLeft, 12);
+		this.targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.numTargetsLeft, 12);
 		this.knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: Infinity", 12);
 		targetsLeftText.color = FlxColor.BLACK;
 		knivesLeftText.color = FlxColor.BLACK;
@@ -95,14 +102,29 @@ class PlayState extends FlxState
 	}
 
 	public function loadItems():Void {
+		remove(this.thrower);
+
+		if (this.activeTargets != null) {
+			for (target in this.hitTargets) {
+				remove(target);
+			}
+		}
+
+		if (this.knives != null) {
+			for (knife in this.knives) {
+				remove(knife);
+			}
+		}
+
 		this.thrower = Level.getThrower(this.curLevel);
 		add(thrower);
 		this.cooldown = 0;
 
-		this.targets = Level.getTargets(this.curLevel);
-		this.targetsLeft = this.targets.length;
+		this.hitTargets = new Array<Target>();
+		this.activeTargets = Level.getTargets(this.curLevel);
+		this.numTargetsLeft = this.activeTargets.length;
 
-		for (target in targets) {
+		for (target in this.activeTargets) {
 			target.body.space = this.space;
 			target.body.cbTypes.add(targetType);
 			add(target);
@@ -116,6 +138,7 @@ class PlayState extends FlxState
 	var SENSOR_GROUP:Int = 4;
 	var SENSOR_MASK:Int = ~6;
 	public function loadBackground():Void {
+
 		space = new Space(new Vec2(0, 200));
 		
 		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
@@ -142,15 +165,16 @@ class PlayState extends FlxState
 		if (FlxG.keys.pressed.R) {
          FlxG.switchState(new PlayState());
 		}
-
-		for(target in targets) {
+		trace(numTargetsLeft);
+		for(target in activeTargets) {
 			if (target.hit) {
-				targets.remove(target);
-				targetsLeft --;
+				hitTargets.push(target);
+				activeTargets.remove(target);
+				numTargetsLeft --;
 			}
 		}
 
-		if (targetsLeft == 0) {
+		if (numTargetsLeft == 0) {
 			curLevel += 1;
 			initializeLevel();
 		}
@@ -176,6 +200,6 @@ class PlayState extends FlxState
 		}
 
 	  	space.step(elapsed);
-		this.targetsLeftText.text = "Targets: " + this.targetsLeft;
+		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 	}
 }
