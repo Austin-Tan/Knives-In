@@ -11,7 +11,6 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Template;
 import flixel.FlxState;
-import flixel.group.FlxGroup;
 import nape.space.Space;
 import nape.phys.Body;
 
@@ -19,21 +18,21 @@ class PlayState extends FlxState
 {
 	var curLevel:Int;
 
+	// Sprites
+	var thrower:Thrower;
+	var cooldown:Float;
+
 	var knife:Knife;
-	var target:Target;
-	var target2:Target;
+	var knivesLeft:Int;
+
 	var targets:Array<Target>;
+	var targetsLeft:Int;
+
+	// Background
 	var space:Space;
 
-	var floorBody:Body = new Body(BodyType.STATIC);
-	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
-	var platformBody:Body = new Body(BodyType.STATIC);
-	var platformShape:Polygon = new Polygon(Polygon.rect(300, 240, 50, 1));
-
-	var thrower:Thrower;
-	var targetsLeft:Int;
+	// Menu
 	var targetsLeftText:flixel.text.FlxText;
-	var knivesLeft:Int;
 	var knivesLeftText:flixel.text.FlxText;
 
 	override public function create():Void {
@@ -41,53 +40,22 @@ class PlayState extends FlxState
 
 		this.bgColor = FlxColor.WHITE;
 
-		curLevel = 0;
-		initLevel(curLevel);
+		this.curLevel = 0;
+		initializeLevel();
 	}
 
-	public function initLevel(level:Int) {
-
+	// to be called when loading a new level
+	public function initializeLevel() {
 		// Display Level
-		createLevelMenu(level);
+		createLevelMenu();
 
-		// TODO: find a way to store the initial setup of each level
-		var x:Int = 150;
-		var y:Int = 150;
-		// knife = new Knife(x, y, FlxColor.BLUE);
-		// add(knife);
-		thrower = new Thrower(x, y);
-		add(thrower);
-
-		space = new Space(new Vec2(0, 200));
-		
-		target = new Target(20, 20);
-		target2 = new Target(320, 200);
-		this.targetsLeft = 2;
-		target.body.space = space;
-		target2.body.space = space;
-
-		target2.body.shapes.at(0).sensorEnabled = false;
-		target2.body.setShapeFilters(new InteractionFilter(2, ~1, 1, ~(2|4)));
-
-		// target2.body.set
-		targets = new Array<Target>();
-		targets.push(target);
-		targets.push(target2);
-		for(targ in targets) {
-			add(targ);
-		}
-		platformBody.shapes.add(platformShape);
-		space.bodies.add(platformBody);
-		platformBody.setShapeFilters(new InteractionFilter(4));
-
-		floorBody.shapes.add(floorShape);
-		space.bodies.add(floorBody);
+		// Must load background before targets
+		loadBackground();
+		loadItems();
 	}
 	
-	var cooldown:Float;
-	public function createLevelMenu(level:Int):Void {
-
-		var text = new flixel.text.FlxText(0, 0, 0, "Level " + level, 30);
+	public function createLevelMenu():Void {
+		var text = new flixel.text.FlxText(0, 0, 0, "Level " + this.curLevel, 30);
 		text.color = FlxColor.BLACK;
 		text.screenCenter(flixel.util.FlxAxes.X);
 		add(text);
@@ -100,8 +68,36 @@ class PlayState extends FlxState
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
 		add(knivesLeftText);
+	}
 
-		cooldown = 0;
+	public function loadItems():Void {
+		this.thrower = Level.getThrower(this.curLevel);
+		add(thrower);
+		this.cooldown = 0;
+
+		this.targets = Level.getTargets(this.curLevel);
+		this.targetsLeft = this.targets.length;
+
+		for (target in targets) {
+			target.body.space = this.space;
+			add(target);
+		}
+	}
+
+	public function loadBackground():Void {
+		space = new Space(new Vec2(0, 200));
+		
+		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
+		var platformShape:Polygon = new Polygon(Polygon.rect(320, 240, 50, 1));
+
+		var floorBody:Body = new Body(BodyType.STATIC);
+		var platformBody:Body = new Body(BodyType.STATIC);
+
+		floorBody.shapes.add(floorShape);
+		platformBody.shapes.add(platformShape);
+
+		space.bodies.add(floorBody);
+		space.bodies.add(platformBody);
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -110,15 +106,20 @@ class PlayState extends FlxState
          FlxG.switchState(new PlayState());
 		}
 
+		if (targetsLeft == 0) {
+			curLevel += 1;
+			initializeLevel();
+		}
+
 		// throw knife
 		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
-			thrower.visible = false;
+			this.thrower.visible = false;
+			this.cooldown = 0.5;
+
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
-			cooldown = 0.5;
-			newKnife.body.space = space;
-			newKnife.body.setShapeFilters(new InteractionFilter(1, ~(2|4), 1, ~(2|4)));
-			add(newKnife);
+			newKnife.body.space = this.space;
 			newKnife.visible = true;
+			add(newKnife);
 		}
 		if(cooldown > 0) {
 			cooldown -= elapsed;
