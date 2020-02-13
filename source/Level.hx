@@ -4,6 +4,8 @@ class Level {
       switch (level) {
          case 0: 
             return new Thrower(150, 150);
+         case 1:
+            return new Thrower(300, 200);
          default: 
             return new Thrower(150, 150);
       }
@@ -15,6 +17,8 @@ class Level {
       switch (level) {
          case 0: 
             coordinates = [[20, 20], [340, 200], [400, 400], [340, 160]];
+         case 1:
+            coordinates = [[300, 50], [200, 50], [150, 50]];
          default:
             coordinates = [[150, 150]];
       }
