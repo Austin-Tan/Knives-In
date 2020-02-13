@@ -24,6 +24,8 @@ class PlayState extends FlxState
 	var floorBody:Body = new Body(BodyType.STATIC);
 	var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
 
+	var thrower:Thrower;
+
 	override public function create():Void {
 		super.create();
 
@@ -42,15 +44,17 @@ class PlayState extends FlxState
 		// TODO: find a way to store the initial setup of each level
 		var x:Int = 150;
 		var y:Int = 150;
-		knife = new Knife(x, y, FlxColor.BLUE);
-		add(knife);
+		// knife = new Knife(x, y, FlxColor.BLUE);
+		// add(knife);
+		thrower = new Thrower(x, y);
+		add(thrower);
 
 		space = new Space(new Vec2(0, 400));
 		
 		target = new Target(20, 20);
 		target2 = new Target(200, 200);
 		target.body.space = space;
-		knife.body.space = space;
+		// knife.body.space = space;
 		target2.body.space = space;
 		targets = new Array<Target>();
 		targets.push(target);
@@ -74,7 +78,15 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		if (FlxG.keys.pressed.FIVE) {
          FlxG.switchState(new PlayState());
-	  }
-	  space.step(elapsed);
+		}
+
+		// throw knife
+		if (FlxG.keys.pressed.SPACE) {
+			var newKnife = new Knife(thrower.x, thrower.y, Math.PI * (thrower.angle % 360) / 180);
+			trace(thrower.angle);
+			newKnife.body.space = space;
+			add(newKnife);
+		}  
+	  	space.step(elapsed);
 	}
 }

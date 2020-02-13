@@ -9,51 +9,26 @@ import nape.geom.Vec2;
 
 class Knife extends FlxNapeSprite {
 
-   var knifeColor:FlxColor;
    var thrownVelocity:Float;
-   var thrown:Bool;
    var initX:Float;
    var initY:Float;
-   var curAngle:Float;
+   var initialSpeed:Float = 12;
 
-   public function new(x:Float, y:Float, knifeColor:FlxColor) {
+   public function new(x:Float, y:Float, angle:Float) {
       super(x, y, "assets/images/knife.png");
-
-      this.knifeColor = knifeColor;
+      this.angle = angle;
       this.initX = x;
       this.initY = y;
-      this.thrown = false;
-
-      // loadGraphic("assets/images/knife.png", false, 32, 16);
+      this.setBodyMaterial(0.05);
    }
 
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
+      // body.position.x = body.position.x + initialSpeed * Math.cos(this.angle);
+      // body.position.y = body.position.y + initialSpeed * Math.sin(this.angle);
 
-      var impulse:Float = 12;
-      var ROTATION_SPEED:Float = 2.5;
-      var zeroVector:Vec2 = new Vec2(0, 0);
-
-      if (!thrown) {
-         body.velocity.set(zeroVector);
-         var newAngle:Float = ROTATION_SPEED * 2 * Math.PI / 360;
-         body.rotate(new Vec2(initX, initY), newAngle);
-         curAngle += newAngle;
-      } else {
-         body.position.x = body.position.x + impulse * Math.cos(curAngle);
-         body.position.y = body.position.y + impulse * Math.sin(curAngle);
+      if (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0) {
+         // remove object
       }
-      
-      if (FlxG.keys.pressed.SPACE && !thrown) {
-         this.thrown = true;
-      }
-
-      // curAngle = angle;
-      if (thrown && (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0)) {
-         thrown = false;
-         body.position.x = initX;
-         body.position.y = initY;
-      }
-
    }
 }

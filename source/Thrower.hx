@@ -2,15 +2,16 @@ package;
 
 import flixel.FlxSprite;
 
-class Thower extends FlxSprite {
+class Thrower extends FlxSprite {
 
-    override public function new(?X:Float = 0, ?Y:Float = 0) {
-        super(X, Y, "assets/images/knife.png");
+    // public var thrownAngle:Float;
+    override public function new(x:Float, y:Float) {
+        super(x, y, "assets/images/knife.png");
     }
 
-    override public function update(elapsed:Float):Void
-        {
-            super.update(elapsed);
-            updateAnimation(elapsed);
-        }
+    override public function update(elapsed:Float):Void {
+        super.update(elapsed);
+        this.angle += 160 * elapsed;
+        // thrownAngle = this.angle;
+    }
 }
