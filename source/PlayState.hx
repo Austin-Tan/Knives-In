@@ -45,9 +45,9 @@ class PlayState extends FlxState
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
 
-	var knifeType:CbType = new CbType();
-	var targetType:CbType = new CbType();
-	var wallType:CbType = new CbType();
+	var knifeType:CbType;
+	var targetType:CbType;
+	var wallType:CbType;
 	var listener:InteractionListener;
 	var knifeHitOption:OptionType;
 	var listener2:InteractionListener;
@@ -91,7 +91,7 @@ class PlayState extends FlxState
 		remove(targetsLeftText);
 		remove(knivesLeftText);
 
-		this.levelText = new flixel.text.FlxText(0, 0, 0, "Level " + this.curLevel, 30);
+		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + this.curLevel, 30);
 		levelText.color = FlxColor.BLACK;
 		levelText.screenCenter(flixel.util.FlxAxes.X);
 		add(levelText);
@@ -143,28 +143,10 @@ class PlayState extends FlxState
 		FlxNapeSpace.space.gravity.setxy(0, 200);
 		// FlxNapeSpace.createWalls();
 
-		var platform = new Platform(0, FlxG.height, FlxG.width, 1, wallType);
-		
-		// var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
-		// var floorBody:Body = new Body(BodyType.STATIC);
-		// floorBody.shapes.add(floorShape);
-		// floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-		// floorBody.cbTypes.push(wallType);
-		// floorBody.space = FlxNapeSpace.space;
-		
-		// var platformShape:Polygon = new Polygon(Polygon.rect(320, 240, 50, 1));
-		// var platformBody:Body = new Body(BodyType.STATIC);
-		// platformBody.shapes.add(platformShape);
-		// platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-		// platformBody.cbTypes.push(wallType);
-		// platformBody.space = FlxNapeSpace.space;
- 
-		// var tileMap = new FlxNapeTilemap();
-		// tileMap.loadMapFromCSV("assets/data/level.csv", FlxGraphic.fromClass(GraphicAuto), 0, 0, AUTO);
-		// tileMap.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-		// tileMap.body.cbTypes.push(wallType);
-		// tileMap.body.space = FlxNapeSpace.space;
-		// add(tileMap);
+		var platforms:Array<Platform> = Level.getPlatforms(curLevel, wallType);//new Platform(0, FlxG.height - 20, FlxG.width, 5, wallType);
+		for (platform in platforms) {
+			add(platform);
+		}
 
 	}
 

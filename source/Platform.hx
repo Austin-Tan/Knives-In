@@ -24,7 +24,7 @@ class Platform extends FlxSprite {
     var SENSOR_GROUP:Int = 4;
     var SENSOR_MASK:Int = ~6;
 
-    override public function new(x:Float, y:Float, width:Float, height:Float, type:CbType) {
+    override public function new(x:Int, y:Int, width:Int, height:Int, type:CbType) {
         super(x, y);
 
         this.body = new Body(BodyType.STATIC);        
@@ -32,5 +32,7 @@ class Platform extends FlxSprite {
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.space = FlxNapeSpace.space;
         this.body.cbTypes.push(type);
+
+        makeGraphic(width, height, FlxColor.BROWN);
     }
 }

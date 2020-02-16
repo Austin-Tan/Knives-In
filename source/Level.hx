@@ -1,3 +1,6 @@
+import flixel.FlxG;
+import nape.callbacks.CbType;
+
 class Level {
 
    public static function getThrower(level:Int):Thrower {
@@ -13,7 +16,6 @@ class Level {
    
    public static function getTargets(level:Int):Array<Target> {
       var coordinates:Array<Array<Int>>;
-      var targets:Array<Target> = new Array<Target>();
       switch (level) {
          case 0: 
             coordinates = [[20, 20], [340, 200], [400, 400], [340, 160]];
@@ -23,6 +25,8 @@ class Level {
             coordinates = [[150, 150]];
       }
 
+      var targets:Array<Target> = new Array<Target>();
+
       for (i in 0...coordinates.length) {
          targets.push(new Target(coordinates[i][0], coordinates[i][1]));
       }
@@ -30,6 +34,31 @@ class Level {
       return targets;
    }
 
-   // public static function getSpace
+   public static function getPlatforms(level:Int, wallType:CbType):Array<Platform> {
+      // x, y, width, height
+      var properties:Array<Array<Int>>;
+      switch (level) {
+         case 0:
+            properties = [[320, 240, 50, 5]];
+         case 1:
+            properties = [[320, 240, 50, 5]];
+         default:
+            properties = [[320, 240, 50, 5]];
+      }
+      
+      // Wall
+      properties.push([0, 0, FlxG.width, 5]);
+      properties.push([0, FlxG.height - 5, FlxG.width, 5]);
+      properties.push([0, 0, 5, FlxG.height]);
+      properties.push([FlxG.width - 5, 0, 5, FlxG.height]);
+
+      var platforms:Array<Platform> = new Array<Platform>();
+
+      for (i in 0...properties.length) {
+         platforms.push(new Platform(properties[i][0], properties[i][1], properties[i][2], properties[i][3], wallType));
+      }
+
+      return platforms;
+   }
       
 }
