@@ -1,5 +1,9 @@
 package;
 
+import flixel.addons.nape.FlxNapeSpace;
+import flixel.tile.FlxTilemap.GraphicAuto;
+import flixel.addons.nape.FlxNapeTilemap;
+import flixel.graphics.FlxGraphic;
 import nape.callbacks.InteractionCallback;
 import nape.callbacks.CbType;
 import nape.callbacks.OptionType;
@@ -36,17 +40,21 @@ class PlayState extends FlxState
 	var hitTargets:Array<Target>;
 	var numTargetsLeft:Int;
 
-	// Background
-	var space:Space;
-
 	// Menu
 	var levelText:flixel.text.FlxText;
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
 
-	override public function create():Void {
-		super.create();
+	var knifeType:CbType = new CbType();
+	var targetType:CbType = new CbType();
+	var wallType:CbType = new CbType();
+	var listener:InteractionListener;
+	var knifeHitOption:OptionType;
+	var listener2:InteractionListener;
 
+	override public function create():Void {
+
+		super.create();
 		this.bgColor = FlxColor.WHITE;
 
 		this.curLevel = 0;
@@ -60,18 +68,15 @@ class PlayState extends FlxState
 		createLevelMenu();
 
 		// Must load background before targets
+		initializeListeners();
 		loadBackground();
 		loadItems();
-		initializeListeners();
 	}
 
-	var knifeType:CbType = new CbType();
-	var targetType:CbType = new CbType();
-	var wallType:CbType = new CbType();
-	var listener:InteractionListener;
-	var knifeHitOption:OptionType;
-	var listener2:InteractionListener;
 	public function initializeListeners():Void {
+		knifeType = new CbType();
+	   targetType = new CbType();
+	   wallType = new CbType();
 		knifeHitOption = new OptionType([targetType, wallType]);
 		listener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, new OptionType(knifeType), knifeHitOption, knifeHit);
 		listener2 = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, new OptionType(targetType), new OptionType(targetType), knifeHit);
@@ -125,39 +130,42 @@ class PlayState extends FlxState
 		this.numTargetsLeft = this.activeTargets.length;
 
 		for (target in this.activeTargets) {
-			target.body.space = this.space;
+			target.body.space = FlxNapeSpace.space;
 			target.body.cbTypes.add(targetType);
 			add(target);
 		}
 		knives = new Array<Knife>();
 	}
-
-
-	var COLLISION_GROUP:Int = 4;
-	var COLLISION_MASK:Int = ~1;
-	var SENSOR_GROUP:Int = 4;
-	var SENSOR_MASK:Int = ~6;
+	
 	public function loadBackground():Void {
 
-		space = new Space(new Vec2(0, 200));
+		FlxNapeSpace.init();
+		FlxNapeSpace.space.gravity.setxy(0, 200);
+		// FlxNapeSpace.createWalls();
+
+		var platform = new Platform(0, FlxG.height, FlxG.width, 1, wallType);
 		
-		var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
-		var platformShape:Polygon = new Polygon(Polygon.rect(320, 240, 50, 1));
+		// var floorShape:Polygon = new Polygon(Polygon.rect(0, FlxG.height, FlxG.width, 1));
+		// var floorBody:Body = new Body(BodyType.STATIC);
+		// floorBody.shapes.add(floorShape);
+		// floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+		// floorBody.cbTypes.push(wallType);
+		// floorBody.space = FlxNapeSpace.space;
+		
+		// var platformShape:Polygon = new Polygon(Polygon.rect(320, 240, 50, 1));
+		// var platformBody:Body = new Body(BodyType.STATIC);
+		// platformBody.shapes.add(platformShape);
+		// platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+		// platformBody.cbTypes.push(wallType);
+		// platformBody.space = FlxNapeSpace.space;
+ 
+		// var tileMap = new FlxNapeTilemap();
+		// tileMap.loadMapFromCSV("assets/data/level.csv", FlxGraphic.fromClass(GraphicAuto), 0, 0, AUTO);
+		// tileMap.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+		// tileMap.body.cbTypes.push(wallType);
+		// tileMap.body.space = FlxNapeSpace.space;
+		// add(tileMap);
 
-		var floorBody:Body = new Body(BodyType.STATIC);
-		var platformBody:Body = new Body(BodyType.STATIC);
-
-		floorBody.shapes.add(floorShape);
-		platformBody.shapes.add(platformShape);
-
-		floorBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-		platformBody.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-
-		floorBody.cbTypes.push(wallType);
-		platformBody.cbTypes.push(wallType);
-
-		space.bodies.add(floorBody);
-		space.bodies.add(platformBody);
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -165,8 +173,8 @@ class PlayState extends FlxState
 		if (FlxG.keys.pressed.R) {
          FlxG.switchState(new PlayState());
 		}
-		trace(numTargetsLeft);
-		for(target in activeTargets) {
+		
+		for (target in activeTargets) {
 			if (target.hit) {
 				hitTargets.push(target);
 				activeTargets.remove(target);
@@ -179,19 +187,19 @@ class PlayState extends FlxState
 			initializeLevel();
 		}
 		
-
 		// throw knife
 		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
 			this.thrower.visible = false;
 			this.cooldown = 0.5;
 
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
-			newKnife.body.space = this.space;
+			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
 			newKnife.body.cbTypes.add(knifeType);
 			knives.push(newKnife);
 			add(newKnife);
 		}
+
 		if(cooldown > 0) {
 			cooldown -= elapsed;
 		}
@@ -199,7 +207,7 @@ class PlayState extends FlxState
 			thrower.visible = true;
 		}
 
-	  	space.step(elapsed);
+	  	FlxNapeSpace.space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 	}
 }

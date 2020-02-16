@@ -29,5 +29,7 @@ class Level {
 
       return targets;
    }
+
+   // public static function getSpace
       
 }
