@@ -138,10 +138,11 @@ class PlayState extends FlxState
 	}
 	
 	public function loadBackground():Void {
-
+		if(FlxNapeSpace.space != null) {	// this clears old bodies
+			FlxNapeSpace.space.clear();
+		}
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, 200);
-		// FlxNapeSpace.createWalls();
 
 		var platforms:Array<Platform> = Level.getPlatforms(curLevel, wallType);//new Platform(0, FlxG.height - 20, FlxG.width, 5, wallType);
 		for (platform in platforms) {
