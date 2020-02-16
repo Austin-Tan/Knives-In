@@ -19,7 +19,7 @@ class Knife extends FlxNapeSprite {
    var thrownVelocity:Float;
    var initX:Float;
    var initY:Float;
-   var initialSpeed:Float = 500;
+   var initialSpeed:Float = 1000;
    var stuck:Bool = false;  // if this has stuck into an object
 
    var COLLISION_GROUP:Int = 1;
