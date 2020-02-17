@@ -22,7 +22,7 @@ class Target extends FlxNapeSprite {
     public var hit:Bool = false;
     public function new(x:Float, y:Float, whichImage:String) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
-         this.body.setShapeMaterials(Material.wood());
+         this.body.setShapeMaterials(new Material(0.2, 1.0, 2.0, 10, 0.001));
          this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
          this.body.shapes.at(0).sensorEnabled = true;
          this.body.name = 0; // 0 for target

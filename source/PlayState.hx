@@ -5,10 +5,6 @@ import flixel.tile.FlxTilemap.GraphicAuto;
 import flixel.addons.nape.FlxNapeTilemap;
 import flixel.graphics.FlxGraphic;
 import nape.callbacks.InteractionCallback;
-import nape.callbacks.CbType;
-import nape.callbacks.OptionType;
-import nape.callbacks.InteractionType;
-import nape.callbacks.CbEvent;
 import nape.callbacks.InteractionListener;
 import nape.dynamics.InteractionFilter;
 import nape.shape.Polygon;
@@ -36,6 +32,7 @@ class PlayState extends FlxState
 	var knivesLeft:Int;
 	var knives:Array<Knife>;
 
+	var platforms:Array<Platform>;
 	var activeTargets:Array<Target>;
 	var hitTargets:Array<Target>;
 	var numTargetsLeft:Int;
@@ -44,10 +41,6 @@ class PlayState extends FlxState
 	var levelText:flixel.text.FlxText;
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
-
-	var listener:InteractionListener;
-	var knifeHitOption:OptionType;
-	var listener2:InteractionListener;
 
 	override public function create():Void {
 
@@ -60,23 +53,18 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
-
+		if(FlxNapeSpace.space != null) {	// this clears old bodies
+			FlxNapeSpace.space.clear();
+		}
+		
 		// Display Level
 		createLevelMenu();
 
 		// Must load background before targets
-		initializeListeners();
 		loadBackground();
 		loadItems();
 	}
 
-	public function initializeListeners():Void {
-	}
-
-	public function knifeHit(cb:InteractionCallback):Void {
-		trace("Knife hit?");
-	}
-	
 	public function createLevelMenu():Void {
 		remove(levelText);
 		remove(targetsLeftText);
@@ -128,13 +116,16 @@ class PlayState extends FlxState
 	}
 	
 	public function loadBackground():Void {
-		if(FlxNapeSpace.space != null) {	// this clears old bodies
-			FlxNapeSpace.space.clear();
-		}
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, 400);
+		
+		if(this.platforms != null) {
+			for (platform in this.platforms) {
+				remove(platform);
+			}
+		}
 
-		var platforms:Array<Platform> = Level.getPlatforms(curLevel);
+		platforms = Level.getPlatforms(curLevel);
 		for (platform in platforms) {
 			add(platform);
 		}

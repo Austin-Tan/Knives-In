@@ -4,14 +4,32 @@ import flixel.math.FlxRandom;
 class Level {
 
    static var rand:FlxRandom = new FlxRandom();
+   static var THROWER_WIDTH:Int = 32;
+   static var THROWER_HEIGHT:Int = 16;
    public static function getThrower(level:Int):Thrower {
       switch (level) {
          case 0: 
-            return new Thrower(150, 150);
+            return new Thrower(FlxG.width / 2, FlxG.height / 2);
          case 1:
             return new Thrower(300, 200);
          default: 
-            return new Thrower(150, 150);
+            return new Thrower((FlxG.width / 2) - THROWER_WIDTH, (FlxG.height / 2) - THROWER_HEIGHT);
+      }
+   }
+
+   static var HALF_TARGET_WIDTH:Int = 8;
+   static var HALF_TARGET_HEIGHT:Int = 16;
+   public static function targetCoordinate(x:Int, y:Int):Array<Int> {
+      return [cast(x - HALF_TARGET_WIDTH, Int), cast(y - HALF_TARGET_HEIGHT, Int)];
+   }
+
+   public static function coordinateCenterOffset(x:Int, y:Int, isTarget:Bool=true):Array<Int> {
+
+      // include the pixel offset
+      if(isTarget) {
+         return targetCoordinate(cast((FlxG.width / 2) + x, Int), cast((FlxG.height / 2)+ y, Int));
+      } else {
+         return [cast(FlxG.width / 2) + x, cast(FlxG.height / 2) + y];
       }
    }
    
@@ -19,7 +37,7 @@ class Level {
       var coordinates:Array<Array<Int>>;
       switch (level) {
          case 0: 
-            coordinates = [[20, 20], [340, 200], [400, 400], [340, 160]];
+            coordinates = [coordinateCenterOffset(-60, -60), coordinateCenterOffset(60, -60), coordinateCenterOffset(0, 80)];
          case 1:
             coordinates = [[300, 50], [200, 50], [150, 50]];
          default:
@@ -48,11 +66,11 @@ class Level {
       var properties:Array<Array<Int>>;
       switch (level) {
          case 0:
-            properties = [[320, 240, 50, 5]];
+            properties = [];
          case 1:
             properties = [[320, 240, 50, 5]];
          default:
-            properties = [[320, 240, 50, 5]];
+            properties = [];
       }
       
       // Wall
