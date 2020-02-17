@@ -1,5 +1,5 @@
 import flixel.FlxG;
-import nape.callbacks.CbType;
+import flixel.math.FlxRandom;
 
 class Level {
 
@@ -28,13 +28,13 @@ class Level {
       var targets:Array<Target> = new Array<Target>();
 
       for (i in 0...coordinates.length) {
-         targets.push(new Target(coordinates[i][0], coordinates[i][1]));
+         targets.push(new Target(coordinates[i][0], coordinates[i][1], "2"));
       }
 
       return targets;
    }
 
-   public static function getPlatforms(level:Int, wallType:CbType):Array<Platform> {
+   public static function getPlatforms(level:Int):Array<Platform> {
       // x, y, width, height
       var properties:Array<Array<Int>>;
       switch (level) {
@@ -55,7 +55,7 @@ class Level {
       var platforms:Array<Platform> = new Array<Platform>();
 
       for (i in 0...properties.length) {
-         platforms.push(new Platform(properties[i][0], properties[i][1], properties[i][2], properties[i][3], wallType));
+         platforms.push(new Platform(properties[i][0], properties[i][1], properties[i][2], properties[i][3]));
       }
 
       return platforms;

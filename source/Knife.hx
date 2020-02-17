@@ -1,5 +1,7 @@
 package;
 
+import nape.phys.BodyType;
+import nape.phys.Body;
 import nape.constraint.WeldJoint;
 import nape.constraint.PivotJoint;
 import flixel.system.FlxSound;
@@ -19,7 +21,7 @@ class Knife extends FlxNapeSprite {
    var thrownVelocity:Float;
    var initX:Float;
    var initY:Float;
-   var initialSpeed:Float = 1000;
+   var initialSpeed:Float = 2000;
    var stuck:Bool = false;  // if this has stuck into an object
 
    var COLLISION_GROUP:Int = 1;
@@ -40,19 +42,15 @@ class Knife extends FlxNapeSprite {
       this.visible = false;
       this.initX = x;
       this.initY = y;
-      this.setBodyMaterial(0.05);
       this.body.rotate(new Vec2(x, y), angle);
       this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
       this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
       this.body.shapes.at(0).sensorEnabled = true;
+      this.body.name = 1; // 1 for knife
    }
 
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
-
-      if (body.position.x > FlxG.width || body.position.y > FlxG.height || body.position.x < 0 || body.position.y < 0) {
-         // remove object
-      }
 
       if(!stuck) {
          var list = this.body.interactingBodies(InteractionType.SENSOR);
@@ -60,16 +58,18 @@ class Knife extends FlxNapeSprite {
             stuck = true;
 
             // this is a bad way to differentiate between walls and targets
-            var isDynamic = list.at(0).isDynamic();
+            var body:Body = list.at(0);
             this.body.shapes.at(0).sensorEnabled = false;
+            trace(list.at(0).name);
 
             // this is a wall
-            if(!isDynamic) {
+            if(body.name == 2) {
                metal_sound.play(true);
                this.body.space = null;
 
             // this is a target
-            } else {
+            } else if (body.name == 0) {
+               body.type = BodyType.DYNAMIC;
                var pivotJoint = new WeldJoint(this.body, list.at(0), 
                                              this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
                this.body.space.constraints.add(pivotJoint);

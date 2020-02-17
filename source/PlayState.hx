@@ -45,9 +45,6 @@ class PlayState extends FlxState
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
 
-	var knifeType:CbType;
-	var targetType:CbType;
-	var wallType:CbType;
 	var listener:InteractionListener;
 	var knifeHitOption:OptionType;
 	var listener2:InteractionListener;
@@ -74,12 +71,6 @@ class PlayState extends FlxState
 	}
 
 	public function initializeListeners():Void {
-		knifeType = new CbType();
-	   targetType = new CbType();
-	   wallType = new CbType();
-		knifeHitOption = new OptionType([targetType, wallType]);
-		listener = new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, new OptionType(knifeType), knifeHitOption, knifeHit);
-		listener2 = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, new OptionType(targetType), new OptionType(targetType), knifeHit);
 	}
 
 	public function knifeHit(cb:InteractionCallback):Void {
@@ -131,7 +122,6 @@ class PlayState extends FlxState
 
 		for (target in this.activeTargets) {
 			target.body.space = FlxNapeSpace.space;
-			target.body.cbTypes.add(targetType);
 			add(target);
 		}
 		knives = new Array<Knife>();
@@ -142,9 +132,9 @@ class PlayState extends FlxState
 			FlxNapeSpace.space.clear();
 		}
 		FlxNapeSpace.init();
-		FlxNapeSpace.space.gravity.setxy(0, 200);
+		FlxNapeSpace.space.gravity.setxy(0, 400);
 
-		var platforms:Array<Platform> = Level.getPlatforms(curLevel, wallType);//new Platform(0, FlxG.height - 20, FlxG.width, 5, wallType);
+		var platforms:Array<Platform> = Level.getPlatforms(curLevel);
 		for (platform in platforms) {
 			add(platform);
 		}
@@ -178,7 +168,6 @@ class PlayState extends FlxState
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
-			newKnife.body.cbTypes.add(knifeType);
 			knives.push(newKnife);
 			add(newKnife);
 		}
@@ -190,7 +179,7 @@ class PlayState extends FlxState
 			thrower.visible = true;
 		}
 
-	  	FlxNapeSpace.space.step(elapsed);
+	  	// FlxNapeSpace.space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 	}
 }

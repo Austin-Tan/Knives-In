@@ -1,6 +1,7 @@
 package;
 
 
+import nape.phys.BodyType;
 import nape.callbacks.CbType;
 import nape.dynamics.InteractionFilter;
 import nape.phys.Material;
@@ -19,11 +20,13 @@ class Target extends FlxNapeSprite {
     var SENSOR_MASK:Int = ~6;
 
     public var hit:Bool = false;
-    public function new(x:Float, y:Float) {
-        super(x, y, "assets/images/Target1.png");
+    public function new(x:Float, y:Float, whichImage:String) {
+        super(x, y, "assets/images/Target" + whichImage + ".png");
          this.body.setShapeMaterials(Material.wood());
          this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
          this.body.shapes.at(0).sensorEnabled = true;
+         this.body.name = 0; // 0 for target
+         this.body.type = BodyType.STATIC;
      }
 
      override public function update(elapsed:Float):Void {
