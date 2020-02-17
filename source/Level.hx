@@ -3,6 +3,7 @@ import flixel.math.FlxRandom;
 
 class Level {
 
+   static var rand:FlxRandom = new FlxRandom();
    public static function getThrower(level:Int):Thrower {
       switch (level) {
          case 0: 
@@ -27,8 +28,16 @@ class Level {
 
       var targets:Array<Target> = new Array<Target>();
 
+      var whichImg:String = "1";
       for (i in 0...coordinates.length) {
-         targets.push(new Target(coordinates[i][0], coordinates[i][1], "2"));
+         if(rand.float() < 0.33) {
+            whichImg = "1";
+         } else if (rand.float() < 0.66) {
+            whichImg = "2";
+         } else { // rand.float() < 1
+            whichImg = "3";
+         }
+         targets.push(new Target(coordinates[i][0], coordinates[i][1], whichImg));
       }
 
       return targets;
