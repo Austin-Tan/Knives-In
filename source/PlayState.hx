@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxSprite;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.tile.FlxTilemap.GraphicAuto;
 import flixel.addons.nape.FlxNapeTilemap;
@@ -65,12 +66,14 @@ class PlayState extends FlxState
 		loadItems();
 	}
 
+	// only needed for one call and remove later
+	var pressSpace:FlxSprite;
 	public function createLevelMenu():Void {
 		remove(levelText);
 		remove(targetsLeftText);
 		remove(knivesLeftText);
 
-		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + this.curLevel, 30);
+		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1), 30);
 		levelText.color = FlxColor.BLACK;
 		levelText.screenCenter(flixel.util.FlxAxes.X);
 		add(levelText);
@@ -83,6 +86,18 @@ class PlayState extends FlxState
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
 		add(knivesLeftText);
+
+		// special cases:
+		if(this.curLevel == 0) {
+			pressSpace = new FlxSprite(FlxG.width - 128, FlxG.height - 64);
+			pressSpace.loadGraphic("assets/images/pressSpace.png", true, 32, 32);
+			pressSpace.scale.set(2, 2);
+			pressSpace.animation.add("static", [0, 1], 1);
+			pressSpace.animation.play("static");
+			add(pressSpace);
+		} else if (this.curLevel == 1) {
+			remove(pressSpace);
+		}
 	}
 
 	public function loadItems():Void {
