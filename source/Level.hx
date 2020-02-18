@@ -1,3 +1,4 @@
+import haxe.Timer;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 
@@ -32,26 +33,55 @@ class Level {
          return [cast(FlxG.width / 2) + x, cast(FlxG.height / 2) + y];
       }
    }
+
+   public static function getLevelStats(level:Int):LevelStats {
+      switch(level) {
+         case 0:
+            return new LevelStats(3, 15, 20);
+         default:
+            return new LevelStats(1, 1, 5);
+      }
+   }
+
+   public static function getNumStages(level:Int):Int {
+      switch(level) {
+         case 0:
+            return 3;
+         default:
+            return 1;
+      }
+   }
    
-   public static function getTargets(level:Int):Array<Target> {
-      var coordinates:Array<Array<Int>>;
-      var rotations:Array<Int>;
+   public static function getTargets(level:Int, stage:Int):Array<Target> {
+      var coordinates:Array<Array<Array<Int>>>;
+      var rotations:Array<Array<Int>>;
       switch (level) {
          case 0: 
-            coordinates = [coordinateCenterOffset(-60, -60), coordinateCenterOffset(60, -60), coordinateCenterOffset(0, 80)];
-            rotations = [-135, -45, 90];
-         case 1:
-            coordinates = [[300, 50], [200, 50], [150, 50]];
-            rotations = [20, 20];
+            coordinates = 
+                           // stage 1
+                           [[coordinateCenterOffset(-60, -60), coordinateCenterOffset(60, -60), coordinateCenterOffset(0, 80)],
+                           // stage 2
+                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(120, 0), coordinateCenterOffset(0, 120), coordinateCenterOffset(-120, 0)],
+                           // stage 3
+                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(100, 0), coordinateCenterOffset(-120, 0), coordinateCenterOffset(100, 80), coordinateCenterOffset(-100, 80)]];
+            rotations = 
+                           // stage 1
+                           [[-135, -45, 90],
+                           // stage 2
+                           [-90, 0, 90, 180],
+                           //stage 3
+                           [-90, 0, 180, 20, 160]];
+         // case 1:
+         //    coordinates = [[300, 50], [200, 50], [150, 50]];
+         //    rotations = [20, 20];
          default:
-            coordinates = [coordinateCenterOffset(0, -100)];
-            rotations = [-90];
+            coordinates = [[coordinateCenterOffset(0, -100)]];
+            rotations = [[-90]];
       }
 
       var targets:Array<Target> = new Array<Target>();
 
-
-      for (i in 0...coordinates.length) {
+      for (i in 0...coordinates[stage].length) {
          var whichImg:String = "1";
          var angle:Int = 0;
          if(rand.float() < 0.33) {
@@ -63,9 +93,9 @@ class Level {
          }
          angle = 0;
          if (i < rotations.length ) {
-            angle = rotations[i];
+            angle = rotations[stage][i];
          }
-         targets.push(new Target(coordinates[i][0], coordinates[i][1], whichImg, angle));
+         targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle));
       }
 
       return targets;

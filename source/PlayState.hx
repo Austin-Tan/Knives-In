@@ -1,5 +1,7 @@
 package;
 
+import flixel.text.FlxText;
+import haxe.Timer;
 import flixel.FlxSprite;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.tile.FlxTilemap.GraphicAuto;
@@ -24,6 +26,13 @@ import nape.phys.Body;
 class PlayState extends FlxState
 {
 	var curLevel:Int;
+	var curStage:Int;
+	var levelStats:LevelStats;
+
+	// Level Stats
+	var knivesPar:Int;
+	var timePar:Float;
+	var victory:Bool = false;
 
 	// Sprites
 	var thrower:Thrower;
@@ -42,6 +51,7 @@ class PlayState extends FlxState
 	var levelText:flixel.text.FlxText;
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
+	var timerText:flixel.text.FlxText;
 	var menuX:Int = 10;
 	var menuY:Int = 10;
 
@@ -52,6 +62,7 @@ class PlayState extends FlxState
 		this.bgColor = FlxColor.WHITE;
 
 		this.curLevel = 0;
+		this.curStage = 0;
 		initializeLevel();
 	}
 
@@ -61,6 +72,8 @@ class PlayState extends FlxState
 			FlxNapeSpace.space.clear();
 		}
 		holdingSpace = FlxG.keys.pressed.SPACE;
+		this.levelStats = Level.getLevelStats(this.curLevel);
+		victory = false;
 		
 		// Display Level
 		createLevelMenu();
@@ -72,26 +85,40 @@ class PlayState extends FlxState
 
 	// only needed for one call and remove later
 	var pressSpace:FlxSprite;
+	var timer:Float;
 	public function createLevelMenu():Void {
+		remove(winnerText);
+		remove(timeText);
+		remove(knivesText);
+		remove(pressEnterText);
 		remove(levelText);
 		remove(targetsLeftText);
 		remove(knivesLeftText);
+		remove(timerText);
 
-		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1), 30);
+		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1) + " - " + (this.curStage + 1), 30);
 		levelText.color = FlxColor.BLACK;
 		levelText.screenCenter(flixel.util.FlxAxes.X);
 		add(levelText);
-		knivesThrown = 0;
 
-		this.targetsLeftText = new flixel.text.FlxText(menuX, menuY, 0, "Targets: " + this.numTargetsLeft, 12);
+		// reset tracked statistics
+		if(this.curStage == 0) {
+			knivesThrown = 0;
+			timer = 0;
+		}
+
+		this.targetsLeftText = new flixel.text.FlxText(menuX, menuY, 0, "", 12);
 		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
+		this.timerText = new flixel.text.FlxText(menuX, menuY + 40, 0, "Time: " + timer);
 		targetsLeftText.color = FlxColor.BLACK;
 		knivesLeftText.color = FlxColor.BLACK;
+		timerText.color = FlxColor.BLACK;
 		add(targetsLeftText);
 		add(knivesLeftText);
+		add(timerText);
 
 		// special cases:
-		if(this.curLevel == 0) {
+		if(this.curLevel == 0 && this.curStage == 0) {
 			if(pressSpace != null) {
 				remove(pressSpace);
 			}
@@ -101,7 +128,7 @@ class PlayState extends FlxState
 			pressSpace.animation.add("static", [0, 1], 1);
 			pressSpace.animation.play("static");
 			add(pressSpace);
-		} else if (this.curLevel == 1) {
+		} else if (this.curLevel == 0 && this.curStage == 1) {
 			if(pressSpace != null) {
 				remove(pressSpace);
 			}
@@ -134,8 +161,9 @@ class PlayState extends FlxState
 		this.cooldown = 0;
 
 		this.hitTargets = new Array<Target>();
-		this.activeTargets = Level.getTargets(this.curLevel);
+		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
 		this.numTargetsLeft = this.activeTargets.length;
+		targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 
 		for (target in this.activeTargets) {
 			target.body.space = FlxNapeSpace.space;
@@ -167,7 +195,16 @@ class PlayState extends FlxState
 			holdingSpace = false;
 		}
 		if (FlxG.keys.justPressed.R) {
+			curStage = 0;
 			initializeLevel();
+		}
+		if(victory) {
+			if (FlxG.keys.pressed.ENTER) {
+				curStage = 0;
+				curLevel ++;
+				initializeLevel();
+			}
+			return;
 		}
 		
 		for (target in activeTargets) {
@@ -175,16 +212,21 @@ class PlayState extends FlxState
 				hitTargets.push(target);
 				activeTargets.remove(target);
 				numTargetsLeft --;
+				this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 			}
 		}
 
 		if (numTargetsLeft == 0) {
-			curLevel += 1;
-			initializeLevel();
+			if(curStage < (levelStats.numStages - 1)) {
+				curStage ++;
+				initializeLevel();
+			} else {
+				victoryScreen();
+			}
 		}
 		
 		// throw knife
-		if (FlxG.keys.pressed.SPACE && cooldown <= 0 && !holdingSpace) {
+		if (!victory && FlxG.keys.pressed.SPACE && cooldown <= 0 && !holdingSpace) {
 			this.thrower.visible = false;
 			this.cooldown = 0.5;
 
@@ -193,7 +235,7 @@ class PlayState extends FlxState
 			newKnife.visible = true;
 			knives.push(newKnife);
 			add(newKnife);
-			updateKnivesThrown();
+			updateTexts(elapsed);
 		}
 
 		if(cooldown > 0) {
@@ -203,16 +245,33 @@ class PlayState extends FlxState
 			thrower.visible = true;
 		}
 
-	  	// FlxNapeSpace.space.step(elapsed);
-		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+		timer += elapsed;
+		timerText.text = "Time: " + Std.int(timer);
 	}
 
-	function updateKnivesThrown() {
-		remove(knivesLeftText);
+	var winnerText:flixel.text.FlxText;
+	var timeText:flixel.text.FlxText;
+	var knivesText:flixel.text.FlxText;
+	var pressEnterText:flixel.text.FlxText;
+	function victoryScreen() {
+		victory = true;
+		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel + 1) + " Complete!", 45);
+		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "Time: " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
+		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) + 40, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
+		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, 0, "Press Enter to continue", 25);
+		winnerText.color = FlxColor.BLACK;
+		timeText.color = FlxColor.BLACK;
+		knivesText.color = FlxColor.BLACK;
+		pressEnterText.color = FlxColor.BLACK;
+		add(winnerText);
+		add(timeText);
+		add(knivesText);
+		add(pressEnterText);
+	}
+
+	function updateTexts(elapsed:Float) {
 		knivesThrown ++;
-		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
-		knivesLeftText.color = FlxColor.BLACK;
-		add(knivesLeftText);
+		knivesLeftText.text = "Knives Thrown: " + knivesThrown;
 	}
 }
 
