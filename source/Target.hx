@@ -20,13 +20,16 @@ class Target extends FlxNapeSprite {
     var SENSOR_MASK:Int = ~6;
 
     public var hit:Bool = false;
-    public function new(x:Float, y:Float, whichImage:String) {
+    public function new(x:Float, y:Float, whichImage:String, angle:Int=0) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
-         this.body.setShapeMaterials(new Material(0.2, 1.0, 2.0, 10, 0.001));
-         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-         this.body.shapes.at(0).sensorEnabled = true;
-         this.body.name = 0; // 0 for target
-         this.body.type = BodyType.STATIC;
+        this.body.rotation = (Math.PI / 180) * angle;
+        this.scale.set(2, 2);
+        this.body.setShapeMaterials(new Material(0.2, 1.0, 2.0, 10, 0.001));
+        this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+        this.body.rotation = (Math.PI / 180) * angle;
+        this.body.shapes.at(0).sensorEnabled = true;
+        this.body.name = 0; // 0 for target
+        this.body.type = BodyType.STATIC;
      }
 
      override public function update(elapsed:Float):Void {

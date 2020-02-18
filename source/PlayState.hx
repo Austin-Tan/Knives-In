@@ -30,7 +30,7 @@ class PlayState extends FlxState
 	var cooldown:Float;
 
 	var knife:Knife;
-	var knivesLeft:Int;
+	var knivesThrown:Int;
 	var knives:Array<Knife>;
 
 	var platforms:Array<Platform>;
@@ -42,6 +42,8 @@ class PlayState extends FlxState
 	var levelText:flixel.text.FlxText;
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
+	var menuX:Int = 10;
+	var menuY:Int = 10;
 
 	override public function create():Void {
 
@@ -77,11 +79,10 @@ class PlayState extends FlxState
 		levelText.color = FlxColor.BLACK;
 		levelText.screenCenter(flixel.util.FlxAxes.X);
 		add(levelText);
+		knivesThrown = 0;
 
-		var x:Int = 10;
-		var y:Int = 10;
-		this.targetsLeftText = new flixel.text.FlxText(x, y, 0, "Targets: " + this.numTargetsLeft, 12);
-		this.knivesLeftText = new flixel.text.FlxText(x, y + 20, 0, "Knives: Infinity", 12);
+		this.targetsLeftText = new flixel.text.FlxText(menuX, menuY, 0, "Targets: " + this.numTargetsLeft, 12);
+		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
 		targetsLeftText.color = FlxColor.BLACK;
 		knivesLeftText.color = FlxColor.BLACK;
 		add(targetsLeftText);
@@ -89,22 +90,33 @@ class PlayState extends FlxState
 
 		// special cases:
 		if(this.curLevel == 0) {
-			pressSpace = new FlxSprite(FlxG.width - 128, FlxG.height - 64);
+			if(pressSpace != null) {
+				remove(pressSpace);
+			}
+			pressSpace = new FlxSprite(FlxG.width - 256, FlxG.height - 64);
 			pressSpace.loadGraphic("assets/images/pressSpace.png", true, 32, 32);
-			pressSpace.scale.set(2, 2);
+			pressSpace.scale.set(3, 3);
 			pressSpace.animation.add("static", [0, 1], 1);
 			pressSpace.animation.play("static");
 			add(pressSpace);
 		} else if (this.curLevel == 1) {
-			remove(pressSpace);
+			if(pressSpace != null) {
+				remove(pressSpace);
+			}
 		}
 	}
 
 	public function loadItems():Void {
 		remove(this.thrower);
 
-		if (this.activeTargets != null) {
+		if (this.hitTargets != null) {
 			for (target in this.hitTargets) {
+				remove(target);
+			}
+		}
+
+		if (this.activeTargets != null) {
+			for (target in this.activeTargets) {
 				remove(target);
 			}
 		}
@@ -149,8 +161,8 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		if (FlxG.keys.pressed.R) {
-         FlxG.switchState(new PlayState());
+		if (FlxG.keys.justPressed.R) {
+			initializeLevel();
 		}
 		
 		for (target in activeTargets) {
@@ -176,6 +188,7 @@ class PlayState extends FlxState
 			newKnife.visible = true;
 			knives.push(newKnife);
 			add(newKnife);
+			updateKnivesThrown();
 		}
 
 		if(cooldown > 0) {
@@ -188,4 +201,14 @@ class PlayState extends FlxState
 	  	// FlxNapeSpace.space.step(elapsed);
 		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 	}
+
+	function updateKnivesThrown() {
+		remove(knivesLeftText);
+		knivesThrown ++;
+		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
+		knivesLeftText.color = FlxColor.BLACK;
+		add(knivesLeftText);
+	}
 }
+
+

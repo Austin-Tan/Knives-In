@@ -35,19 +35,25 @@ class Level {
    
    public static function getTargets(level:Int):Array<Target> {
       var coordinates:Array<Array<Int>>;
+      var rotations:Array<Int>;
       switch (level) {
          case 0: 
             coordinates = [coordinateCenterOffset(-60, -60), coordinateCenterOffset(60, -60), coordinateCenterOffset(0, 80)];
+            rotations = [-135, -45, 90];
          case 1:
             coordinates = [[300, 50], [200, 50], [150, 50]];
+            rotations = [20, 20];
          default:
-            coordinates = [[150, 150]];
+            coordinates = [coordinateCenterOffset(0, -100)];
+            rotations = [-90];
       }
 
       var targets:Array<Target> = new Array<Target>();
 
-      var whichImg:String = "1";
+
       for (i in 0...coordinates.length) {
+         var whichImg:String = "1";
+         var angle:Int = 0;
          if(rand.float() < 0.33) {
             whichImg = "1";
          } else if (rand.float() < 0.66) {
@@ -55,7 +61,11 @@ class Level {
          } else { // rand.float() < 1
             whichImg = "3";
          }
-         targets.push(new Target(coordinates[i][0], coordinates[i][1], whichImg));
+         angle = 0;
+         if (i < rotations.length ) {
+            angle = rotations[i];
+         }
+         targets.push(new Target(coordinates[i][0], coordinates[i][1], whichImg, angle));
       }
 
       return targets;
