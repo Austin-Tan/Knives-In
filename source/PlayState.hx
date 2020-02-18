@@ -259,7 +259,7 @@ class PlayState extends FlxState
 			this.thrower.visible = false;
 			this.cooldown = 0.5;
 
-			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle) / 180);
+			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 2) / 180);
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
 			knives.push(newKnife);
