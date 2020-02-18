@@ -45,6 +45,7 @@ class PlayState extends FlxState
 	var menuX:Int = 10;
 	var menuY:Int = 10;
 
+	var holdingSpace:Bool = false;
 	override public function create():Void {
 
 		super.create();
@@ -59,6 +60,7 @@ class PlayState extends FlxState
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
 		}
+		holdingSpace = FlxG.keys.pressed.SPACE;
 		
 		// Display Level
 		createLevelMenu();
@@ -161,6 +163,9 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+		if(FlxG.keys.justReleased.SPACE) {
+			holdingSpace = false;
+		}
 		if (FlxG.keys.justPressed.R) {
 			initializeLevel();
 		}
@@ -179,7 +184,7 @@ class PlayState extends FlxState
 		}
 		
 		// throw knife
-		if (FlxG.keys.pressed.SPACE && cooldown <= 0) {
+		if (FlxG.keys.pressed.SPACE && cooldown <= 0 && !holdingSpace) {
 			this.thrower.visible = false;
 			this.cooldown = 0.5;
 
