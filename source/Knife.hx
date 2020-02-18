@@ -48,6 +48,7 @@ class Knife extends FlxNapeSprite {
       this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
       this.body.shapes.at(0).sensorEnabled = true;
       this.body.name = 1; // 1 for knife
+      this.setSize(64, 32);
    }
 
    override public function update(elapsed:Float):Void {
@@ -56,25 +57,31 @@ class Knife extends FlxNapeSprite {
       if(!stuck) {
          var list = this.body.interactingBodies(InteractionType.SENSOR);
          if(list.length > 0) {
-            stuck = true;
-
-            // this is a bad way to differentiate between walls and targets
-            var body:Body = list.at(0);
-            this.body.shapes.at(0).sensorEnabled = false;
-            trace(list.at(0).name);
-
-            // this is a wall
-            if(body.name == 2) {
-               metal_sound.play(true);
-               this.body.space = null;
-
-            // this is a target
-            } else if (body.name == 0) {
-               body.type = BodyType.DYNAMIC;
-               var pivotJoint = new WeldJoint(this.body, list.at(0), 
-                                             this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
-               this.body.space.constraints.add(pivotJoint);
-               wood_sound.play(true);
+            for (body in list) {
+               if(body.name == 1) {
+                  break; // hit something else instead, this is a knife
+               }
+               stuck = true;
+   
+               this.body.shapes.at(0).sensorEnabled = false;
+               trace(body.name);
+   
+               // this is a wall
+               if(body.name == 2) {
+                  metal_sound.play(true);
+                  this.body.space = null;
+                  this.setSize(0, 0); // nulling the hitbox
+   
+               // this is a target
+               } else if (body.name == 0) {
+                  body.type = BodyType.DYNAMIC;
+                  var pivotJoint = new WeldJoint(this.body, list.at(0), 
+                                                this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
+                  this.body.space.constraints.add(pivotJoint);
+                  wood_sound.play(true);
+                  this.setSize(0, 0); // nulling the hitbox
+   
+               }
             }
          }
       }

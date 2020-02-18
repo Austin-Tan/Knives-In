@@ -56,13 +56,19 @@ class PlayState extends FlxState
 	var menuY:Int = 10;
 
 	var holdingSpace:Bool = false;
+	var paused:Bool = false;
 	override public function create():Void {
 
 		super.create();
 		this.bgColor = FlxColor.WHITE;
+		this.pauseText.color = FlxColor.BLACK;
 
 		this.curLevel = 0;
 		this.curStage = 0;
+
+		knivesStar.scale.set(2, 2);
+		completeStar.scale.set(2, 2);
+		timeStar.scale.set(2, 2);
 		initializeLevel();
 	}
 
@@ -91,6 +97,10 @@ class PlayState extends FlxState
 		remove(timeText);
 		remove(knivesText);
 		remove(pressEnterText);
+		remove(completeStar);
+		remove(knivesStar);
+		remove(timeStar);
+
 		remove(levelText);
 		remove(targetsLeftText);
 		remove(knivesLeftText);
@@ -189,6 +199,7 @@ class PlayState extends FlxState
 
 	}
 
+	var pauseText:flixel.text.FlxText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "PAUSED", 45);
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if(FlxG.keys.justReleased.SPACE) {
@@ -206,6 +217,24 @@ class PlayState extends FlxState
 			}
 			return;
 		}
+
+		// pause menu
+		if (FlxG.keys.justPressed.P || FlxG.keys.justPressed.ESCAPE) {
+			paused = !paused;
+			if (paused) {
+				add(pauseText);
+				thrower.visible = false;
+				FlxNapeSpace.space.gravity.setxy(0, 0);
+			} else {
+				remove(pauseText);
+				thrower.visible = true;
+				FlxNapeSpace.space.gravity.setxy(0, 400);
+			}
+		}
+		if (paused) {
+			return;
+		}
+
 		
 		for (target in activeTargets) {
 			if (target.hit) {
@@ -249,10 +278,15 @@ class PlayState extends FlxState
 		timerText.text = "Time: " + Std.int(timer);
 	}
 
+
 	var winnerText:flixel.text.FlxText;
 	var timeText:flixel.text.FlxText;
 	var knivesText:flixel.text.FlxText;
 	var pressEnterText:flixel.text.FlxText;
+
+	var completeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
+	var knivesStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
+	var timeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
 	function victoryScreen() {
 		victory = true;
 		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel + 1) + " Complete!", 45);
@@ -263,10 +297,22 @@ class PlayState extends FlxState
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
 		pressEnterText.color = FlxColor.BLACK;
+		completeStar.x = 15 + winnerText.x + winnerText.width;
+		knivesStar.x = 15 + knivesText.x + knivesText.width;
+		timeStar.x = 15 + timeText.x + timeText.width;
+
 		add(winnerText);
 		add(timeText);
 		add(knivesText);
 		add(pressEnterText);
+		
+		add(completeStar);
+		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
+			add(timeStar);
+		}
+		if (this.knivesThrown <= this.levelStats.knivesPar) {
+			add(knivesStar);
+		}
 	}
 
 	function updateTexts(elapsed:Float) {

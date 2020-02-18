@@ -30,6 +30,7 @@ class Target extends FlxNapeSprite {
         this.body.shapes.at(0).sensorEnabled = true;
         this.body.name = 0; // 0 for target
         this.body.type = BodyType.STATIC;
+        this.setSize(32, 64);
      }
 
      override public function update(elapsed:Float):Void {

@@ -5,21 +5,21 @@ import flixel.math.FlxRandom;
 class Level {
 
    static var rand:FlxRandom = new FlxRandom();
-   static var THROWER_WIDTH:Int = 32;
-   static var THROWER_HEIGHT:Int = 16;
+   static var THROWER_WIDTH:Int = 64;
+   static var THROWER_HEIGHT:Int = 40;
    public static function getThrower(level:Int):Thrower {
       switch (level) {
          case 0: 
-            return new Thrower(FlxG.width / 2, FlxG.height / 2);
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 1:
             return new Thrower(300, 200);
          default: 
-            return new Thrower((FlxG.width / 2) - THROWER_WIDTH, (FlxG.height / 2) - THROWER_HEIGHT);
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2));
       }
    }
 
-   static var HALF_TARGET_WIDTH:Int = 8;
-   static var HALF_TARGET_HEIGHT:Int = 16;
+   static var HALF_TARGET_WIDTH:Int = 16;
+   static var HALF_TARGET_HEIGHT:Int = 32;
    public static function targetCoordinate(x:Int, y:Int):Array<Int> {
       return [cast(x - HALF_TARGET_WIDTH, Int), cast(y - HALF_TARGET_HEIGHT, Int)];
    }
@@ -35,11 +35,13 @@ class Level {
    }
 
    public static function getLevelStats(level:Int):LevelStats {
+
+      //\ format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
       switch(level) {
          case 0:
-            return new LevelStats(3, 15, 20);
+            return new LevelStats(3, 15, 15);
          default:
-            return new LevelStats(1, 1, 5);
+            return new LevelStats(1, 1, 3);
       }
    }
 
@@ -59,18 +61,18 @@ class Level {
          case 0: 
             coordinates = 
                            // stage 1
-                           [[coordinateCenterOffset(-60, -60), coordinateCenterOffset(60, -60), coordinateCenterOffset(0, 80)],
+                           [[coordinateCenterOffset(-140, -140), coordinateCenterOffset(140, -140), coordinateCenterOffset(0, 180)],
                            // stage 2
-                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(120, 0), coordinateCenterOffset(0, 120), coordinateCenterOffset(-120, 0)],
+                           [coordinateCenterOffset(0, -200), coordinateCenterOffset(220, 0), coordinateCenterOffset(0, 220), coordinateCenterOffset(-220, 0)],
                            // stage 3
-                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(100, 0), coordinateCenterOffset(-120, 0), coordinateCenterOffset(100, 80), coordinateCenterOffset(-100, 80)]];
+                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(140, -30), coordinateCenterOffset(-140, -30), coordinateCenterOffset(140, 140), coordinateCenterOffset(-140, 140)]];
             rotations = 
                            // stage 1
                            [[-135, -45, 90],
                            // stage 2
                            [-90, 0, 90, 180],
                            //stage 3
-                           [-90, 0, 180, 20, 160]];
+                           [-90, -25, 215, 40, 140]];
          // case 1:
          //    coordinates = [[300, 50], [200, 50], [150, 50]];
          //    rotations = [20, 20];
@@ -92,7 +94,7 @@ class Level {
             whichImg = "3";
          }
          angle = 0;
-         if (i < rotations.length ) {
+         if (i < rotations[stage].length ) {
             angle = rotations[stage][i];
          }
          targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle));

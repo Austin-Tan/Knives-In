@@ -13,9 +13,9 @@ class Thrower extends FlxSprite {
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
         if(this.visible) {
-            this.angle += 180 * elapsed;
+            this.angle += 240 * elapsed;
         } else {
-            this.angle -= 3 * elapsed;
+            this.angle -= 4 * elapsed;
         }
         // thrownAngle = this.angle;
     }
