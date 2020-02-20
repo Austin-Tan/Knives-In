@@ -57,13 +57,19 @@ class PlayState extends FlxState
 
 	var holdingSpace:Bool = false;
 	var paused:Bool = false;
+	var selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 	override public function create():Void {
-
 		super.create();
 		this.bgColor = FlxColor.WHITE;
 		this.pauseText.color = FlxColor.BLACK;
+		this.pauseText.screenCenter();
+		this.selectButton.screenCenter();
+		this.pauseText.y -= 90;
+		this.pauseText2.color = FlxColor.BLACK;
+		this.pauseText2.screenCenter();
+		this.pauseText2.y -= 40;
 
-		this.curLevel = 0;
+		this.curLevel = Main.passedLevel;
 		this.curStage = 0;
 
 		knivesStar.scale.set(2, 2);
@@ -74,6 +80,7 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
+		trace("Level: " + curLevel + ". Stage: " + curStage);
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
 		}
@@ -199,7 +206,8 @@ class PlayState extends FlxState
 
 	}
 
-	var pauseText:flixel.text.FlxText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "PAUSED", 45);
+	var pauseText:flixel.text.FlxText = new flixel.text.FlxText(0, 0, 0, "PAUSED", 45);
+	var pauseText2:flixel.text.FlxText = new flixel.text.FlxText(0, 0, 0, "Press P or ESC to resume", 45);
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if(FlxG.keys.justReleased.SPACE) {
@@ -223,10 +231,12 @@ class PlayState extends FlxState
 			paused = !paused;
 			if (paused) {
 				add(pauseText);
+				add(selectButton);
 				thrower.visible = false;
 				FlxNapeSpace.space.gravity.setxy(0, 0);
 			} else {
 				remove(pauseText);
+				remove(selectButton);
 				thrower.visible = true;
 				FlxNapeSpace.space.gravity.setxy(0, 400);
 			}
