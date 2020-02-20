@@ -1,3 +1,4 @@
+import js.Cookie;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.ui.FlxButton;
@@ -21,7 +22,8 @@ class LevelSelect extends FlxState {
         var i = 0;
         var buttonX:Int = leftButtonX;
         var buttonY:Int = -150;
-        while (i < 25) {
+        var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
+        while (i < 25 && i <= maxLevel) {
             var x = i;
             if(i % 5 == 0) {
                 buttonY += 50;
@@ -34,19 +36,19 @@ class LevelSelect extends FlxState {
             trace("X: " + buttonX + " Y: " + buttonY);
             var j:Int = 0;
             while (j < 3) {
-                // if (j == 0 && levelcomplete(i)) {
+                if (j == 0 && maxLevel > i) {
                     var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
                     add(star);
-                // } else if (j == 1 && onTimePar(i)) {
-                //     var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
-                //     add(star);
-                // } else if (j == 2 && onKnivesPar(i)) {
-                //     var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
-                //     add(star);
-                // } else {
-                //     var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/grayStar.png");
-                //     add(star);
-                // }
+                } else if (j == 1 && Cookie.exists(i + "T")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
+                    add(star);
+                } else if (j == 2 && Cookie.exists(i + "K")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
+                    add(star);
+                } else {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/grayStar.png");
+                    add(star);
+                }
                 j++;
             }
             i++;

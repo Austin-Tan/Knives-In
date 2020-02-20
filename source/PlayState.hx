@@ -1,5 +1,6 @@
 package;
 
+import js.Cookie;
 import flixel.text.FlxText;
 import haxe.Timer;
 import flixel.FlxSprite;
@@ -317,11 +318,17 @@ class PlayState extends FlxState
 		add(pressEnterText);
 		
 		add(completeStar);
+		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
+		if(curLevel >= maxLevel) {
+			Cookie.set("MaxLevel", "" + (curLevel + 1), Main.expireDelay);
+		}
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
 			add(timeStar);
+			Cookie.set(curLevel + "T", "", Main.expireDelay);
 		}
 		if (this.knivesThrown <= this.levelStats.knivesPar) {
 			add(knivesStar);
+			Cookie.set(curLevel + "K", "", Main.expireDelay);
 		}
 	}
 
