@@ -33,7 +33,6 @@ class LevelSelect extends FlxState {
             var playButton = new FlxButton((FlxG.width / 2 + buttonX), (FlxG.height / 2) + buttonY, "Level " + (i + 1), ()->{clickPlay(x);});
             add(playButton);
 
-            trace("X: " + buttonX + " Y: " + buttonY);
             var j:Int = 0;
             while (j < 3) {
                 if (j == 0 && maxLevel > i) {
@@ -53,15 +52,27 @@ class LevelSelect extends FlxState {
             }
             i++;
         }
+
+        var clearButton = new FlxButton(FlxG.width - 50, FlxG.height - 30, "Clear all data", clearData);
+        add(clearButton);
     }
 
     override public function update(elapsed:Float):Void {
             super.update(elapsed);
     }
+
+    function clearData():Void {
+        var cookies = Cookie.all();
+        for (cookie in cookies.keys()) {
+            trace(cookie);
+            Cookie.remove(cookie);
+        }
+
+        FlxG.switchState(new LevelSelect());
+    }
     
     function clickPlay(level:Int):Void {
         Main.passedLevel = level;
-        trace(Main.passedLevel);
         FlxG.switchState(new PlayState());
     }
 }
