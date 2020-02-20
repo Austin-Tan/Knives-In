@@ -1,5 +1,6 @@
 package;
 
+import js.Cookie;
 import flixel.FlxG;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
@@ -31,6 +32,7 @@ class MenuState extends FlxState
 	}
 
 	function clickPlay():Void {
+
 		FlxG.switchState(new PlayState());
 	}
 }

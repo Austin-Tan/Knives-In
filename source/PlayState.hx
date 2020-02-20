@@ -82,6 +82,11 @@ class PlayState extends FlxState
 	// to be called when loading a new level
 	public function initializeLevel() {
 		trace("Level: " + curLevel + ". Stage: " + curStage);
+		Main.LOGGER.logLevelStart(curLevel, {
+			level: curLevel,
+			stage: curStage}
+		);
+
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
 		}
@@ -253,10 +258,21 @@ class PlayState extends FlxState
 				activeTargets.remove(target);
 				numTargetsLeft --;
 				this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+
+				// 2 for hitting target
+				Main.LOGGER.logLevelAction(2, {
+					targetsLeft: numTargetsLeft,
+					knivesThrown: knivesThrown,
+					time: timer 
+				});
 			}
 		}
 
 		if (numTargetsLeft == 0) {
+			Main.LOGGER.logLevelEnd({
+				knivesThrown: knivesThrown,
+				time: timer
+			});
 			if(curStage < (levelStats.numStages - 1)) {
 				curStage ++;
 				initializeLevel();
@@ -276,6 +292,13 @@ class PlayState extends FlxState
 			knives.push(newKnife);
 			add(newKnife);
 			updateTexts(elapsed);
+
+			// 1 for throwing knife
+			Main.LOGGER.logLevelAction(1, {
+				targetsLeft: numTargetsLeft,
+				knivesTrhown: knivesThrown,
+				time: timer 
+			});
 		}
 
 		if(cooldown > 0) {
