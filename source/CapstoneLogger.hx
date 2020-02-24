@@ -224,6 +224,7 @@ class CapstoneLogger
 			client_ts: timestampOfAction,
 			ts: relativeTime,
 			te: relativeTime,
+			sid: this.currentSessionId,
 			session_seqid: ++this.currentActionSeqInSession,
 			qaction_seqid: ++this.currentActionSeqInLevel,
 			aid: actionId
