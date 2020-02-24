@@ -49,6 +49,8 @@ class Knife extends FlxNapeSprite {
       this.body.shapes.at(0).sensorEnabled = true;
       this.body.name = 1; // 1 for knife
       this.setSize(64, 32);
+
+      // FlxG.pixelPerfectOverlap()
    }
 
    override public function update(elapsed:Float):Void {
