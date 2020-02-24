@@ -18,6 +18,7 @@ class PlayState extends FlxState
 	var curLevel:Int;
 	var curStage:Int;
 	var levelStats:LevelStats;
+	var timer:Float;
 
 	// Level Stats
 	var knivesPar:Int;
@@ -26,7 +27,7 @@ class PlayState extends FlxState
 
 	// Sprites
 	var thrower:Thrower;
-	var cooldown:Float;
+	// var cooldown:Float;
 
 	var knife:Knife;
 	var knivesThrown:Int;
@@ -56,8 +57,19 @@ class PlayState extends FlxState
 	var selectButton:FlxButton;
 	var pauseText:flixel.text.FlxText;
 
-	// Victory screen
+	// Tutorial
+	var pressSpace:FlxSprite;
 
+	// Victory Screen
+	var winnerText:flixel.text.FlxText;
+	var timeText:flixel.text.FlxText;
+	var knivesText:flixel.text.FlxText;
+	var pressEnterText:flixel.text.FlxText;
+
+	var completeStar:FlxSprite;
+	var knivesStar:FlxSprite;
+	var timeStar:FlxSprite;
+	var timeIconVictory:FlxSprite;
 
 	override public function create():Void {
 		super.create();
@@ -68,10 +80,6 @@ class PlayState extends FlxState
 
 		initializePauseScreen();
 
-		knivesStar.scale.set(2, 2);
-		completeStar.scale.set(2, 2);
-		timeStar.scale.set(2, 2);
-		timeIconVictory.scale.set(2, 2);
 		initializeLevel();
 	}
 
@@ -117,11 +125,6 @@ class PlayState extends FlxState
 		}
 	}
 
-	// only needed for one call and remove later
-	var pressSpace:FlxSprite;
-
-	var timer:Float;
-
 	public function showTutorial() {
 		pressSpace = new FlxSprite(FlxG.width - 256, FlxG.height - 64);
 		pressSpace.loadGraphic("assets/images/pressSpace.png", true, 32, 32);
@@ -130,6 +133,7 @@ class PlayState extends FlxState
 		pressSpace.animation.play("static");
 		add(pressSpace);
 	}
+	
 	public function createLevelMenu():Void {
 		remove(winnerText);
 		remove(timeText);
@@ -210,7 +214,7 @@ class PlayState extends FlxState
 
 		this.thrower = Level.getThrower(this.curLevel);
 		add(thrower);
-		this.cooldown = 0;
+		// this.cooldown = 0;
 
 		this.hitTargets = new Array<Target>();
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
@@ -345,17 +349,6 @@ class PlayState extends FlxState
 
 		updateTexts();
 	}
-
-
-	var winnerText:flixel.text.FlxText;
-	var timeText:flixel.text.FlxText;
-	var knivesText:flixel.text.FlxText;
-	var pressEnterText:flixel.text.FlxText;
-
-	var completeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
-	var knivesStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
-	var timeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
-	var timeIconVictory:FlxSprite = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) + 10, "assets/images/stopwatch.png");
 	
 	function showVictoryScreen() {
 		victory = true;
@@ -367,17 +360,26 @@ class PlayState extends FlxState
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
 		pressEnterText.color = FlxColor.BLACK;
+
+		completeStar = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
+		knivesStar = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
+		timeStar = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
+		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) + 10, "assets/images/stopwatch.png");
+	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
 		knivesStar.x = 15 + knivesText.x + knivesText.width;
 		timeStar.x = 15 + timeText.x + timeText.width;
+
+		completeStar.scale.set(2, 2);
+		knivesStar.scale.set(2, 2);
+		timeStar.scale.set(2, 2);
+		timeIconVictory.scale.set(2, 2);
 
 		add(winnerText);
 		add(timeText);
 		add(knivesText);
 		add(pressEnterText);
 
-		add(timeIconVictory);
-		
 		add(completeStar);
 		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
 		if(curLevel >= maxLevel) {
@@ -391,6 +393,7 @@ class PlayState extends FlxState
 			add(knivesStar);
 			Cookie.set(curLevel + "K", "", Main.expireDelay);
 		}
+		add(timeIconVictory);
 	}
 
 	function updateTexts() {
