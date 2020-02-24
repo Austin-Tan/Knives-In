@@ -35,7 +35,9 @@ class LevelSelect extends FlxState {
 
             var j:Int = 0;
             while (j < 3) {
-                if (j == 0 && maxLevel > i) {
+                if (maxLevel == i) {
+
+                } else if (j == 0 && maxLevel > i) {
                     var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
                     add(star);
                 } else if (j == 1 && Cookie.exists(i + "T")) {
@@ -67,7 +69,7 @@ class LevelSelect extends FlxState {
             trace(cookie);
             Cookie.remove(cookie);
         }
-
+        Cookie.set("MaxLevel", "0", Main.expireDelay);
         FlxG.switchState(new LevelSelect());
     }
     
