@@ -5,17 +5,6 @@ import flixel.text.FlxText;
 import haxe.Timer;
 import flixel.FlxSprite;
 import flixel.addons.nape.FlxNapeSpace;
-import flixel.tile.FlxTilemap.GraphicAuto;
-import flixel.addons.nape.FlxNapeTilemap;
-import flixel.graphics.FlxGraphic;
-import nape.callbacks.InteractionCallback;
-import nape.callbacks.InteractionListener;
-import nape.dynamics.InteractionFilter;
-import nape.shape.Polygon;
-import nape.phys.BodyType;
-import nape.geom.Vec2;
-import lime.math.Vector2;
-import openfl.geom.Vector3D;
 import flixel.FlxG;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
@@ -55,6 +44,10 @@ class PlayState extends FlxState
 	var timerText:flixel.text.FlxText;
 	var menuX:Int = 10;
 	var menuY:Int = 10;
+	var pressR:FlxSprite;
+	var pressRText:FlxText;
+	var pressP:FlxSprite;
+	var pressPText:FlxText;
 
 	var holdingSpace:Bool = false;
 	var paused:Bool = false;
@@ -106,6 +99,7 @@ class PlayState extends FlxState
 
 	// only needed for one call and remove later
 	var pressSpace:FlxSprite;
+
 	var timer:Float;
 	public function createLevelMenu():Void {
 		remove(winnerText);
@@ -146,9 +140,25 @@ class PlayState extends FlxState
 		add(timerText);
 		add(timeIcon);
 
+
+		pressR = new FlxSprite(FlxG.width - 100, menuY);
+		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
+		add(pressR);
+		pressRText = new flixel.text.FlxText(FlxG.width - 83, menuY, "Restart", 12);
+		pressRText.color = FlxColor.BLACK;
+		add(pressRText);
+
+		pressP = new FlxSprite(FlxG.width - 100, menuY + 20);
+		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
+		add(pressP);
+		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, "Pause", 12);
+		pressPText.color = FlxColor.BLACK;
+		add(pressPText);
+
 		// special cases:
-		if(this.curLevel == 0 && this.curStage == 0) {
-			if(pressSpace != null) {
+		// tutorial
+		if (this.curLevel == 0 && this.curStage == 0) {
+			if (pressSpace != null) {
 				remove(pressSpace);
 			}
 			pressSpace = new FlxSprite(FlxG.width - 256, FlxG.height - 64);
@@ -158,7 +168,7 @@ class PlayState extends FlxState
 			pressSpace.animation.play("static");
 			add(pressSpace);
 		} else if (this.curLevel == 0 && this.curStage == 1) {
-			if(pressSpace != null) {
+			if (pressSpace != null) {
 				remove(pressSpace);
 			}
 		}
