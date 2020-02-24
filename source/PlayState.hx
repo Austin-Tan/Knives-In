@@ -42,6 +42,7 @@ class PlayState extends FlxState
 	var targetsLeftText:flixel.text.FlxText;
 	var knivesLeftText:flixel.text.FlxText;
 	var timerText:flixel.text.FlxText;
+	var timeIcon:FlxSprite;
 	var menuX:Int = 10;
 	var menuY:Int = 10;
 	var pressR:FlxSprite;
@@ -49,29 +50,39 @@ class PlayState extends FlxState
 	var pressP:FlxSprite;
 	var pressPText:FlxText;
 
+	// Pause screen
 	var holdingSpace:Bool = false;
 	var paused:Bool = false;
-	var selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
+	var selectButton:FlxButton;
+	var pauseText:flixel.text.FlxText;
+
+	// Victory screen
+
+
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.WHITE;
-		this.pauseText.color = FlxColor.BLACK;
-		this.pauseText.screenCenter();
-		this.selectButton.screenCenter();
-		this.pauseText.y -= 90;
-		this.pauseText2.color = FlxColor.BLACK;
-		this.pauseText2.screenCenter();
-		this.pauseText2.y -= 40;
 
 		this.curLevel = Main.passedLevel;
 		this.curStage = 0;
 
+		initializePauseScreen();
+
 		knivesStar.scale.set(2, 2);
 		completeStar.scale.set(2, 2);
 		timeStar.scale.set(2, 2);
-		timeIcon.scale.set(2, 2);
 		timeIconVictory.scale.set(2, 2);
 		initializeLevel();
+	}
+
+	public function initializePauseScreen() {
+		this.pauseText =  new flixel.text.FlxText(0, 0, 0, "PAUSED", 45);
+		this.pauseText.color = FlxColor.BLACK;
+		this.pauseText.screenCenter();
+		this.pauseText.y -= 90;
+		
+		this.selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
+		this.selectButton.screenCenter();
 	}
 
 	// to be called when loading a new level
@@ -95,12 +106,30 @@ class PlayState extends FlxState
 		// Must load background before targets
 		loadBackground();
 		loadItems();
+
+		// tutorial
+		if (this.curLevel == 0 && this.curStage == 0) {
+			showTutorial();
+		} else {
+			if (pressSpace != null) {
+				remove(pressSpace);
+			}
+		}
 	}
 
 	// only needed for one call and remove later
 	var pressSpace:FlxSprite;
 
 	var timer:Float;
+
+	public function showTutorial() {
+		pressSpace = new FlxSprite(FlxG.width - 256, FlxG.height - 64);
+		pressSpace.loadGraphic("assets/images/pressSpace.png", true, 32, 32);
+		pressSpace.scale.set(3, 3);
+		pressSpace.animation.add("static", [0, 1], 1);
+		pressSpace.animation.play("static");
+		add(pressSpace);
+	}
 	public function createLevelMenu():Void {
 		remove(winnerText);
 		remove(timeText);
@@ -109,18 +138,13 @@ class PlayState extends FlxState
 		remove(completeStar);
 		remove(knivesStar);
 		remove(timeStar);
-
 		remove(timeIconVictory);
+
 		remove(levelText);
 		remove(targetsLeftText);
 		remove(knivesLeftText);
 		remove(timeIcon);
 		remove(timerText);
-
-		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1) + " - " + (this.curStage + 1), 30);
-		levelText.color = FlxColor.BLACK;
-		levelText.screenCenter(flixel.util.FlxAxes.X);
-		add(levelText);
 
 		// reset tracked statistics
 		if(this.curStage == 0) {
@@ -128,9 +152,17 @@ class PlayState extends FlxState
 			timer = 0;
 		}
 
+		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1) + " - " + (this.curStage + 1), 30);
+		levelText.color = FlxColor.BLACK;
+		levelText.screenCenter(flixel.util.FlxAxes.X);
+		add(levelText);
+
 		this.targetsLeftText = new flixel.text.FlxText(menuX, menuY, 0, "", 12);
 		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
 		this.timerText = new flixel.text.FlxText(menuX, menuY + 45, 0, "      : " + timer);
+		this.timeIcon = new FlxSprite(0 + 18, 10 + 48, "assets/images/stopwatch.png");
+		timeIcon.scale.set(2, 2);
+
 		targetsLeftText.color = FlxColor.BLACK;
 		knivesLeftText.color = FlxColor.BLACK;
 		timerText.color = FlxColor.BLACK;
@@ -139,7 +171,6 @@ class PlayState extends FlxState
 		add(knivesLeftText);
 		add(timerText);
 		add(timeIcon);
-
 
 		pressR = new FlxSprite(FlxG.width - 100, menuY);
 		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
@@ -154,24 +185,6 @@ class PlayState extends FlxState
 		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, "Pause", 12);
 		pressPText.color = FlxColor.BLACK;
 		add(pressPText);
-
-		// special cases:
-		// tutorial
-		if (this.curLevel == 0 && this.curStage == 0) {
-			if (pressSpace != null) {
-				remove(pressSpace);
-			}
-			pressSpace = new FlxSprite(FlxG.width - 256, FlxG.height - 64);
-			pressSpace.loadGraphic("assets/images/pressSpace.png", true, 32, 32);
-			pressSpace.scale.set(3, 3);
-			pressSpace.animation.add("static", [0, 1], 1);
-			pressSpace.animation.play("static");
-			add(pressSpace);
-		} else if (this.curLevel == 0 && this.curStage == 1) {
-			if (pressSpace != null) {
-				remove(pressSpace);
-			}
-		}
 	}
 
 	public function loadItems():Void {
@@ -201,8 +214,11 @@ class PlayState extends FlxState
 
 		this.hitTargets = new Array<Target>();
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
+
+		// game status
 		this.numTargetsLeft = this.activeTargets.length;
-		targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+		this.knivesLeftText.text = "Knives Thrown: " + this.knivesThrown;
 
 		for (target in this.activeTargets) {
 			target.body.space = FlxNapeSpace.space;
@@ -228,8 +244,6 @@ class PlayState extends FlxState
 
 	}
 
-	var pauseText:flixel.text.FlxText = new flixel.text.FlxText(0, 0, 0, "PAUSED", 45);
-	var pauseText2:flixel.text.FlxText = new flixel.text.FlxText(0, 0, 0, "Press P or ESC to resume", 45);
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if(FlxG.keys.justReleased.SPACE) {
@@ -262,19 +276,22 @@ class PlayState extends FlxState
 		if (paused) {
 			return;
 		}
+
+		// restart level
 		if (FlxG.keys.justPressed.R) {
 			curStage = 0;
 			initializeLevel();
 		}
 		
+		// update targets
 		for (target in activeTargets) {
 			if (target.hit) {
 				hitTargets.push(target);
 				activeTargets.remove(target);
 				numTargetsLeft --;
-				this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+				updateTexts();
 
-				// 2 for hitting target
+				// logging: 2 for hitting target
 				Main.LOGGER.logLevelAction(2, {
 					targetsLeft: numTargetsLeft,
 					knivesThrown: knivesThrown,
@@ -292,11 +309,11 @@ class PlayState extends FlxState
 				curStage ++;
 				initializeLevel();
 			} else {
-				victoryScreen();
+				showVictoryScreen();
 			}
 		}
 		
-		// throw knife
+		// update knife
 		if (!victory && FlxG.keys.justPressed.SPACE && !holdingSpace) {
 			// this.thrower.visible = false;
 			// this.cooldown = 0.5;
@@ -306,7 +323,8 @@ class PlayState extends FlxState
 			newKnife.visible = true;
 			knives.push(newKnife);
 			add(newKnife);
-			updateTexts(elapsed);
+
+			knivesThrown += 1;
 
 			// 1 for throwing knife
 			Main.LOGGER.logLevelAction(1, {
@@ -324,7 +342,8 @@ class PlayState extends FlxState
 		// }
 
 		timer += elapsed;
-		timerText.text = "      : " + Std.int(timer);
+
+		updateTexts();
 	}
 
 
@@ -336,9 +355,9 @@ class PlayState extends FlxState
 	var completeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
 	var knivesStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
 	var timeStar:FlxSprite = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
-	var timeIcon:FlxSprite = new FlxSprite(0 + 18, 10 + 48, "assets/images/stopwatch.png");
 	var timeIconVictory:FlxSprite = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) + 10, "assets/images/stopwatch.png");
-	function victoryScreen() {
+	
+	function showVictoryScreen() {
 		victory = true;
 		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel + 1) + " Complete!", 45);
 		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
@@ -374,9 +393,10 @@ class PlayState extends FlxState
 		}
 	}
 
-	function updateTexts(elapsed:Float) {
-		knivesThrown ++;
+	function updateTexts() {
 		knivesLeftText.text = "Knives Thrown: " + knivesThrown;
+		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
+		timerText.text = "      : " + Std.int(timer);
 	}
 }
 
