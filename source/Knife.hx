@@ -1,5 +1,6 @@
 package;
 
+import nape.phys.Material;
 import nape.phys.BodyType;
 import nape.phys.Body;
 import nape.constraint.WeldJoint;
@@ -46,18 +47,16 @@ class Knife extends FlxNapeSprite {
       this.body.rotate(new Vec2(x, y), angle);
       this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
       this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
+      this.body.setShapeMaterials(new Material(0, 0, 0, 1, 0));
       this.body.shapes.at(0).sensorEnabled = true;
       this.body.name = 1; // 1 for knife
       this.setSize(64, 32);
-
-      // FlxG.pixelPerfectOverlap()
    }
 
    public function stickTarget(target:Target):Void {
       this.stuck = true;
       target.body.type = BodyType.DYNAMIC;
       wood_sound.play(true);
-
    }
 
    override public function update(elapsed:Float):Void {
