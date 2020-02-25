@@ -17,7 +17,7 @@ class Target extends FlxNapeSprite {
     var COLLISION_GROUP:Int = 2;
     var COLLISION_MASK:Int = ~1;
     var SENSOR_GROUP:Int = 2;
-    var SENSOR_MASK:Int = ~6;
+    var SENSOR_MASK:Int = ~7;
 
     public var hit:Bool = false;
     public function new(x:Float, y:Float, whichImage:String, angle:Int=0) {

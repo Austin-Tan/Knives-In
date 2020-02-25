@@ -22,12 +22,12 @@ class Knife extends FlxNapeSprite {
    var initX:Float;
    var initY:Float;
    var initialSpeed:Float = 2000;
-   var stuck:Bool = false;  // if this has stuck into an object
+   public var stuck:Bool = false;  // if this has stuck into an object
 
    var COLLISION_GROUP:Int = 1;
    var COLLISION_MASK:Int = ~7;
    var SENSOR_GROUP:Int = 1;
-   var SENSOR_MASK:Int = ~1;
+   var SENSOR_MASK:Int = ~3;
 
    #if flash
       var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.mp3");
@@ -53,6 +53,13 @@ class Knife extends FlxNapeSprite {
       // FlxG.pixelPerfectOverlap()
    }
 
+   public function stickTarget(target:Target):Void {
+      this.stuck = true;
+      target.body.type = BodyType.DYNAMIC;
+      wood_sound.play(true);
+
+   }
+
    override public function update(elapsed:Float):Void {
       super.update(elapsed);
 
@@ -74,16 +81,17 @@ class Knife extends FlxNapeSprite {
                   this.body.space = null;
                   this.setSize(0, 0); // nulling the hitbox
    
-               // this is a target
-               } else if (body.name == 0) {
-                  body.type = BodyType.DYNAMIC;
-                  var pivotJoint = new WeldJoint(this.body, list.at(0), 
-                                                this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
-                  this.body.space.constraints.add(pivotJoint);
-                  wood_sound.play(true);
-                  this.setSize(0, 0); // nulling the hitbox
-   
                }
+               // // this is a target
+               // } else if (body.name == 0) {
+               //    body.type = BodyType.DYNAMIC;
+               //    var pivotJoint = new WeldJoint(this.body, list.at(0), 
+               //                                  this.body.worldPointToLocal(this.body.position), list.at(0).worldPointToLocal(list.at(0).position));
+               //    this.body.space.constraints.add(pivotJoint);
+               //    wood_sound.play(true);
+               //    this.setSize(0, 0); // nulling the hitbox
+   
+               // }
             }
          }
       }

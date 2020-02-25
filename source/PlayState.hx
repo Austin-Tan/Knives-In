@@ -1,5 +1,8 @@
 package;
 
+import nape.phys.Compound;
+import nape.geom.Vec2;
+import nape.constraint.WeldJoint;
 import js.Cookie;
 import flixel.text.FlxText;
 import haxe.Timer;
@@ -32,6 +35,7 @@ class PlayState extends FlxState
 	var knife:Knife;
 	var knivesThrown:Int = 0;
 	var knives:Array<Knife>;
+	var unstuckKnives:Array<Knife>;
 
 	var platforms:Array<Platform>;
 	var activeTargets:Array<Target>;
@@ -118,10 +122,9 @@ class PlayState extends FlxState
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
-		} else {
-			if (pressSpace != null) {
-				remove(pressSpace);
-			}
+		}
+		if (pressSpace != null) {
+			remove(pressSpace);
 		}
 	}
 
@@ -235,6 +238,7 @@ class PlayState extends FlxState
 			add(target);
 		}
 		knives = new Array<Knife>();
+		unstuckKnives = new Array<Knife>();
 	}
 	
 	public function loadBackground():Void {
@@ -292,21 +296,37 @@ class PlayState extends FlxState
 			this.curStage = 1;
 			initializeLevel();
 		}
-		
-		// update targets
-		for (target in activeTargets) {
-			if (target.hit) {
-				hitTargets.push(target);
-				activeTargets.remove(target);
-				numTargetsLeft --;
-				updateTexts();
 
+		for (knife in unstuckKnives) {
+			if (knife.stuck) {
+				continue;
+			}
+			for (target in activeTargets) {
+				if (FlxG.pixelPerfectOverlap(knife, target, 0)) {
+					unstuckKnives.remove(knife);
+					hitTargets.push(target);
+					// activeTargets.remove(target);
+					if (!target.hit) {
+						numTargetsLeft --;
+						target.hit = true;
+					}
+					updateTexts();
+					
+					var anchor1:Vec2 = knife.body.worldPointToLocal(knife.body.position);
+					var anchor2:Vec2 = target.body.worldPointToLocal(knife.body.position);
+					var phase:Float = knife.body.rotation - target.body.rotation;
+					var pivotJoint = new WeldJoint(knife.body, target.body, anchor1, anchor2, phase);
+					FlxNapeSpace.space.constraints.add(pivotJoint);
+					knife.stickTarget(target);
+
+					
 				// logging: 2 for hitting target
 				Main.LOGGER.logLevelAction(2, {
 					targetsLeft: numTargetsLeft,
 					knivesThrown: knivesThrown,
 					time: timer 
 				});
+				}
 			}
 		}
 
@@ -332,6 +352,7 @@ class PlayState extends FlxState
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
 			knives.push(newKnife);
+			unstuckKnives.push(newKnife);
 			add(newKnife);
 
 			knivesThrown += 1;
