@@ -116,6 +116,7 @@ class Level {
 
       var targets:Array<Target> = new Array<Target>();
 
+      trace("for loop, level is " + level + " and stage is " + stage);
       for (i in 0...coordinates[stage].length) {
          var whichImg:String = "1";
          var angle:Int = 0;
@@ -132,6 +133,7 @@ class Level {
          }
          targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle));
       }
+      trace("post loop");
 
       return targets;
    }
