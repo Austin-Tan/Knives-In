@@ -96,7 +96,7 @@ class PlayState extends FlxState
 	// to be called when loading a new level
 	public function initializeLevel() {
 		trace("Level: " + curLevel + ". Stage: " + curStage);
-		Main.LOGGER.logLevelStart(curLevel, {
+		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
 			level: curLevel,
 			stage: curStage}
 		);
