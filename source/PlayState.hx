@@ -30,7 +30,7 @@ class PlayState extends FlxState
 	// var cooldown:Float;
 
 	var knife:Knife;
-	var knivesThrown:Int;
+	var knivesThrown:Int = 0;
 	var knives:Array<Knife>;
 
 	var platforms:Array<Platform>;
@@ -150,8 +150,13 @@ class PlayState extends FlxState
 		remove(timeIcon);
 		remove(timerText);
 
+		remove(pressR);
+		remove(pressRText);
+		remove(pressP);
+		remove(pressPText);
+
 		// reset tracked statistics
-		if(this.curStage == 0) {
+		if(this.curStage == 1) {
 			knivesThrown = 0;
 			timer = 0;
 		}
@@ -162,7 +167,7 @@ class PlayState extends FlxState
 		add(levelText);
 
 		this.targetsLeftText = new flixel.text.FlxText(menuX, menuY, 0, "", 12);
-		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: " + knivesThrown, 12);
+		this.knivesLeftText = new flixel.text.FlxText(menuX, menuY + 20, 0, "Knives Thrown: 0" , 12);
 		this.timerText = new flixel.text.FlxText(menuX, menuY + 45, 0, "      : " + timer);
 		this.timeIcon = new FlxSprite(0 + 18, 10 + 48, "assets/images/stopwatch.png");
 		timeIcon.scale.set(2, 2);
@@ -179,14 +184,14 @@ class PlayState extends FlxState
 		pressR = new FlxSprite(FlxG.width - 100, menuY);
 		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
 		add(pressR);
-		pressRText = new flixel.text.FlxText(FlxG.width - 83, menuY, "Restart", 12);
+		pressRText = new flixel.text.FlxText(FlxG.width - 83, menuY, " Restart", 12);
 		pressRText.color = FlxColor.BLACK;
 		add(pressRText);
 
 		pressP = new FlxSprite(FlxG.width - 100, menuY + 20);
 		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
 		add(pressP);
-		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, "Pause", 12);
+		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, " Pause", 12);
 		pressPText.color = FlxColor.BLACK;
 		add(pressPText);
 	}
@@ -217,6 +222,7 @@ class PlayState extends FlxState
 		// this.cooldown = 0;
 
 		this.hitTargets = new Array<Target>();
+		trace("In playstate, curStage is " + this.curStage);
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
 
 		// game status
@@ -283,7 +289,7 @@ class PlayState extends FlxState
 
 		// restart level
 		if (FlxG.keys.justPressed.R) {
-			curStage = 0;
+			this.curStage = 1;
 			initializeLevel();
 		}
 		
@@ -397,7 +403,7 @@ class PlayState extends FlxState
 	}
 
 	function updateTexts() {
-		knivesLeftText.text = "Knives Thrown: " + knivesThrown;
+		knivesLeftText.text = "Knives Thrown: " + this.knivesThrown;
 		this.targetsLeftText.text = "Targets: " + this.numTargetsLeft;
 		timerText.text = "      : " + Std.int(timer);
 	}
