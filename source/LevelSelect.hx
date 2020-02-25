@@ -19,7 +19,7 @@ class LevelSelect extends FlxState {
 		add(text);
 
         // Buttons to Select
-        var i = 0;
+        var i = 1;
         var buttonX:Int = leftButtonX;
         var buttonY:Int = -150;
         var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
@@ -30,7 +30,7 @@ class LevelSelect extends FlxState {
                 buttonX = leftButtonX;
             }
             buttonX += 100;
-            var playButton = new FlxButton((FlxG.width / 2 + buttonX), (FlxG.height / 2) + buttonY, "Level " + (i + 1), ()->{clickPlay(x);});
+            var playButton = new FlxButton((FlxG.width / 2 + buttonX), (FlxG.height / 2) + buttonY, "Level " + (i), ()->{clickPlay(x);});
             add(playButton);
 
             var j:Int = 0;
@@ -69,7 +69,7 @@ class LevelSelect extends FlxState {
             trace(cookie);
             Cookie.remove(cookie);
         }
-        Cookie.set("MaxLevel", "0", Main.expireDelay);
+        Cookie.set("MaxLevel", "1", Main.expireDelay);
         FlxG.switchState(new LevelSelect());
     }
     

@@ -76,7 +76,7 @@ class PlayState extends FlxState
 		this.bgColor = FlxColor.WHITE;
 
 		this.curLevel = Main.passedLevel;
-		this.curStage = 0;
+		this.curStage = 1;
 
 		initializePauseScreen();
 
@@ -116,7 +116,7 @@ class PlayState extends FlxState
 		loadItems();
 
 		// tutorial
-		if (this.curLevel == 0 && this.curStage == 0) {
+		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
 		} else {
 			if (pressSpace != null) {
@@ -156,7 +156,7 @@ class PlayState extends FlxState
 			timer = 0;
 		}
 
-		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel + 1) + " - " + (this.curStage + 1), 30);
+		this.levelText = new flixel.text.FlxText(0, 10, 0, "Level " + (this.curLevel) + " - " + (this.curStage), 30);
 		levelText.color = FlxColor.BLACK;
 		levelText.screenCenter(flixel.util.FlxAxes.X);
 		add(levelText);
@@ -255,7 +255,7 @@ class PlayState extends FlxState
 		}
 		if(victory) {
 			if (FlxG.keys.pressed.ENTER) {
-				curStage = 0;
+				curStage = 1;
 				curLevel ++;
 				initializeLevel();
 			}
@@ -309,7 +309,7 @@ class PlayState extends FlxState
 				knivesThrown: knivesThrown,
 				time: timer
 			});
-			if(curStage < (levelStats.numStages - 1)) {
+			if(curStage != levelStats.numStages) {
 				curStage ++;
 				initializeLevel();
 			} else {
@@ -333,7 +333,7 @@ class PlayState extends FlxState
 			// 1 for throwing knife
 			Main.LOGGER.logLevelAction(1, {
 				targetsLeft: numTargetsLeft,
-				knivesTrhown: knivesThrown,
+				knivesThrown: knivesThrown,
 				time: timer 
 			});
 		}
@@ -352,7 +352,7 @@ class PlayState extends FlxState
 	
 	function showVictoryScreen() {
 		victory = true;
-		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel + 1) + " Complete!", 45);
+		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel) + " Complete!", 45);
 		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
 		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) + 40, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
 		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, 0, "Press Enter to continue", 25);

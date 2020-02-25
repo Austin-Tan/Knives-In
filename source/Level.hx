@@ -4,14 +4,18 @@ import flixel.math.FlxRandom;
 
 class Level {
 
+   public static function getStageId(level:Int, stage:Int):Int {
+      return 3 * (level - 1) + stage;
+   }
+
    static var rand:FlxRandom = new FlxRandom();
    static var THROWER_WIDTH:Int = 64;
    static var THROWER_HEIGHT:Int = 40;
    public static function getThrower(level:Int):Thrower {
       switch (level) {
-         case 0: 
+         case 1: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
-         case 1:
+         case 2:
             return new Thrower(300, 200);
          default: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2));
@@ -36,9 +40,9 @@ class Level {
 
    public static function getLevelStats(level:Int):LevelStats {
 
-      //\ format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
+      // format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
       switch(level) {
-         case 0:
+         case 1:
             return new LevelStats(3, 15, 15);
          default:
             return new LevelStats(1, 1, 3);
@@ -47,7 +51,7 @@ class Level {
 
    public static function getNumStages(level:Int):Int {
       switch(level) {
-         case 0:
+         case 1:
             return 3;
          default:
             return 1;
@@ -55,10 +59,12 @@ class Level {
    }
    
    public static function getTargets(level:Int, stage:Int):Array<Target> {
+      stage = stage - 1;
+      
       var coordinates:Array<Array<Array<Int>>>;
       var rotations:Array<Array<Int>>;
       switch (level) {
-         case 0: 
+         case 1: 
             coordinates = 
                            // stage 1
                            [[coordinateCenterOffset(-140, -140), coordinateCenterOffset(140, -140), coordinateCenterOffset(0, 180)],
@@ -94,7 +100,7 @@ class Level {
             whichImg = "3";
          }
          angle = 0;
-         if (i < rotations[stage].length ) {
+         if (i < rotations[stage].length) {
             angle = rotations[stage][i];
          }
          targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle));
@@ -107,9 +113,9 @@ class Level {
       // x, y, width, height
       var properties:Array<Array<Int>>;
       switch (level) {
-         case 0:
-            properties = [];
          case 1:
+            properties = [];
+         case 2:
             properties = [[320, 240, 50, 5]];
          default:
             properties = [];

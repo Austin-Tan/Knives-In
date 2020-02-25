@@ -7,7 +7,7 @@ import flixel.FlxG;
 
 class Main extends Sprite
 {
-	public static var passedLevel:Int = 0;
+	public static var passedLevel:Int = 1;
 
 	public static var LOGGER:CapstoneLogger;
 	
