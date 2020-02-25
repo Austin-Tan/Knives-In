@@ -39,7 +39,6 @@ class PlayState extends FlxState
 
 	var platforms:Array<Platform>;
 	var activeTargets:Array<Target>;
-	var hitTargets:Array<Target>;
 	var numTargetsLeft:Int;
 
 	// Menu
@@ -202,12 +201,6 @@ class PlayState extends FlxState
 	public function loadItems():Void {
 		remove(this.thrower);
 
-		if (this.hitTargets != null) {
-			for (target in this.hitTargets) {
-				remove(target);
-			}
-		}
-
 		if (this.activeTargets != null) {
 			for (target in this.activeTargets) {
 				remove(target);
@@ -224,7 +217,6 @@ class PlayState extends FlxState
 		add(thrower);
 		// this.cooldown = 0;
 
-		this.hitTargets = new Array<Target>();
 		trace("In playstate, curStage is " + this.curStage);
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
 
@@ -243,7 +235,7 @@ class PlayState extends FlxState
 	
 	public function loadBackground():Void {
 		FlxNapeSpace.init();
-		FlxNapeSpace.space.gravity.setxy(0, 400);
+		FlxNapeSpace.space.gravity.setxy(0, 750);
 		
 		if(this.platforms != null) {
 			for (platform in this.platforms) {
@@ -304,8 +296,6 @@ class PlayState extends FlxState
 			for (target in activeTargets) {
 				if (FlxG.pixelPerfectOverlap(knife, target, 0)) {
 					unstuckKnives.remove(knife);
-					hitTargets.push(target);
-					// activeTargets.remove(target);
 					if (!target.hit) {
 						numTargetsLeft --;
 						target.hit = true;
@@ -318,14 +308,13 @@ class PlayState extends FlxState
 					var pivotJoint = new WeldJoint(knife.body, target.body, anchor1, anchor2, phase);
 					FlxNapeSpace.space.constraints.add(pivotJoint);
 					knife.stickTarget(target);
-
 					
-				// logging: 2 for hitting target
-				Main.LOGGER.logLevelAction(2, {
-					targetsLeft: numTargetsLeft,
-					knivesThrown: knivesThrown,
-					time: timer 
-				});
+					// logging: 2 for hitting target
+					Main.LOGGER.logLevelAction(2, {
+						targetsLeft: numTargetsLeft,
+						knivesThrown: knivesThrown,
+						time: timer 
+					});
 				}
 			}
 		}
@@ -344,9 +333,7 @@ class PlayState extends FlxState
 		}
 		
 		// update knife
-		if (!victory && FlxG.keys.justPressed.SPACE && !holdingSpace) {
-			// this.thrower.visible = false;
-			// this.cooldown = 0.5;
+		if (!victory && (FlxG.keys.justPressed.SPACE || FlxG.mouse.justPressed) && !holdingSpace) {
 
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 2) / 180);
 			newKnife.body.space = FlxNapeSpace.space;

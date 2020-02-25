@@ -28,7 +28,7 @@ class Target extends FlxNapeSprite {
         super(x, y, "assets/images/Target" + whichImage + ".png");
         this.body.rotation = (Math.PI / 180) * angle;
         this.scale.set(2, 2);
-        this.body.setShapeMaterials(new Material(0.2, 1.0, 2.0, 10, 0.001));
+        this.body.setShapeMaterials(new Material(0.2, 10.0, 20.0, 5, 0.001));
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.rotation = (Math.PI / 180) * angle;
         this.body.shapes.at(0).sensorEnabled = true;
