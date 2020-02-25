@@ -15,13 +15,14 @@ class Level {
 
    static var rand:FlxRandom = new FlxRandom();
    static var THROWER_WIDTH:Int = 64;
-   static var THROWER_HEIGHT:Int = 40;
+   static var THROWER_HEIGHT:Int = 64; // why?
+
    public static function getThrower(level:Int):Thrower {
       switch (level) {
          case 1: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 2:
-            return new Thrower(300, 200);
+            return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          default: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2));
       }
@@ -29,6 +30,7 @@ class Level {
 
    static var HALF_TARGET_WIDTH:Int = 16;
    static var HALF_TARGET_HEIGHT:Int = 32;
+
    public static function targetCoordinate(x:Int, y:Int):Array<Int> {
       return [cast(x - HALF_TARGET_WIDTH, Int), cast(y - HALF_TARGET_HEIGHT, Int)];
    }
@@ -45,7 +47,6 @@ class Level {
    public static function polarCoordinate(r:Float, angle:Float, isTarget:Bool=true):Array<Int> {
       var x:Int = Std.int((FlxG.width / 2) + r * Math.cos(angle * 2 * Math.PI / 360));
       var y:Int = Std.int((FlxG.height / 2) + r * Math.sin(angle * 2 * Math.PI / 360));
-      trace(x, y);
       if (isTarget) {
          return targetCoordinate(x, y);
       } else {
@@ -58,6 +59,8 @@ class Level {
       switch(level) {
          case 1:
             return new LevelStats(3, 15, 15);
+         case 2:
+            return new LevelStats(3, 15, 15);
          default:
             return new LevelStats(1, 1, 3);
       }
@@ -66,6 +69,8 @@ class Level {
    public static function getNumStages(level:Int):Int {
       switch(level) {
          case 1:
+            return 3;
+         case 2:
             return 3;
          default:
             return 1;
@@ -80,38 +85,32 @@ class Level {
       switch (level) {
          case 1: 
             coordinates = 
-                           // stage 1
-                           [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
-                           // stage 2
-                           [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
-                           // stage 3
-                           [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
+               // stage 1
+               [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
+               // stage 2
+               [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
+               // stage 3
+               [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
             rotations = 
-                           // stage 1
-                           [[210, -30, 90],
-                           // stage 2
-                           [-90, 0, 90, 180],
-                           //stage 3
-                           [0, 72, 72 * 2, 72 * 3, 72 * 4]];
+               // stage 1
+               [[210, -30, 90],
+               // stage 2
+               [-90, 0, 90, 180],
+               //stage 3
+               [0, 72, 72 * 2, 72 * 3, 72 * 4]];
          case 2: 
             coordinates = 
-                           // stage 1
-                           [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
-                           // stage 2
-                           [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
-                           // stage 3
-                           [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
+               [[polarCoordinate(100, -45), polarCoordinate(100, 0), polarCoordinate(100, 45)],
+               [polarCoordinate(80, 0), polarCoordinate(140, 0), polarCoordinate(200, 0), polarCoordinate(260, 0)],
+               [polarCoordinate(200, 30), polarCoordinate(150, 30), polarCoordinate(200, -30), polarCoordinate(150, -30)]];
             rotations = 
-                           // stage 1
-                           [[210, -30, 90],
-                           // stage 2
-                           [-90, 0, 90, 180],
-                           //stage 3
-                           [0, 72, 72 * 2, 72 * 3, 72 * 4]];
+               [[-45, 0, 45],
+               [0, 0, 0, 0],
+               [30, 30, -30, -30]];
 
          default:
-            coordinates = [[coordinateCenterOffset(0, -100)]];
-            rotations = [[-90]];
+            coordinates = [[polarCoordinate(50, 0), polarCoordinate(50, 90), coordinateCenterOffset(150, 0)]];
+            rotations = [[0, 90, 0]];
       }
 
       var targets:Array<Target> = new Array<Target>();
@@ -145,9 +144,9 @@ class Level {
          case 1:
             properties = [];
          case 2:
-            properties = [[320, 240, 50, 5]];
-         default:
             properties = [];
+         default:
+            properties = [];//[[320, 240, 50, 5]];
       }
       
       // Wall
