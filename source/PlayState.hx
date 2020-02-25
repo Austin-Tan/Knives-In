@@ -76,7 +76,7 @@ class PlayState extends FlxState
 		this.bgColor = FlxColor.WHITE;
 
 		this.curLevel = Main.passedLevel;
-		this.curStage = 1;
+		this.curStage = 3;
 
 		initializePauseScreen();
 
@@ -283,7 +283,7 @@ class PlayState extends FlxState
 
 		// restart level
 		if (FlxG.keys.justPressed.R) {
-			curStage = 0;
+			curStage = 1;
 			initializeLevel();
 		}
 		

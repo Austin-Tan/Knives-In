@@ -5,7 +5,12 @@ import flixel.math.FlxRandom;
 class Level {
 
    public static function getStageId(level:Int, stage:Int):Int {
-      return 3 * (level - 1) + stage;
+      var id:Int = 0;
+      for (i in 0...level) {
+         id += getNumStages(level);
+      }
+      id += stage;
+      return id;
    }
 
    static var rand:FlxRandom = new FlxRandom();
@@ -29,7 +34,6 @@ class Level {
    }
 
    public static function coordinateCenterOffset(x:Int, y:Int, isTarget:Bool=true):Array<Int> {
-
       // include the pixel offset
       if(isTarget) {
          return targetCoordinate(cast((FlxG.width / 2) + x, Int), cast((FlxG.height / 2)+ y, Int));
@@ -38,8 +42,18 @@ class Level {
       }
    }
 
-   public static function getLevelStats(level:Int):LevelStats {
+   public static function polarCoordinate(r:Float, angle:Float, isTarget:Bool=true):Array<Int> {
+      var x:Int = Std.int((FlxG.width / 2) + r * Math.cos(angle * 2 * Math.PI / 360));
+      var y:Int = Std.int((FlxG.height / 2) + r * Math.sin(angle * 2 * Math.PI / 360));
+      trace(x, y);
+      if (isTarget) {
+         return targetCoordinate(x, y);
+      } else {
+         return [x, y];
+      }
+   }
 
+   public static function getLevelStats(level:Int):LevelStats {
       // format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
       switch(level) {
          case 1:
@@ -60,28 +74,41 @@ class Level {
    
    public static function getTargets(level:Int, stage:Int):Array<Target> {
       stage = stage - 1;
-      
+
       var coordinates:Array<Array<Array<Int>>>;
       var rotations:Array<Array<Int>>;
       switch (level) {
          case 1: 
             coordinates = 
                            // stage 1
-                           [[coordinateCenterOffset(-140, -140), coordinateCenterOffset(140, -140), coordinateCenterOffset(0, 180)],
+                           [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
                            // stage 2
-                           [coordinateCenterOffset(0, -200), coordinateCenterOffset(220, 0), coordinateCenterOffset(0, 220), coordinateCenterOffset(-220, 0)],
+                           [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
                            // stage 3
-                           [coordinateCenterOffset(0, -120), coordinateCenterOffset(140, -30), coordinateCenterOffset(-140, -30), coordinateCenterOffset(140, 140), coordinateCenterOffset(-140, 140)]];
+                           [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
             rotations = 
                            // stage 1
-                           [[-135, -45, 90],
+                           [[210, -30, 90],
                            // stage 2
                            [-90, 0, 90, 180],
                            //stage 3
-                           [-90, -25, 215, 40, 140]];
-         // case 1:
-         //    coordinates = [[300, 50], [200, 50], [150, 50]];
-         //    rotations = [20, 20];
+                           [0, 72, 72 * 2, 72 * 3, 72 * 4]];
+         case 2: 
+            coordinates = 
+                           // stage 1
+                           [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
+                           // stage 2
+                           [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
+                           // stage 3
+                           [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
+            rotations = 
+                           // stage 1
+                           [[210, -30, 90],
+                           // stage 2
+                           [-90, 0, 90, 180],
+                           //stage 3
+                           [0, 72, 72 * 2, 72 * 3, 72 * 4]];
+
          default:
             coordinates = [[coordinateCenterOffset(0, -100)]];
             rotations = [[-90]];
