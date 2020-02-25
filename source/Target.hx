@@ -1,6 +1,7 @@
 package;
 
 
+import lime.math.Vector2;
 import nape.phys.BodyType;
 import nape.callbacks.CbType;
 import nape.dynamics.InteractionFilter;
@@ -19,8 +20,11 @@ class Target extends FlxNapeSprite {
     var SENSOR_GROUP:Int = 2;
     var SENSOR_MASK:Int = ~7;
 
+    var verticalMovement:Int = -30;
+    var horizontalMovement:Int = 0;
+
     public var hit:Bool = false;
-    public function new(x:Float, y:Float, whichImage:String, angle:Int=0) {
+    public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isStatic=false) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
         this.body.rotation = (Math.PI / 180) * angle;
         this.scale.set(2, 2);
@@ -29,14 +33,23 @@ class Target extends FlxNapeSprite {
         this.body.rotation = (Math.PI / 180) * angle;
         this.body.shapes.at(0).sensorEnabled = true;
         this.body.name = 0; // 0 for target
-        this.body.type = BodyType.STATIC;
         this.setSize(32, 64);
+
+        if (isStatic) {
+            this.body.type = BodyType.STATIC;
+        } else {
+            this.body.type = BodyType.KINEMATIC;
+            this.body.velocity = new Vec2(0,30);
+        }
+
      }
 
      override public function update(elapsed:Float):Void {
         super.update(elapsed);
-        if(!hit && body.constraints.length > 0) {
+        if (!hit && body.constraints.length > 0) {
             hit = true;
         }
+        
+        trace(body.position);
      }
 }
