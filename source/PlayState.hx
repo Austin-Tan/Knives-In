@@ -402,10 +402,6 @@ class PlayState extends FlxState
 
 		// targets
 		for (target in activeTargets) {
-			// trace(FlxG.height + " " + FlxG.width);
-			// trace("target " + target);
-			// trace("platform "+ platforms[1]);
-
 			// ceiling
 			if (FlxG.overlap(target, platforms[0])) {
 				target.collide(1, -1);
@@ -414,14 +410,13 @@ class PlayState extends FlxState
 			if (FlxG.overlap(target, platforms[1])) {
 				target.collide(1, -1);
 			}
-			// FlxG.overlap(target, )
 
 			// left wall
-			if (FlxG.collide(target, platforms[2])) {
+			if (FlxG.overlap(target, platforms[2])) {
 				target.collide(-1, 1);
 			}
 			// right wall
-			if (FlxG.collide(target, platforms[3])) {
+			if (FlxG.overlap(target, platforms[3])) {
 				target.collide(-1, 1);
 			}
 		}

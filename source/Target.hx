@@ -47,8 +47,6 @@ class Target extends FlxNapeSprite {
             this.yVelocity = yVelocity;
             this.body.velocity.setxy(xVelocity, yVelocity);// = new Vec2(0,100);
         }
-        // this.elasticity = 1000000;
-
      }
 
      public function pauseMe(paused:Bool):Void {
@@ -86,9 +84,5 @@ class Target extends FlxNapeSprite {
         yVelocity = changeY * yVelocity;
         this.body.velocity.setxy(xVelocity, yVelocity);
         justTouch = true;
-        // if (changeY == -1) {
-        //     setPosition(x, y + 1);
-        // }
-        //  this.body.velocity = new Vec2(xVelocity, yVelocity);
      }
 }
