@@ -351,14 +351,6 @@ class PlayState extends FlxState
 				time: timer 
 			});
 		}
-
-		// if(cooldown > 0) {
-		// 	cooldown -= elapsed;
-		// }
-		// if(cooldown <= 0) {
-		// 	thrower.visible = true;
-		// }
-
 		timer += elapsed;
 
 		updateTexts();
