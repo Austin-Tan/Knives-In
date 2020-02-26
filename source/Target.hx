@@ -25,6 +25,7 @@ class Target extends FlxNapeSprite {
     var justTouch:Bool = false;
     var count:Int = 0;
 
+    public var moving:Bool = false;
     public var hit:Bool = false;
     public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isKinemetic=false, xVelocity=0, yVelocity=0) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
@@ -40,6 +41,7 @@ class Target extends FlxNapeSprite {
         if (!isKinemetic) {
             this.body.type = BodyType.STATIC;
         } else {
+            this.moving = true;
             this.body.type = BodyType.KINEMATIC;
             this.xVelocity = xVelocity;
             this.yVelocity = yVelocity;
@@ -47,6 +49,17 @@ class Target extends FlxNapeSprite {
         }
         // this.elasticity = 1000000;
 
+     }
+
+     public function pauseMe(paused:Bool):Void {
+         if (moving && !hit) {
+            if (paused) {
+                this.body.type = BodyType.STATIC;
+            } else {
+                this.body.type = BodyType.KINEMATIC;
+                this.body.velocity.setxy(xVelocity, yVelocity);
+            }
+         }
      }
 
      override public function update(elapsed:Float):Void {

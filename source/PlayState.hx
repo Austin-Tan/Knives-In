@@ -305,6 +305,9 @@ class PlayState extends FlxState
 				thrower.visible = true;
 				FlxNapeSpace.space.gravity.setxy(0, 400);
 			}
+			for (target in activeTargets) {
+				target.pauseMe(paused);
+			}
 		}
 		if (paused) {
 			return;
