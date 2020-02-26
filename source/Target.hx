@@ -15,10 +15,10 @@ import nape.geom.Vec2;
 
 class Target extends FlxNapeSprite {
 
-    var COLLISION_GROUP:Int = 2;
-    var COLLISION_MASK:Int = ~1;
-    var SENSOR_GROUP:Int = 2;
-    var SENSOR_MASK:Int = ~7;
+    public var COLLISION_GROUP:Int = 2;
+    public var COLLISION_MASK:Int = ~1;
+    public var SENSOR_GROUP:Int = 2;
+    public var SENSOR_MASK:Int = ~7;
 
     var verticalMovement:Int = -30;
     var horizontalMovement:Int = 0;
@@ -28,6 +28,7 @@ class Target extends FlxNapeSprite {
         super(x, y, "assets/images/Target" + whichImage + ".png");
         this.body.rotation = (Math.PI / 180) * angle;
         this.scale.set(2, 2);
+        updateHitbox();
         this.body.setShapeMaterials(new Material(0.2, 10.0, 20.0, 5, 0.001));
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.rotation = (Math.PI / 180) * angle;
@@ -49,7 +50,5 @@ class Target extends FlxNapeSprite {
         if (!hit && body.constraints.length > 0) {
             hit = true;
         }
-        
-        trace(body.position);
      }
 }
