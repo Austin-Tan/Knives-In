@@ -23,6 +23,8 @@ class Level {
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 2:
             return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2));
+         case 3:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          default: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2));
       }
@@ -61,6 +63,8 @@ class Level {
             return new LevelStats(3, 15, 15);
          case 2:
             return new LevelStats(3, 15, 15);
+         case 3:
+            return new LevelStats(3, 15, 15);
          default:
             return new LevelStats(1, 1, 3);
       }
@@ -72,6 +76,8 @@ class Level {
             return 3;
          case 2:
             return 3;
+         case 3:
+            return 1;
          default:
             return 1;
       }
@@ -80,6 +86,7 @@ class Level {
    public static function getTargets(level:Int, stage:Int):Array<Target> {
       stage = stage - 1;
 
+      var velocities:Array<Array<Array<Int>>>;
       var coordinates:Array<Array<Array<Int>>>;
       var rotations:Array<Array<Int>>;
       switch (level) {
@@ -98,6 +105,7 @@ class Level {
                [-90, 0, 90, 180],
                //stage 3
                [0, 72, 72 * 2, 72 * 3, 72 * 4]];
+            velocities = null;
          case 2: 
             coordinates = 
                [[polarCoordinate(100, -45), polarCoordinate(100, 0), polarCoordinate(100, 45)],
@@ -107,10 +115,25 @@ class Level {
                [[-45, 0, 45],
                [0, 0, 0, 0],
                [30, 30, -30, -30]];
-
+            velocities = null;
+         case 3:
+            coordinates = 
+               [[polarCoordinate(200, 0), polarCoordinate(-200, 0)],
+               [coordinateCenterOffset(-100, -100), coordinateCenterOffset(180, 210), coordinateCenterOffset(50, 160)],
+               [polarCoordinate(260, 0), polarCoordinate(200, 0), polarCoordinate(-200, 0), polarCoordinate(-260, 0)]];
+               // [coordinateCenterOffset(-200, 50), coordinateCenterOffset(-50, 200), coordinateCenterOffset(200, 50), coordinateCenterOffset(50, -200)]];
+            rotations =
+               [[0, 180], 
+               [-90, 90, 90], 
+               [0, 0, 180, 180]];
+            velocities =
+               [[[0,80], [0,80]],
+               [[80,0], [-80,0], [80,0]],
+               [[0,-80], [0,80], [0,-80], [0,80]]];
          default:
             coordinates = [[polarCoordinate(50, 0), polarCoordinate(50, 90), coordinateCenterOffset(150, 0)]];
             rotations = [[0, 90, 0]];
+            velocities = null;
       }
 
       var targets:Array<Target> = new Array<Target>();
@@ -130,7 +153,11 @@ class Level {
          if (i < rotations[stage].length) {
             angle = rotations[stage][i];
          }
-         targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle));
+         if (velocities == null) {
+            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle, false));
+         } else {
+            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle, true, velocities[stage][i][0], velocities[stage][i][1]));
+         }
       }
       trace("post loop");
 
@@ -145,11 +172,13 @@ class Level {
             properties = [];
          case 2:
             properties = [];
+         case 3:
+            properties = [];
          default:
             properties = [];//[[320, 240, 50, 5]];
       }
       
-      // Wall
+      // Wall 
       properties.push([0, 0, FlxG.width, 5]);
       properties.push([0, FlxG.height - 5, FlxG.width, 5]);
       properties.push([0, 0, 5, FlxG.height]);

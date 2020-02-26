@@ -243,8 +243,8 @@ class PlayState extends FlxState
 			}
 		}
 
-		platforms = Level.getPlatforms(curLevel);
-		for (platform in platforms) {
+		this.platforms = Level.getPlatforms(curLevel);
+		for (platform in this.platforms) {
 			add(platform);
 		}
 
@@ -350,6 +350,31 @@ class PlayState extends FlxState
 				knivesThrown: knivesThrown,
 				time: timer 
 			});
+		}
+
+		// targets
+		for (target in activeTargets) {
+			// trace(FlxG.height + " " + FlxG.width);
+			// trace("target " + target);
+			// trace("platform "+ platforms[1]);
+
+			// ceiling
+			if (FlxG.collide(target, platforms[0])) {
+				target.collide(1, -1);
+			}
+			// floor
+			if (FlxG.collide(target, platforms[1])) {
+				target.collide(1, -1);
+			}
+
+			// left wall
+			if (FlxG.collide(target, platforms[2])) {
+				target.collide(-1, 1);
+			}
+			// right wall
+			if (FlxG.collide(target, platforms[3])) {
+				target.collide(-1, 1);
+			}
 		}
 
 		// if(cooldown > 0) {

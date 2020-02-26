@@ -20,11 +20,11 @@ class Target extends FlxNapeSprite {
     var SENSOR_GROUP:Int = 2;
     var SENSOR_MASK:Int = ~7;
 
-    var verticalMovement:Int = -30;
-    var horizontalMovement:Int = 0;
+    var xVelocity:Int;
+    var yVelocity:Int;
 
     public var hit:Bool = false;
-    public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isStatic=false) {
+    public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isKinemetic=false, xVelocity=0, yVelocity=0) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
         this.body.rotation = (Math.PI / 180) * angle;
         this.scale.set(2, 2);
@@ -33,13 +33,16 @@ class Target extends FlxNapeSprite {
         this.body.rotation = (Math.PI / 180) * angle;
         this.body.shapes.at(0).sensorEnabled = true;
         this.body.name = 0; // 0 for target
-        this.setSize(32, 64);
+        // 26 x 32
+        this.setSize(26, 32);
 
-        if (isStatic) {
+        if (!isKinemetic) {
             this.body.type = BodyType.STATIC;
         } else {
             this.body.type = BodyType.KINEMATIC;
-            this.body.velocity = new Vec2(0,30);
+            this.xVelocity = xVelocity;
+            this.yVelocity = yVelocity;
+            this.body.velocity.setxy(xVelocity, yVelocity);// = new Vec2(0,100);
         }
 
      }
@@ -49,7 +52,12 @@ class Target extends FlxNapeSprite {
         if (!hit && body.constraints.length > 0) {
             hit = true;
         }
-        
-        trace(body.position);
+
+     }
+     public function collide(changeX:Int, changeY:Int) {
+        xVelocity = changeX * xVelocity;
+        yVelocity = changeY * yVelocity;
+        this.body.velocity.setxy(xVelocity, yVelocity);
+        //  this.body.velocity = new Vec2(xVelocity, yVelocity);
      }
 }
