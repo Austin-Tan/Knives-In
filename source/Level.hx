@@ -82,6 +82,53 @@ class Level {
             return 1;
       }
    }
+
+   public static function getButtons(level:Int, stage:Int):Array<HitButton> {
+      var buttons:Array<HitButton> = new Array<HitButton>();
+      stage = stage - 1;
+
+      var coordinates:Array<Array<Array<Int>>>;
+      var rotations:Array<Array<Int>>;
+      var gateCoordinates:Array<Array<Array<Int>>>;
+      switch (level) {
+         case 4:
+            coordinates = [
+               // stage 1
+               [[500-50, 70]],
+               // stage 2
+               [],
+               // stage 3
+               []
+            ];
+            rotations = [
+               // stage 1
+               [-90],
+               // stage 2
+               [],
+               // stage 3
+               []
+            ];
+            gateCoordinates = [
+               // stage 1
+               [[500, 164]],
+               // stage 2
+               [],
+               // stage 3
+               []
+            ];
+
+         default:
+            coordinates = [];
+            rotations = [];
+            gateCoordinates = [];
+      }
+      if (coordinates != null && coordinates.length > 0 ) {
+         for (i in 0...coordinates[stage].length) {
+            buttons.push(new HitButton(coordinates[stage][i][0], coordinates[stage][i][1], gateCoordinates[stage][i][0], gateCoordinates[stage][i][1], rotations[stage][i]));
+         }
+      }
+      return buttons;
+   }
    
    public static function getTargets(level:Int, stage:Int):Array<Target> {
       stage = stage - 1;
@@ -130,6 +177,17 @@ class Level {
                [[[0,80], [0,80]],
                [[80,0], [-80,0], [80,0]],
                [[0,-80], [0,80], [0,-80], [0,80]]];
+         case 4:
+            coordinates = [
+               // stage 1
+               [[800, 800]]
+
+            ];
+            rotations = [
+               [0]
+            ];
+            velocities = null;
+
          default:
             coordinates = [[polarCoordinate(50, 0), polarCoordinate(50, 90), coordinateCenterOffset(150, 0)]];
             rotations = [[0, 90, 0]];
@@ -174,6 +232,8 @@ class Level {
             properties = [];
          case 3:
             properties = [];
+         case 4:
+            properties = [[500, 0, 32, 165], [500, 286, 32, 220]];
          default:
             properties = [];//[[320, 240, 50, 5]];
       }
@@ -192,5 +252,4 @@ class Level {
 
       return platforms;
    }
-      
 }

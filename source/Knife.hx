@@ -34,8 +34,9 @@ class Knife extends FlxNapeSprite {
       var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.mp3");
       var wood_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_wood.mp3");
    #else
-      var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.wav");
+      public var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.wav");
       var wood_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_wood.wav");
+      public var button_sound:FlxSound = FlxG.sound.load("assets/sounds/button.wav");
    #end
 
    public function new(x:Float, y:Float, angle:Float) {
@@ -44,13 +45,15 @@ class Knife extends FlxNapeSprite {
       this.initX = x;
       this.initY = y;
       this.scale.set(2, 2);
+      updateHitbox();
+      updateFramePixels();
       this.body.rotate(new Vec2(x, y), angle);
       this.body.velocity.set(new Vec2(initialSpeed * Math.cos(angle), initialSpeed * Math.sin(angle)));
       this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
-      this.body.setShapeMaterials(new Material(0, 0, 0, 1, 0));
+      this.body.setShapeMaterials(new Material(0, 1.0, 1.0, 1, 0));
       this.body.shapes.at(0).sensorEnabled = true;
       this.body.name = 1; // 1 for knife
-      this.setSize(64, 32);
+      // this.setSize(64, 32);
    }
 
    public function stickTarget(target:Target):Void {

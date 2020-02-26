@@ -1,5 +1,8 @@
 package;
 
+import flixel.util.FlxSpriteUtil;
+import flixel.FlxObject;
+import nape.phys.BodyType;
 import nape.phys.Compound;
 import nape.geom.Vec2;
 import nape.constraint.WeldJoint;
@@ -38,6 +41,9 @@ class PlayState extends FlxState
 	var unstuckKnives:Array<Knife>;
 
 	var platforms:Array<Platform>;
+	var activeButtons:Array<HitButton>;
+	var pressedButtons:Array<HitButton> = new Array<HitButton>();
+
 	var activeTargets:Array<Target>;
 	var numTargetsLeft:Int;
 
@@ -248,6 +254,27 @@ class PlayState extends FlxState
 			add(platform);
 		}
 
+		if (this.activeButtons != null) {
+			for (button in this.activeButtons) {
+				remove(button);
+				remove(button.gate);
+			}
+		}
+		
+		if (this.pressedButtons != null) {
+			for (button in this.pressedButtons) {
+				remove(button);
+				remove(button.gate);
+				pressedButtons.remove(button);
+			}
+		}
+
+		activeButtons = Level.getButtons(curLevel, curStage);
+		for (button in activeButtons) {
+			add(button);
+			add(button.gate);
+
+		}
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -317,6 +344,24 @@ class PlayState extends FlxState
 					});
 				}
 			}
+			for (button in activeButtons) {
+				if (FlxG.pixelPerfectOverlap(knife, button, 0)) {
+					unstuckKnives.remove(knife);
+					knife.stuck = true;
+					knife.body.type = BodyType.STATIC;
+					knife.body.space = null;
+					knife.button_sound.play();
+					activeButtons.remove(button);
+					pressedButtons.push(button);
+					button.animation.play("pressed");
+					button.gate.toggleGate();
+				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 0)) {
+					trace("hit detected on gate");
+					unstuckKnives.remove(knife);
+					button.gate.embedKnife(knife);
+
+				}
+			}
 		}
 
 		if (numTargetsLeft == 0) {
@@ -376,13 +421,6 @@ class PlayState extends FlxState
 				target.collide(-1, 1);
 			}
 		}
-
-		// if(cooldown > 0) {
-		// 	cooldown -= elapsed;
-		// }
-		// if(cooldown <= 0) {
-		// 	thrower.visible = true;
-		// }
 
 		timer += elapsed;
 
