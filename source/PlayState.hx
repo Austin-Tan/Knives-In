@@ -404,13 +404,14 @@ class PlayState extends FlxState
 			// trace("platform "+ platforms[1]);
 
 			// ceiling
-			if (FlxG.collide(target, platforms[0])) {
+			if (FlxG.overlap(target, platforms[0])) {
 				target.collide(1, -1);
 			}
 			// floor
-			if (FlxG.collide(target, platforms[1])) {
+			if (FlxG.overlap(target, platforms[1])) {
 				target.collide(1, -1);
 			}
+			// FlxG.overlap(target, )
 
 			// left wall
 			if (FlxG.collide(target, platforms[2])) {

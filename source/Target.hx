@@ -22,6 +22,8 @@ class Target extends FlxNapeSprite {
 
     var xVelocity:Int;
     var yVelocity:Int;
+    var justTouch:Bool = false;
+    var count:Int = 0;
 
     public var hit:Bool = false;
     public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isKinemetic=false, xVelocity=0, yVelocity=0) {
@@ -43,6 +45,7 @@ class Target extends FlxNapeSprite {
             this.yVelocity = yVelocity;
             this.body.velocity.setxy(xVelocity, yVelocity);// = new Vec2(0,100);
         }
+        // this.elasticity = 1000000;
 
      }
 
@@ -51,12 +54,28 @@ class Target extends FlxNapeSprite {
         if (!hit && body.constraints.length > 0) {
             hit = true;
         }
+        // make sure the target leaves the border
+        if (justTouch) {
+            count += 1;
+            if (count == 10) {
+                justTouch = false;
+                count = 0;
+            }
+        }
 
      }
      public function collide(changeX:Int, changeY:Int) {
+        if (hit || justTouch)
+            return;
+        trace("velocity: " + xVelocity + " " + yVelocity);
+        trace("position: " + x + " " + y);
         xVelocity = changeX * xVelocity;
         yVelocity = changeY * yVelocity;
         this.body.velocity.setxy(xVelocity, yVelocity);
+        justTouch = true;
+        // if (changeY == -1) {
+        //     setPosition(x, y + 1);
+        // }
         //  this.body.velocity = new Vec2(xVelocity, yVelocity);
      }
 }

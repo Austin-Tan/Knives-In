@@ -53,7 +53,6 @@ class Knife extends FlxNapeSprite {
       this.body.setShapeMaterials(new Material(0, 1.0, 1.0, 1, 0));
       this.body.shapes.at(0).sensorEnabled = true;
       this.body.name = 1; // 1 for knife
-      // this.setSize(64, 32);
    }
 
    public function stickTarget(target:Target):Void {

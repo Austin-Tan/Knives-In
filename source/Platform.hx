@@ -31,7 +31,7 @@ class Platform extends FlxSprite {
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.space = FlxNapeSpace.space;
         this.body.name = 2; // 2 for platform
-        this.body.allowMovement = false;
+        // this.body.allowMovement = false;
 
         makeGraphic(width, height, FlxColor.BROWN);
     }
