@@ -18,10 +18,7 @@ class Gate extends FlxSprite {
     override public function new(x:Float, y:Float, button:HitButton) {
         super(x, y);
         this.button = button;
-		loadGraphic("assets/images/barrier.png", true, 16, 32);
-        this.scale.set(2, 4);
-        this.updateFramePixels();
-        this.updateHitbox();
+		loadGraphic("assets/images/barrier.png", true, 32, 128);
         this.animation.add("closed", [0], 0, false);
         this.animation.add("opened", [4], 0, false);
         this.animation.add("opening", [0, 1, 2, 3, 4], 20, false);

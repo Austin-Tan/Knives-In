@@ -124,12 +124,14 @@ class PlayState extends FlxState
 		loadBackground();
 		loadItems();
 
+		if (pressSpace != null) {
+			remove(pressSpace);
+			pressSpace = null;
+		}
+
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
-		}
-		if (pressSpace != null) {
-			remove(pressSpace);
 		}
 	}
 
@@ -358,7 +360,7 @@ class PlayState extends FlxState
 					pressedButtons.push(button);
 					button.animation.play("pressed");
 					button.gate.toggleGate();
-				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 0)) {
+				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 2)) {
 					trace("hit detected on gate");
 					unstuckKnives.remove(knife);
 					button.gate.embedKnife(knife);

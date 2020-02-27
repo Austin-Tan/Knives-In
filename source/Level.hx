@@ -180,8 +180,7 @@ class Level {
          case 4:
             coordinates = [
                // stage 1
-               [[800, 800]]
-
+               [coordinateCenterOffset(300, 0)]
             ];
             rotations = [
                [0]
