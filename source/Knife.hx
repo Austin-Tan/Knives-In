@@ -36,7 +36,6 @@ class Knife extends FlxNapeSprite {
    #else
       public var metal_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_metal.wav");
       var wood_sound:FlxSound = FlxG.sound.load("assets/sounds/knife_wood.wav");
-      public var button_sound:FlxSound = FlxG.sound.load("assets/sounds/button.wav");
    #end
 
    public function new(x:Float, y:Float, angle:Float) {

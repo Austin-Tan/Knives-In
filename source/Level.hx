@@ -94,13 +94,14 @@ class Level {
       var coordinates:Array<Array<Array<Int>>>;
       var rotations:Array<Array<Int>>;
       var gateCoordinates:Array<Array<Array<Int>>>;
+      var timing:Array<Array<Float>>;
       switch (level) {
          case 4:
             coordinates = [
                // stage 1
                [[500-50, 70]],
                // stage 2
-               [],
+               [[-9, cast(FlxG.height / 2, Int) - 30]],
                // stage 3
                []
             ];
@@ -108,7 +109,7 @@ class Level {
                // stage 1
                [-90],
                // stage 2
-               [],
+               [90],
                // stage 3
                []
             ];
@@ -116,7 +117,15 @@ class Level {
                // stage 1
                [[500, 164]],
                // stage 2
+               [[500, 164]],
+               // stage 3
+               []
+            ];
+            timing = [
+               // stage 1
                [],
+               // stage 2
+               [1],
                // stage 3
                []
             ];
@@ -125,10 +134,15 @@ class Level {
             coordinates = [];
             rotations = [];
             gateCoordinates = [];
+            timing = [];
       }
       if (coordinates != null && coordinates.length > 0 ) {
          for (i in 0...coordinates[stage].length) {
-            buttons.push(new HitButton(coordinates[stage][i][0], coordinates[stage][i][1], gateCoordinates[stage][i][0], gateCoordinates[stage][i][1], rotations[stage][i]));
+            var timer:Float = 0;
+            if (timing != null && timing[stage].length > 0) {
+               timer = timing[stage][i];
+            }
+            buttons.push(new HitButton(coordinates[stage][i][0], coordinates[stage][i][1], gateCoordinates[stage][i][0], gateCoordinates[stage][i][1], rotations[stage][i], timer));
          }
       }
       return buttons;

@@ -59,6 +59,7 @@ class PlayState extends FlxState
 	var pressRText:FlxText;
 	var pressP:FlxSprite;
 	var pressPText:FlxText;
+	var timeTutorialText:FlxText;
 
 	// Pause screen
 	var holdingSpace:Bool = false;
@@ -128,10 +129,16 @@ class PlayState extends FlxState
 			remove(pressSpace);
 			pressSpace = null;
 		}
+		if (timeTutorialText != null) {
+			remove(timeTutorialText);
+			timeTutorialText = null;
+		}
 
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
+		} else if (this.curLevel == 4 && this.curStage == 2) {
+			showTimeTutorial();
 		}
 	}
 
@@ -143,6 +150,14 @@ class PlayState extends FlxState
 		pressSpace.animation.play("static");
 		add(pressSpace);
 	}
+
+	public function showTimeTutorial() {
+		this.timeTutorialText = new flixel.text.FlxText(FlxG.width - 350, FlxG.height - 100, 0, "Some buttons\nare timed!", 22);
+		timeTutorialText.color = FlxColor.BLACK;
+		add(timeTutorialText);
+	}
+
+
 	
 	public function createLevelMenu():Void {
 		remove(winnerText);
@@ -355,17 +370,25 @@ class PlayState extends FlxState
 					knife.stuck = true;
 					knife.body.type = BodyType.STATIC;
 					knife.body.space = null;
-					knife.button_sound.play();
+					button.button_sound.play();
 					activeButtons.remove(button);
 					pressedButtons.push(button);
 					button.animation.play("pressed");
 					button.gate.toggleGate();
+					button.startTimer();
 				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 2)) {
 					trace("hit detected on gate");
 					unstuckKnives.remove(knife);
 					button.gate.embedKnife(knife);
 
 				}
+			}
+		}
+		for (button in pressedButtons) {
+			if (button.addMe) { 
+				button.addMe = false;
+				activeButtons.push(button);
+				pressedButtons.remove(button);
 			}
 		}
 
