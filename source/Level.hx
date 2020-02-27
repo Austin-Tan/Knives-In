@@ -65,6 +65,8 @@ class Level {
             return new LevelStats(3, 15, 15);
          case 3:
             return new LevelStats(3, 15, 15);
+         case 4:
+            return new LevelStats(3, 30, 30);
          default:
             return new LevelStats(1, 1, 3);
       }
@@ -78,6 +80,8 @@ class Level {
             return 3;
          case 3:
             return 1;
+         case 4:
+            return 3;
          default:
             return 1;
       }
@@ -180,9 +184,15 @@ class Level {
          case 4:
             coordinates = [
                // stage 1
+               [coordinateCenterOffset(300, 0)],
+               // stage 2
+               [coordinateCenterOffset(300, 0)],
+               // stage 3
                [coordinateCenterOffset(300, 0)]
             ];
             rotations = [
+               [0],
+               [0],
                [0]
             ];
             velocities = null;
@@ -221,9 +231,11 @@ class Level {
       return targets;
    }
 
-   public static function getPlatforms(level:Int):Array<Platform> {
+   public static function getPlatforms(level:Int, stage:Int):Array<Platform> {
       // x, y, width, height
-      var properties:Array<Array<Int>>;
+      stage = stage - 1;
+      var properties:Array<Array<Array<Int>>>;
+      var platforms:Array<Platform> = new Array<Platform>();
       switch (level) {
          case 1:
             properties = [];
@@ -232,21 +244,27 @@ class Level {
          case 3:
             properties = [];
          case 4:
-            properties = [[500, 0, 32, 165], [500, 286, 32, 220]];
+            properties = [
+               [[500, 0, 32, 165], [500, 286, 32, 220]],
+               [[500, 0, 32, 165], [500, 286, 32, 220]],
+               []
+            ];
          default:
             properties = [];//[[320, 240, 50, 5]];
       }
       
+
+
       // Wall 
-      properties.push([0, 0, FlxG.width, 5]);
-      properties.push([0, FlxG.height - 5, FlxG.width, 5]);
-      properties.push([0, 0, 5, FlxG.height]);
-      properties.push([FlxG.width - 5, 0, 5, FlxG.height]);
+      platforms.push(new Platform(0, 0, FlxG.width, 5));
+      platforms.push(new Platform(0, FlxG.height - 5, FlxG.width, 5));
+      platforms.push(new Platform(0, 0, 5, FlxG.height));
+      platforms.push(new Platform(FlxG.width - 5, 0, 5, FlxG.height));
 
-      var platforms:Array<Platform> = new Array<Platform>();
-
-      for (i in 0...properties.length) {
-         platforms.push(new Platform(properties[i][0], properties[i][1], properties[i][2], properties[i][3]));
+      if(properties.length > 0 && properties[stage] != null) {
+         for (i in 0...properties[stage].length) {
+            platforms.push(new Platform(properties[stage][i][0], properties[stage][i][1], properties[stage][i][2], properties[stage][i][3]));
+         }
       }
 
       return platforms;

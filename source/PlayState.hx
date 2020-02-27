@@ -251,7 +251,7 @@ class PlayState extends FlxState
 			}
 		}
 
-		this.platforms = Level.getPlatforms(curLevel);
+		this.platforms = Level.getPlatforms(curLevel, curStage);
 		for (platform in this.platforms) {
 			add(platform);
 		}
