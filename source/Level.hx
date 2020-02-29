@@ -3,6 +3,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 
 class Level {
+   public static var MAX_LEVEL:Int = 4;
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
@@ -25,8 +26,10 @@ class Level {
             return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 3:
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
+         case 4:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          default: 
-            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2));
+            return new Thrower(50, 50);
       }
    }
 
@@ -212,8 +215,8 @@ class Level {
             velocities = null;
 
          default:
-            coordinates = [[polarCoordinate(50, 0), polarCoordinate(50, 90), coordinateCenterOffset(150, 0)]];
-            rotations = [[0, 90, 0]];
+            coordinates = [];
+            rotations = [];
             velocities = null;
       }
 

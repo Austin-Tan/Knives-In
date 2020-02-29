@@ -81,6 +81,11 @@ class PlayState extends FlxState
 	var timeStar:FlxSprite;
 	var timeIconVictory:FlxSprite;
 
+	// Congrats Screen
+	var congratsText1:flixel.text.FlxText;
+	var congratsText2:flixel.text.FlxText;
+	var selectButton2:FlxButton;
+
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.WHITE;
@@ -91,6 +96,25 @@ class PlayState extends FlxState
 		initializePauseScreen();
 
 		initializeLevel();
+	}
+
+	public function showCongratsScreen() {
+		this.congratsText1 =  new flixel.text.FlxText(0, 0, 0, "CONGRATS!", 30);
+		this.congratsText1.color = FlxColor.BLACK;
+		this.congratsText1.screenCenter();
+		this.congratsText1.y -= 50;
+		add(congratsText1);
+
+		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME", 30);
+		this.congratsText2.color = FlxColor.GRAY;
+		this.congratsText2.screenCenter();
+		add(congratsText2);
+
+
+		this.selectButton2 = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
+		this.selectButton2.screenCenter();
+		this.selectButton2.y += 50;
+		add(selectButton2);
 	}
 
 	public function initializePauseScreen() {
@@ -105,6 +129,14 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
+
+		if (curLevel > Level.MAX_LEVEL) {
+			removeTextItems();
+			removeItems();
+			showCongratsScreen();
+			return;
+		}
+		
 		trace("Level: " + curLevel + ". Stage: " + curStage);
 		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
 			level: curLevel,
@@ -117,7 +149,7 @@ class PlayState extends FlxState
 		holdingSpace = FlxG.keys.pressed.SPACE;
 		this.levelStats = Level.getLevelStats(this.curLevel);
 		victory = false;
-		
+
 		// Display Level
 		createLevelMenu();
 
@@ -157,9 +189,11 @@ class PlayState extends FlxState
 		add(timeTutorialText);
 	}
 
+	public function removeTextItems() {
+		remove(congratsText1);
+		remove(congratsText2);
+		remove(selectButton2);
 
-	
-	public function createLevelMenu():Void {
 		remove(winnerText);
 		remove(timeText);
 		remove(knivesText);
@@ -179,6 +213,10 @@ class PlayState extends FlxState
 		remove(pressRText);
 		remove(pressP);
 		remove(pressPText);
+	}
+
+	public function createLevelMenu():Void {
+		removeTextItems();
 
 		// reset tracked statistics
 		if(this.curStage == 1) {
@@ -219,6 +257,44 @@ class PlayState extends FlxState
 		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, " Pause", 12);
 		pressPText.color = FlxColor.BLACK;
 		add(pressPText);
+	}
+
+	public function removeItems():Void {
+		if(this.platforms != null) {
+			for (platform in this.platforms) {
+				remove(platform);
+			}
+		}
+
+		remove(this.thrower);
+
+		if (this.activeTargets != null) {
+			for (target in this.activeTargets) {
+				remove(target);
+			}
+		}
+
+		if (this.knives != null) {
+			for (knife in this.knives) {
+				remove(knife);
+			}
+		}
+
+		if (this.activeButtons != null) {
+			for (button in this.activeButtons) {
+				remove(button);
+				remove(button.gate);
+			}
+		}
+		
+		if (this.pressedButtons != null) {
+			for (button in this.pressedButtons) {
+				remove(button);
+				remove(button.gate);
+				pressedButtons.remove(button);
+			}
+		}
+
 	}
 
 	public function loadItems():Void {
