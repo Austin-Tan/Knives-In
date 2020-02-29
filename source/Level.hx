@@ -60,15 +60,15 @@ class Level {
       // format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
       switch(level) {
          case 1:
-            return new LevelStats(3, 15, 15);
+            return new LevelStats(3, 16, 15);
          case 2:
-            return new LevelStats(3, 15, 15);
+            return new LevelStats(3, 24, 24);
          case 3:
             return new LevelStats(3, 15, 15);
          case 4:
-            return new LevelStats(3, 30, 30);
+            return new LevelStats(3, 15, 22);
          default:
-            return new LevelStats(1, 1, 3);
+            return new LevelStats(1, 2, 3);
       }
    }
 
@@ -103,7 +103,7 @@ class Level {
                // stage 2
                [[-9, cast(FlxG.height / 2, Int) - 30]],
                // stage 3
-               []
+               [[cast(FlxG.width / 2, Int) - 30, 5], [-9, cast(FlxG.height / 2, Int) - 30], [cast(FlxG.width / 2, Int) - 30, FlxG.height - 43]]
             ];
             rotations = [
                // stage 1
@@ -111,7 +111,7 @@ class Level {
                // stage 2
                [90],
                // stage 3
-               []
+               [180, 90, 0]
             ];
             gateCoordinates = [
                // stage 1
@@ -119,7 +119,7 @@ class Level {
                // stage 2
                [[500, 164]],
                // stage 3
-               []
+               [[500, 164], [cast(FlxG.width / 2, Int) - 15, 15], [100, 164]]
             ];
             timing = [
                // stage 1
@@ -127,7 +127,7 @@ class Level {
                // stage 2
                [1],
                // stage 3
-               []
+               [2.25, 2.25, 2.25]
             ];
 
          default:
@@ -261,7 +261,8 @@ class Level {
             properties = [
                [[500, 0, 32, 165], [500, 286, 32, 220]],
                [[500, 0, 32, 165], [500, 286, 32, 220]],
-               []
+               // stage 3
+               [[500, 160, 200, 5], [500, 290, 200, 5], [cast(FlxG.width / 2, Int) - 68, 0, 5 , 94], [385, 0, 5, 94], [0, 160, 132, 5], [0, 290, 132, 5]]
             ];
          default:
             properties = [];//[[320, 240, 50, 5]];

@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import nape.dynamics.InteractionFilter;
 import flixel.addons.nape.FlxNapeSpace;
 import nape.phys.BodyType;
@@ -28,6 +29,9 @@ class Gate extends FlxSprite {
         if(timer != 0) {
             timed = true;
             this.timer = timer;
+        }
+        if (x == cast(FlxG.width / 2, Int) - 15) {
+            this.angle = 90;
         }
     }
 
