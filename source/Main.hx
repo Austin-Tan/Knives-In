@@ -24,7 +24,7 @@ class Main extends Sprite
 		var gameId:Int = 202002;
 		var gameKey:String = "74be16979710d4c4e7c6647856088456";
 		var gameName:String = "knivesin";
-		var categoryId:Int = 2;
+		var categoryId:Int = -3;
 
 		Main.LOGGER = new CapstoneLogger(gameId, gameName, gameKey, categoryId);
 		var userId:String = Main.LOGGER.getSavedUserId();
