@@ -35,7 +35,7 @@ with open(IN_FILE, 'r') as f:
 uid_to_best_level = {}
 
 for uid, rows in uid_map.items():
-
+   
    # create a map of <level instance, {level, stage, knives, time}>
    level_instance_map = {}
    for row in rows:
@@ -58,14 +58,14 @@ for uid, rows in uid_map.items():
          elif v['level'] == max_level:
             max_stage = max(max_stage, v['stage'])
          
-         if len(v) == 4 and v['level'] == 4 and v['stage'] == 3:
+         if len(v) == 4 and v['level'] == 0 and v['stage'] == 2:
             last_level = True
 
    if not last_level:
-      uid_to_best_level[uid] = '{}-{}'.format(max_level, max_stage)
+      uid_to_best_level[uid] = '{}-{}'.format(max_level + 1, max_stage + 1)
    else:
-      uid_to_best_level[uid] = 'completed'
-   
+      uid_to_best_level[uid] = '1-3'
+pdb.set_trace()
 
 
 # create a map of <level, number of players>
@@ -75,17 +75,11 @@ for k,v in uid_to_best_level.items():
       level_map[v] = 0
    level_map[v] += 1
 
-drop_off = {}
-prev = 0
-for key, value in sorted(level_map.items(), reverse=True):
-   drop_off[key] = value + prev
-   prev += value
-
 with open(OUT_FILE, 'w') as f:
    fieldsnames = ['level', 'player_count']
    writer = csv.DictWriter(f, fieldnames=fieldsnames)
    writer.writeheader()
-   for key, value in sorted(drop_off.items()):
+   for key, value in sorted(level_map.items()):
       writer.writerow({'level': key, 'player_count':value})
 
 
