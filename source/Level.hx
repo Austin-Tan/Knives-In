@@ -79,7 +79,7 @@ class Level {
          case 2:
             return 3;
          case 3:
-            return 1;
+            return 3;
          case 4:
             return 3;
          default:
