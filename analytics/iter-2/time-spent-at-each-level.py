@@ -53,7 +53,7 @@ for uid, rows in uid_map.items():
       if 'level' in v and 'time' in v:
          level = v['level']
          stage = v['stage']
-         key = 'level {} stage {}'.format(level, stage)
+         key = (level-1)*3 + stage
 
          if key not in level_to_time:
             level_to_time[key] = []
@@ -71,7 +71,6 @@ with open(OUT_FILE, 'w') as f:
    for key, value in sorted(level_to_time.items()):
       for time in value:
          writer.writerow({'level': key, 'time_spent':time})
-
 
 
 
