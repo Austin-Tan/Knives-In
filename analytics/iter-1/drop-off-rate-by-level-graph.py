@@ -58,14 +58,13 @@ for uid, rows in uid_map.items():
          elif v['level'] == max_level:
             max_stage = max(max_stage, v['stage'])
          
-         if len(v) == 4 and v['level'] == 0 and v['stage'] == 2:
+         if v['level'] == 1 and v['stage'] == 0:
             last_level = True
 
    if not last_level:
       uid_to_best_level[uid] = '{}-{}'.format(max_level + 1, max_stage + 1)
    else:
-      uid_to_best_level[uid] = '1-3'
-pdb.set_trace()
+      uid_to_best_level[uid] = 'completed'
 
 
 # create a map of <level, number of players>
