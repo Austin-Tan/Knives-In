@@ -53,7 +53,7 @@ for uid, rows in uid_map.items():
       if 'level' in v and 'time' in v:
          level = v['level']
          stage = v['stage']
-         key = '{}-{}'.format(level, stage)
+         key = 'level {} stage {}'.format(level, stage)
 
          if key not in level_to_time:
             level_to_time[key] = []
