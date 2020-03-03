@@ -23,7 +23,7 @@ class LevelSelect extends FlxState {
         var buttonX:Int = leftButtonX;
         var buttonY:Int = -150;
         var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
-        while (i < 25 && i <= maxLevel) {
+        while (i < 25 && i <= maxLevel && i <= Level.MAX_LEVEL) {
             var x = i;
             if(i % 5 == 0) {
                 buttonY += 50;
