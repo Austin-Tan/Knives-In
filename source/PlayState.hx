@@ -60,6 +60,8 @@ class PlayState extends FlxState
 	var pressP:FlxSprite;
 	var pressPText:FlxText;
 	var timeTutorialText:FlxText;
+	var mashTutorialText:FlxText;
+
 
 	// Pause screen
 	var holdingSpace:Bool = false;
@@ -164,12 +166,18 @@ class PlayState extends FlxState
 			remove(timeTutorialText);
 			timeTutorialText = null;
 		}
+		if (mashTutorialText != null) {
+			remove(mashTutorialText);
+			mashTutorialText = null;
+		}
 
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
 		} else if (this.curLevel == 4 && this.curStage == 2) {
 			showTimeTutorial();
+		} else if (this.curLevel == 2 && this.curStage == 1) {
+			showMashTutorial();
 		}
 	}
 
@@ -181,11 +189,15 @@ class PlayState extends FlxState
 		pressSpace.animation.play("static");
 		add(pressSpace);
 	}
-
 	public function showTimeTutorial() {
 		this.timeTutorialText = new flixel.text.FlxText(FlxG.width - 350, FlxG.height - 100, 0, "Some buttons\nare timed!", 22);
 		timeTutorialText.color = FlxColor.BLACK;
 		add(timeTutorialText);
+	}
+	public function showMashTutorial() {
+		this.mashTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "Blue buttons take several hits to knock down,\ntry rapidly mashing space and clicking\nto destroy them quickly!", 16);
+		mashTutorialText.color = FlxColor.BLACK;
+		add(mashTutorialText);
 	}
 
 	public function removeTextItems() {

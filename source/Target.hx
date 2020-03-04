@@ -34,6 +34,7 @@ class Target extends FlxNapeSprite {
         if (!bigTarget) {
             this.scale.set(2, 2);
             hp = 1;
+            this.body.setShapeMaterials(new Material(0.2, 10.0, 20.0, 5, 0.001));
         } else {
             loadGraphic("assets/images/BigTarget.png", true, 80, 180);
             this.animation.add("5", [0], 0, false);
@@ -43,9 +44,9 @@ class Target extends FlxNapeSprite {
             this.animation.add("1", [10, 11, 11, 10, 12], 60, false);
             this.animation.play("5");
             hp = 5;
+            this.body.setShapeMaterials(new Material(0.001, 10.0, 20.0, 150, 0.001));
         }
         isBig = bigTarget;
-        this.body.setShapeMaterials(new Material(0.2, 10.0, 20.0, 5, 0.001));
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.rotation = (Math.PI / 180) * angle;
         this.body.shapes.at(0).sensorEnabled = true;
