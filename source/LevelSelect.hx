@@ -66,7 +66,6 @@ class LevelSelect extends FlxState {
     function clearData():Void {
         var cookies = Cookie.all();
         for (cookie in cookies.keys()) {
-            trace(cookie);
             Cookie.remove(cookie);
         }
         Cookie.set("MaxLevel", "1", Main.expireDelay);

@@ -56,7 +56,6 @@ class Knife extends FlxNapeSprite {
 
    public function stickTarget(target:Target):Void {
       this.stuck = true;
-      target.body.type = BodyType.DYNAMIC;
       wood_sound.play(true);
    }
 
@@ -70,8 +69,6 @@ class Knife extends FlxNapeSprite {
                if(body.name == 1) {
                   continue; // hit something else instead, this is a knife
                }
-   
-               trace(body.name);
    
                // this is a wall
                if(body.name == 2) {

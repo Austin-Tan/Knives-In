@@ -23,7 +23,7 @@ class Level {
          case 1: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 2:
-            return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2));
+            return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2) - 8);
          case 3:
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 4:
@@ -50,8 +50,8 @@ class Level {
    }
 
    public static function polarCoordinate(r:Float, angle:Float, isTarget:Bool=true):Array<Int> {
-      var x:Int = Std.int((FlxG.width / 2) + r * Math.cos(angle * 2 * Math.PI / 360));
-      var y:Int = Std.int((FlxG.height / 2) + r * Math.sin(angle * 2 * Math.PI / 360));
+      var x:Int = Std.int((FlxG.width / 2) + r * Math.cos(angle * 2 * Math.PI / 360) - 15);
+      var y:Int = Std.int((FlxG.height / 2) + r * Math.sin(angle * 2 * Math.PI / 360) - 15);
       if (isTarget) {
          return targetCoordinate(x, y);
       } else {
@@ -157,6 +157,7 @@ class Level {
       var velocities:Array<Array<Array<Int>>>;
       var coordinates:Array<Array<Array<Int>>>;
       var rotations:Array<Array<Int>>;
+      var bigBoys:Array<Array<Bool>>;
       switch (level) {
          case 1: 
             coordinates = 
@@ -174,16 +175,25 @@ class Level {
                //stage 3
                [0, 72, 72 * 2, 72 * 3, 72 * 4]];
             velocities = null;
+            bigBoys = null;
          case 2: 
             coordinates = 
-               [[polarCoordinate(100, -45), polarCoordinate(100, 0), polarCoordinate(100, 45)],
-               [polarCoordinate(80, 0), polarCoordinate(140, 0), polarCoordinate(200, 0), polarCoordinate(260, 0)],
+               [[polarCoordinate(100, -45), polarCoordinate(180, 0), polarCoordinate(100, 45)],
+               [coordinateCenterOffset(70, -70), coordinateCenterOffset(115, -35), coordinateCenterOffset(160, 0), coordinateCenterOffset(205, 35), coordinateCenterOffset(250, 70)],
                [polarCoordinate(200, 30), polarCoordinate(150, 30), polarCoordinate(200, -30), polarCoordinate(150, -30)]];
             rotations = 
                [[-45, 0, 45],
-               [0, 0, 0, 0],
+               [0, 0, 0, 0, 0],
                [30, 30, -30, -30]];
             velocities = null;
+            bigBoys = [
+               // stage 1
+               [false, true, false],
+               // stage 2
+               [false, false, false, false, false],
+               // stage 3
+               [true, false, true, false]
+            ];
          case 3:
             coordinates = 
                [[polarCoordinate(200, 0), polarCoordinate(-200, 0)],
@@ -198,6 +208,7 @@ class Level {
                [[[0,80], [0,80]],
                [[80,0], [-80,0], [80,0]],
                [[0,-80], [0,80], [0,-80], [0,80]]];
+            bigBoys = null;
          case 4:
             coordinates = [
                // stage 1
@@ -213,16 +224,17 @@ class Level {
                [0]
             ];
             velocities = null;
+            bigBoys = null;
 
          default:
             coordinates = [];
             rotations = [];
             velocities = null;
+            bigBoys = null;
       }
 
       var targets:Array<Target> = new Array<Target>();
 
-      trace("for loop, level is " + level + " and stage is " + stage);
       for (i in 0...coordinates[stage].length) {
          var whichImg:String = "1";
          var angle:Int = 0;
@@ -238,12 +250,11 @@ class Level {
             angle = rotations[stage][i];
          }
          if (velocities == null) {
-            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle, false));
+            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], bigBoys == null ? false:bigBoys[stage][i],whichImg, angle, false));
          } else {
-            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], whichImg, angle, true, velocities[stage][i][0], velocities[stage][i][1]));
+            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], bigBoys == null ? false:bigBoys[stage][i], whichImg, angle, true, velocities[stage][i][0], velocities[stage][i][1]));
          }
       }
-      trace("post loop");
 
       return targets;
    }

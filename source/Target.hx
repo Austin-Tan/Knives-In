@@ -27,11 +27,24 @@ class Target extends FlxNapeSprite {
 
     public var moving:Bool = false;
     public var hit:Bool = false;
-    public function new(x:Float, y:Float, whichImage:String, angle:Int=0, isKinemetic=false, xVelocity=0, yVelocity=0) {
+    public var isBig:Bool;
+    public var hp:Int;
+    public function new(x:Float, y:Float, bigTarget:Bool, whichImage:String, angle:Int=0, isKinemetic=false, xVelocity=0, yVelocity=0) {
         super(x, y, "assets/images/Target" + whichImage + ".png");
-        this.body.rotation = (Math.PI / 180) * angle;
-        this.scale.set(2, 2);
-        updateHitbox();
+        if (!bigTarget) {
+            this.scale.set(2, 2);
+            hp = 1;
+        } else {
+            loadGraphic("assets/images/BigTarget.png", true, 80, 180);
+            this.animation.add("5", [0], 0, false);
+            this.animation.add("4", [1, 2, 2, 1, 3], 60, false);
+            this.animation.add("3", [4, 5, 5, 4, 6], 60, false);
+            this.animation.add("2", [7, 8, 8, 7, 9], 60, false);
+            this.animation.add("1", [10, 11, 11, 10, 12], 60, false);
+            this.animation.play("5");
+            hp = 5;
+        }
+        isBig = bigTarget;
         this.body.setShapeMaterials(new Material(0.2, 10.0, 20.0, 5, 0.001));
         this.body.setShapeFilters(new InteractionFilter(COLLISION_GROUP, COLLISION_MASK, SENSOR_GROUP, SENSOR_MASK));
         this.body.rotation = (Math.PI / 180) * angle;
@@ -62,9 +75,7 @@ class Target extends FlxNapeSprite {
 
      override public function update(elapsed:Float):Void {
         super.update(elapsed);
-        if (!hit && body.constraints.length > 0) {
-            hit = true;
-        }
+
         // make sure the target leaves the border
         if (justTouch) {
             count += 1;
@@ -76,10 +87,9 @@ class Target extends FlxNapeSprite {
 
      }
      public function collide(changeX:Int, changeY:Int) {
-        if (hit || justTouch)
+        if (hit || justTouch) {
             return;
-        trace("velocity: " + xVelocity + " " + yVelocity);
-        trace("position: " + x + " " + y);
+        }
         xVelocity = changeX * xVelocity;
         yVelocity = changeY * yVelocity;
         this.body.velocity.setxy(xVelocity, yVelocity);

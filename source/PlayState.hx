@@ -137,7 +137,6 @@ class PlayState extends FlxState
 			return;
 		}
 		
-		trace("Level: " + curLevel + ". Stage: " + curStage);
 		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
 			level: curLevel,
 			stage: curStage}
@@ -316,7 +315,6 @@ class PlayState extends FlxState
 		add(thrower);
 		// this.cooldown = 0;
 
-		trace("In playstate, curStage is " + this.curStage);
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
 
 		// game status
@@ -417,11 +415,20 @@ class PlayState extends FlxState
 				continue;
 			}
 			for (target in activeTargets) {
-				if (FlxG.pixelPerfectOverlap(knife, target, 0)) {
+				if (target.isBig ? FlxG.pixelPerfectOverlap(knife, target, 10) : FlxG.pixelPerfectOverlap(knife, target, 0)) {
 					unstuckKnives.remove(knife);
+
 					if (!target.hit) {
-						numTargetsLeft --;
-						target.hit = true;
+						target.hp --;
+						trace("new hp is " + target.hp);
+						if (target.hp == 0) {
+							target.hit = true;
+							numTargetsLeft --;
+      						target.body.type = BodyType.DYNAMIC;
+						}
+						if (target.isBig) {
+							target.animation.play("" + target.hp);
+						}
 					}
 					updateTexts();
 					
