@@ -2,9 +2,10 @@ import csv
 import sys
 import json
 import pdb
+from statistics import mean
 
 IN_FILE = 'results/quests.out'
-OUT_FILE = 'csv/number-of-knives.csv'
+OUT_FILE = 'csv/number-of-knives-fixed.csv'
 
 index = {
    'cid': 0,
@@ -34,9 +35,6 @@ with open(IN_FILE, 'r') as f:
 # create a map of <level, [time]]>
 level_to_time = {}
 
-# create a map of <level, [number of knives]>
-level_to_knife_count = {}
-
 for uid, rows in uid_map.items():
 
    level_instance_map = {}
@@ -47,29 +45,32 @@ for uid, rows in uid_map.items():
       details = json.loads(row[index['q_detail']])
       for k, v in details.items():
          level_instance_map[dqid][k] = v
-   
+  
+   # pdb.set_trace() 
+
    for k, v in level_instance_map.items():
-      if 'level' in v and 'time' in v:
+      if 'level' in v and 'knivesThrown' in v:
          level = v['level']
          stage = v['stage']
+         time = v['knivesThrown']
+         if stage == 1:
+            prev_time = 0
+
          key = (level-1)*3 + stage
 
          if key not in level_to_time:
             level_to_time[key] = []
-         level_to_time[key].append(v['time'])
-
-         if key not in level_to_knife_count:
-            level_to_knife_count[key] = []
-         level_to_knife_count[key].append(v['knivesThrown'])
+         level_to_time[key].append(time - prev_time)
          
+         prev_time = time
 
 with open(OUT_FILE, 'w') as f:
-   fieldsnames = ['level', 'time_spent']
+   fieldsnames = ['level', 'knives_thrown']
    writer = csv.DictWriter(f, fieldnames=fieldsnames)
    writer.writeheader()
-   for key, value in sorted(level_to_knife_count.items()):
+   for key, value in sorted(level_to_time.items()):
       for time in value:
-         writer.writerow({'level': key, 'time_spent':time})
+         writer.writerow({'level': key, 'knives_thrown':time})
 
 
 
