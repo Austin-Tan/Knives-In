@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxSprite;
 import js.Cookie;
 import flixel.FlxG;
 import flixel.ui.FlxButton;
@@ -10,7 +11,6 @@ import flixel.system.FlxSound;
 
 class MenuState extends FlxState
 {
-
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.BLACK;
@@ -33,9 +33,30 @@ class MenuState extends FlxState
 		credits.y += 200;
 		credits.x -= 140;
 
-		FlxG.sound.playMusic("assets/music/blippy.ogg");   
-		FlxG.sound.load("assets/music/blippy.ogg").play();
+		var menuY = 10;
+		var muteMusicIcon = new FlxSprite(FlxG.width - 120, menuY + 60);
+		muteMusicIcon.loadGraphic("assets/images/musicIcon.png", false, 32, 32);
+		add(muteMusicIcon);
+		var muteMusicButton = new FlxButton(FlxG.width - 100, menuY + 60, "Music", muteMusic);
+		add(muteMusicButton);
 
+		var muteSoundIcon = new FlxSprite(FlxG.width - 120, menuY + 90);
+		muteSoundIcon.loadGraphic("assets/images/soundIcon.png", false, 32, 32);
+		add(muteSoundIcon);
+		var muteSoundButton = new FlxButton(FlxG.width - 100, menuY + 90, "All Sound", muteSound);
+		add(muteSoundButton);
+	}
+
+	function muteMusic():Void {
+		if (Main.blippy.playing) {
+			Main.blippy.pause();
+		} else {
+			Main.blippy.resume();
+		}
+	}
+		
+	public function muteSound():Void {
+		FlxG.sound.toggleMuted();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -44,7 +65,6 @@ class MenuState extends FlxState
 	}
 
 	function clickPlay():Void {
-
 		FlxG.switchState(new PlayState());
 	}
 }

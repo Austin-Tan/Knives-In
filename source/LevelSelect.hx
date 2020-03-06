@@ -55,8 +55,13 @@ class LevelSelect extends FlxState {
             i++;
         }
 
-        var clearButton = new FlxButton(FlxG.width - 60, FlxG.height - 30, "Clear all data", clearData);
+        var clearButton = new FlxButton(FlxG.width - 120, FlxG.height - 30, "Clear all data", clearData);
         add(clearButton);
+
+        var backButton = new FlxButton(0, 0, "Main Menu", ()->{FlxG.switchState(new MenuState());});
+        backButton.screenCenter();
+        backButton.y += 100;
+        add(backButton);
     }
 
     override public function update(elapsed:Float):Void {

@@ -59,6 +59,10 @@ class PlayState extends FlxState
 	var pressRButton:FlxButton;
 	var pressP:FlxSprite;
 	var pressPButton:FlxButton;
+	var muteMusicIcon:FlxSprite;
+	var muteMusicButton:FlxButton;
+	var muteSoundIcon:FlxSprite;
+	var muteSoundButton:FlxButton;
 	var timeTutorialText:FlxText;
 	var mashTutorialText:FlxText;
 
@@ -231,6 +235,10 @@ class PlayState extends FlxState
 		remove(pressRButton);
 		remove(pressP);
 		remove(pressPButton);
+		remove(muteMusicButton);
+		remove(muteMusicIcon);
+		remove(muteSoundButton);
+		remove(muteSoundIcon);
 	}
 
 	public function createLevelMenu():Void {
@@ -268,11 +276,35 @@ class PlayState extends FlxState
 		pressRButton = new FlxButton(FlxG.width - 100, menuY, "Restart", ()->{this.curStage = 1;initializeLevel();});
 		add(pressRButton);
 
-		pressP = new FlxSprite(FlxG.width - 120, menuY + 20);
+		pressP = new FlxSprite(FlxG.width - 120, menuY + 30);
 		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
 		add(pressP);
-		pressPButton = new FlxButton(FlxG.width - 100, menuY + 20, "Pause", pauseGame);
+		pressPButton = new FlxButton(FlxG.width - 100, menuY + 30, "Pause", pauseGame);
 		add(pressPButton);
+
+		muteMusicIcon = new FlxSprite(FlxG.width - 120, menuY + 60);
+		muteMusicIcon.loadGraphic("assets/images/musicIcon.png", false, 32, 32);
+		add(muteMusicIcon);
+		muteMusicButton = new FlxButton(FlxG.width - 100, menuY + 60, "Music", muteMusic);
+		add(muteMusicButton);
+
+		muteSoundIcon = new FlxSprite(FlxG.width - 120, menuY + 90);
+		muteSoundIcon.loadGraphic("assets/images/soundIcon.png", false, 32, 32);
+		add(muteSoundIcon);
+		muteSoundButton = new FlxButton(FlxG.width - 100, menuY + 90, "All Sound", muteSound);
+		add(muteSoundButton);
+	}
+
+	public function muteMusic():Void {
+		if (Main.blippy.playing) {
+			Main.blippy.pause();
+		} else {
+			Main.blippy.resume();
+		}
+	}
+	
+	public function muteSound():Void {
+		FlxG.sound.toggleMuted();
 	}
 
 	public function removeItems():Void {
@@ -410,6 +442,14 @@ class PlayState extends FlxState
 		if(FlxG.keys.justReleased.SPACE) {
 			holdingSpace = false;
 		}
+		if (FlxG.keys.justPressed.M) {
+			muteSound();
+		}
+		// restart level
+		if (FlxG.keys.justPressed.R) {
+			this.curStage = 1;
+			initializeLevel();
+		}
 		if(victory) {
 			if (FlxG.keys.pressed.ENTER) {
 				curStage = 1;
@@ -418,7 +458,7 @@ class PlayState extends FlxState
 			}
 			return;
 		}
-		if (pressRButton.pressed || pressPButton.pressed) {
+		if (pressRButton.pressed || pressPButton.pressed || muteSoundButton.pressed || muteMusicButton.pressed) {
 			return;
 		}
 
@@ -428,12 +468,6 @@ class PlayState extends FlxState
 		}
 		if (paused) {
 			return;
-		}
-
-		// restart level
-		if (FlxG.keys.justPressed.R) {
-			this.curStage = 1;
-			initializeLevel();
 		}
 
 		for (knife in unstuckKnives) {
@@ -568,20 +602,20 @@ class PlayState extends FlxState
 	
 	function showVictoryScreen() {
 		victory = true;
-		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel) + " Complete!", 45);
-		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
-		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) + 40, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
-		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 95, 0, "\t\t\t\t\t\t\t\t\t\tOr press ENTER", 25);
-		continueButton = new FlxButton((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
+		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 130, 0, "Level " + (this.curLevel) + " Complete!", 45);
+		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2) - 70, 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
+		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 30, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
+		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 230, (FlxG.height / 2) + 25, 0, "\t\t\t\t\t\tOr press ENTER", 25);
+		continueButton = new FlxButton((FlxG.width / 2) - 260, (FlxG.height / 2) + 30, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
 		winnerText.color = FlxColor.BLACK;
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
 		pressEnterText.color = FlxColor.BLACK;
 
-		completeStar = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
-		knivesStar = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
-		timeStar = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
-		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) + 10, "assets/images/stopwatch.png");
+		completeStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/star.png");
+		knivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/star.png");
+		timeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/star.png");
+		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) - 60, "assets/images/stopwatch.png");
 	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
 		knivesStar.x = 15 + knivesText.x + knivesText.width;
