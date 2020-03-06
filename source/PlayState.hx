@@ -67,6 +67,7 @@ class PlayState extends FlxState
 	var holdingSpace:Bool = false;
 	var paused:Bool = false;
 	var selectButton:FlxButton;
+	var resumeButton:FlxButton;
 	var pauseText:flixel.text.FlxText;
 
 	// Tutorial
@@ -127,6 +128,10 @@ class PlayState extends FlxState
 		
 		this.selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 		this.selectButton.screenCenter();
+		this.selectButton.y += 15;
+		this.resumeButton = new FlxButton(0, 0, "Resume", pauseGame);
+		this.resumeButton.screenCenter();
+		this.resumeButton.y -= 30;
 	}
 
 	// to be called when loading a new level
@@ -382,11 +387,13 @@ class PlayState extends FlxState
 		paused = !paused;
 		if (paused) {
 			add(pauseText);
+			add(resumeButton);
 			add(selectButton);
 			thrower.visible = false;
 			FlxNapeSpace.space.gravity.setxy(0, 0);
 		} else {
 			remove(pauseText);
+			remove(resumeButton);
 			remove(selectButton);
 			thrower.visible = true;
 			FlxNapeSpace.space.gravity.setxy(0, 400);
@@ -407,6 +414,9 @@ class PlayState extends FlxState
 				curLevel ++;
 				initializeLevel();
 			}
+			return;
+		}
+		if (pressRButton.pressed || pressPButton.pressed) {
 			return;
 		}
 

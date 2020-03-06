@@ -55,7 +55,7 @@ class LevelSelect extends FlxState {
             i++;
         }
 
-        var clearButton = new FlxButton(FlxG.width - 50, FlxG.height - 30, "Clear all data", clearData);
+        var clearButton = new FlxButton(FlxG.width - 60, FlxG.height - 30, "Clear all data", clearData);
         add(clearButton);
     }
 
