@@ -77,6 +77,7 @@ class Knife extends FlxNapeSprite {
                   this.setSize(0, 0); // nulling the hitbox
                   stuck = true;
                   this.body.shapes.at(0).sensorEnabled = false;
+		            FlxG.sound.playMusic("assets/music/blippy.ogg");   
    
                }
             }

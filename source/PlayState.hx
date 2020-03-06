@@ -83,6 +83,7 @@ class PlayState extends FlxState
 	var knivesStar:FlxSprite;
 	var timeStar:FlxSprite;
 	var timeIconVictory:FlxSprite;
+	var continueButton:FlxButton;
 
 	// Congrats Screen
 	var congratsText1:flixel.text.FlxText;
@@ -108,7 +109,7 @@ class PlayState extends FlxState
 		this.congratsText1.y -= 50;
 		add(congratsText1);
 
-		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME", 30);
+		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\t\t\tDid you get all the stars?", 30);
 		this.congratsText2.color = FlxColor.GRAY;
 		this.congratsText2.screenCenter();
 		add(congratsText2);
@@ -128,7 +129,7 @@ class PlayState extends FlxState
 		
 		this.selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 		this.selectButton.screenCenter();
-		this.selectButton.y += 15;
+		this.selectButton.y += 5;
 		this.resumeButton = new FlxButton(0, 0, "Resume", pauseGame);
 		this.resumeButton.screenCenter();
 		this.resumeButton.y -= 30;
@@ -214,6 +215,7 @@ class PlayState extends FlxState
 		remove(timeText);
 		remove(knivesText);
 		remove(pressEnterText);
+		remove(continueButton);
 		remove(completeStar);
 		remove(knivesStar);
 		remove(timeStar);
@@ -260,16 +262,16 @@ class PlayState extends FlxState
 		add(timerText);
 		add(timeIcon);
 
-		pressR = new FlxSprite(FlxG.width - 100, menuY);
+		pressR = new FlxSprite(FlxG.width - 120, menuY);
 		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
 		add(pressR);
-		pressRButton = new FlxButton(FlxG.width - 83, menuY, "Restart", ()->{this.curStage = 1;initializeLevel();});
+		pressRButton = new FlxButton(FlxG.width - 100, menuY, "Restart", ()->{this.curStage = 1;initializeLevel();});
 		add(pressRButton);
 
-		pressP = new FlxSprite(FlxG.width - 100, menuY + 20);
+		pressP = new FlxSprite(FlxG.width - 120, menuY + 20);
 		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
 		add(pressP);
-		pressPButton = new FlxButton(FlxG.width - 83, menuY + 20, "Pause", pauseGame);
+		pressPButton = new FlxButton(FlxG.width - 100, menuY + 20, "Pause", pauseGame);
 		add(pressPButton);
 	}
 
@@ -444,7 +446,6 @@ class PlayState extends FlxState
 
 					if (!target.hit) {
 						target.hp --;
-						trace("new hp is " + target.hp);
 						if (target.hp == 0) {
 							target.hit = true;
 							numTargetsLeft --;
@@ -570,7 +571,8 @@ class PlayState extends FlxState
 		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel) + " Complete!", 45);
 		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
 		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) + 40, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
-		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, 0, "Press Enter to continue", 25);
+		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 95, 0, "\t\t\t\t\t\t\t\t\t\tOr press ENTER", 25);
+		continueButton = new FlxButton((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
 		winnerText.color = FlxColor.BLACK;
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
@@ -590,6 +592,7 @@ class PlayState extends FlxState
 		timeStar.scale.set(2, 2);
 		timeIconVictory.scale.set(2, 2);
 
+		add(continueButton);
 		add(winnerText);
 		add(timeText);
 		add(knivesText);

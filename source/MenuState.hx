@@ -33,7 +33,9 @@ class MenuState extends FlxState
 		credits.y += 200;
 		credits.x -= 140;
 
-		FlxG.sound.playMusic("assets/music/blippy.mp3");   
+		FlxG.sound.playMusic("assets/music/blippy.ogg");   
+		FlxG.sound.load("assets/music/blippy.ogg").play();
+
 	}
 
 	override public function update(elapsed:Float):Void
