@@ -56,9 +56,9 @@ class PlayState extends FlxState
 	var menuX:Int = 10;
 	var menuY:Int = 10;
 	var pressR:FlxSprite;
-	var pressRText:FlxText;
+	var pressRButton:FlxButton;
 	var pressP:FlxSprite;
-	var pressPText:FlxText;
+	var pressPButton:FlxButton;
 	var timeTutorialText:FlxText;
 	var mashTutorialText:FlxText;
 
@@ -221,9 +221,9 @@ class PlayState extends FlxState
 		remove(timerText);
 
 		remove(pressR);
-		remove(pressRText);
+		remove(pressRButton);
 		remove(pressP);
-		remove(pressPText);
+		remove(pressPButton);
 	}
 
 	public function createLevelMenu():Void {
@@ -258,16 +258,14 @@ class PlayState extends FlxState
 		pressR = new FlxSprite(FlxG.width - 100, menuY);
 		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
 		add(pressR);
-		pressRText = new flixel.text.FlxText(FlxG.width - 83, menuY, " Restart", 12);
-		pressRText.color = FlxColor.BLACK;
-		add(pressRText);
+		pressRButton = new FlxButton(FlxG.width - 83, menuY, "Restart", ()->{this.curStage = 1;initializeLevel();});
+		add(pressRButton);
 
 		pressP = new FlxSprite(FlxG.width - 100, menuY + 20);
 		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
 		add(pressP);
-		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, " Pause", 12);
-		pressPText.color = FlxColor.BLACK;
-		add(pressPText);
+		pressPButton = new FlxButton(FlxG.width - 83, menuY + 20, "Pause", pauseGame);
+		add(pressPButton);
 	}
 
 	public function removeItems():Void {
@@ -380,6 +378,24 @@ class PlayState extends FlxState
 		}
 	}
 
+	function pauseGame():Void {
+		paused = !paused;
+		if (paused) {
+			add(pauseText);
+			add(selectButton);
+			thrower.visible = false;
+			FlxNapeSpace.space.gravity.setxy(0, 0);
+		} else {
+			remove(pauseText);
+			remove(selectButton);
+			thrower.visible = true;
+			FlxNapeSpace.space.gravity.setxy(0, 400);
+		}
+		for (target in activeTargets) {
+			target.pauseMe(paused);
+		}
+	}
+
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		if(FlxG.keys.justReleased.SPACE) {
@@ -396,21 +412,7 @@ class PlayState extends FlxState
 
 		// pause menu
 		if (FlxG.keys.justPressed.P || FlxG.keys.justPressed.ESCAPE) {
-			paused = !paused;
-			if (paused) {
-				add(pauseText);
-				add(selectButton);
-				thrower.visible = false;
-				FlxNapeSpace.space.gravity.setxy(0, 0);
-			} else {
-				remove(pauseText);
-				remove(selectButton);
-				thrower.visible = true;
-				FlxNapeSpace.space.gravity.setxy(0, 400);
-			}
-			for (target in activeTargets) {
-				target.pauseMe(paused);
-			}
+			pauseGame();
 		}
 		if (paused) {
 			return;
