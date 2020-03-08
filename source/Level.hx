@@ -104,6 +104,7 @@ class Level {
       var rotations:Array<Array<Int>>;
       var gateCoordinates:Array<Array<Array<Int>>>;
       var timing:Array<Array<Float>>;
+      var rotateGate:Array<Array<Bool>>;
       switch (level) {
          case 4:
             coordinates = [
@@ -138,12 +139,83 @@ class Level {
                // stage 3
                [2.25, 2.25, 2.25]
             ];
+            rotateGate = [
+               // stage 1
+               [false],
+               // stage 2
+               [false],
+               // stage 3
+               [false, true, false],
+            ];
+
+         case 5:
+            coordinates = [
+               // stage 1
+               [],
+               // stage 2
+               [],
+               // stage 3
+               [[125, 103], [430, FlxG.height - 140]],
+               // stage 4
+               [[-800, cast(FlxG.height / 2, Int) - 31], [-8, cast(FlxG.height / 2, Int) - 100]],
+               // stage 5
+               []
+            ];
+            rotations = [
+               // stage 1
+               [],
+               // stage 2
+               [],
+               // stage 3
+               [180, 0],
+               // stage 4
+               [90, 90],
+               // stage 5
+               []
+            ];
+            gateCoordinates = [
+               // stage 1
+               [],
+               // stage 2
+               [],
+               // stage 3
+               [[290, 31], [290, 328]],
+               // stage 4
+               [[900, 164], [500, 164]],
+               // stage 5
+               []
+            ];
+            timing = [
+               // stage 1
+               [],
+               // stage 2
+               [],
+               // stage 3
+               [0.5, 0.5],
+               // stage 4
+               [1, 1],
+               // stage 5
+               []
+            ]; 
+            rotateGate = [
+               // stage 1
+               [],
+               // stage 2
+               [],
+               // stage 3
+               [true, true],
+               // stage 4
+               [false, false],
+               // stage 5
+               []
+            ];
 
          default:
             coordinates = [];
             rotations = [];
             gateCoordinates = [];
             timing = [];
+            rotateGate = [];
       }
       if (coordinates != null && coordinates.length > 0 ) {
          for (i in 0...coordinates[stage].length) {
@@ -151,7 +223,7 @@ class Level {
             if (timing != null && timing[stage].length > 0) {
                timer = timing[stage][i];
             }
-            buttons.push(new HitButton(coordinates[stage][i][0], coordinates[stage][i][1], gateCoordinates[stage][i][0], gateCoordinates[stage][i][1], rotations[stage][i], timer));
+            buttons.push(new HitButton(coordinates[stage][i][0], coordinates[stage][i][1], gateCoordinates[stage][i][0], gateCoordinates[stage][i][1], rotations[stage][i], timer, rotateGate[stage][i]));
          }
       }
       return buttons;
@@ -237,38 +309,50 @@ class Level {
                // stage 1
                [coordinateCenterOffset(220, 10), coordinateCenterOffset(175, 175), coordinateCenterOffset(15, 215), coordinateCenterOffset(-145, 175), coordinateCenterOffset(-190, 10), coordinateCenterOffset(-145, -125), coordinateCenterOffset(15, -170), coordinateCenterOffset(175, -125)],
                // stage 2
-               [[50, 30], [cast(FlxG.width / 2, Int), 30], [FlxG.width - 50, 30], [50, FlxG.height - 40], [cast(FlxG.width / 2, Int), FlxG.height - 40], [FlxG.width - 50, FlxG.height - 40]],
+               [[50, 30], [cast(FlxG.width / 2, Int), 30], [FlxG.width - 50, 30], [50, FlxG.height - 40], [FlxG.width - 50, FlxG.height - 40], [100, 115], [FlxG.width - 100, FlxG.height - 120]],
                // stage 3
-               [],
+               [[cast(FlxG.width / 2, Int), 30], [cast(FlxG.width / 2, Int), FlxG.height - 40]],
                // stage 4
-               [],
+               [coordinateCenterOffset(300, 10), coordinateCenterOffset(150, 5)],
                // stage 5
-               []
+               [[120, 100], [FlxG.width - 120, 100], [120, FlxG.height - 140], [FlxG.width - 120, FlxG.height - 140]]
             ];
             rotations = [
                // stage 1
                [0, 45, 90, 135, 180, 225, 270, 315],
                // stage 2
-               [225, 270, 315, 135, 90, 45, -90, 90],
+               [225, 270, 315, 135, 45, -90, 90],
                // stage 3
-               [],
+               [-90, 90],
                // stage 4
-               [],
+               [0, 0],
                // stage 5
-               []
+               [225, 315, 135, 45]
             ];
-            velocities = null;
+            velocities = [
+            // stage 1
+               [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]],
+            // stage 2
+               [[0,0], [0,0], [0,0], [0,0], [0,0], [100,0], [-100,0]],
+            // stage 3
+               [[0, 0], [0, 0]],
+            // stage 4
+               [[0, 0], [0, 0]],
+            // stage 5
+               [[0, 0], [0, 0], [0, 0], [0, 0]],
+            
+            ];
             bigBoys = [
                // stage 1
                [true, true, true, true, true, true, true, true],
                // stage 2
-               [false, false, false, false, false, false, true, true],
+               [false, false, false, false, false, true, true],
                // stage 3
-               [],
+               [true, true],
                // stage 4
-               [],
+               [false, true],
                // stage 5
-               []
+               [true, true, true, true]
             ];
 
          default:
@@ -297,7 +381,7 @@ class Level {
          if (velocities == null) {
             targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], bigBoys == null ? false:bigBoys[stage][i],whichImg, angle, false));
          } else {
-            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], bigBoys == null ? false:bigBoys[stage][i], whichImg, angle, true, velocities[stage][i][0], velocities[stage][i][1]));
+            targets.push(new Target(coordinates[stage][i][0], coordinates[stage][i][1], bigBoys == null ? false:bigBoys[stage][i], whichImg, angle, (velocities[stage][i][0] != 0 || velocities[stage][i][1] != 0), velocities[stage][i][0], velocities[stage][i][1]));
          }
       }
 
@@ -322,6 +406,17 @@ class Level {
                [[500, 0, 32, 165], [500, 286, 32, 220]],
                // stage 3
                [[500, 160, 200, 5], [500, 290, 200, 5], [cast(FlxG.width / 2, Int) - 68, 0, 5 , 94], [385, 0, 5, 94], [0, 160, 132, 5], [0, 290, 132, 5]]
+            ];
+         case 5:
+            properties = [
+               [],
+               [],
+               // stage 3
+               [[0, 80, 248, 25], [370, 80, 400, 25], [0, FlxG.height - 103, 248, 25], [370, FlxG.height - 103, 400, 25]],
+               // stage 4
+               [[500, 0, 32, 165], [500, 286, 32, 220]],
+               // stage 5
+               []
             ];
          default:
             properties = [];//[[320, 240, 50, 5]];

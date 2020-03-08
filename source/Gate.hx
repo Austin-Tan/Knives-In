@@ -16,7 +16,7 @@ class Gate extends FlxSprite {
     public var open:Bool = false;
 
     var releaseKnives:Array<Knife>;
-    override public function new(x:Float, y:Float, button:HitButton, timer:Float) {
+    override public function new(x:Float, y:Float, button:HitButton, timer:Float, rotate:Bool=false) {
         super(x, y);
         this.button = button;
 		loadGraphic("assets/images/barrier.png", true, 32, 128);
@@ -30,7 +30,7 @@ class Gate extends FlxSprite {
             timed = true;
             this.timer = timer;
         }
-        if (x == cast(FlxG.width / 2, Int) - 15) {
+        if (rotate) {
             this.angle = 90;
         }
     }

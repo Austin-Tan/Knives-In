@@ -143,7 +143,6 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
-
 		if (curLevel > Level.MAX_LEVEL) {
 			removeTextItems();
 			removeItems();
@@ -159,6 +158,7 @@ class PlayState extends FlxState
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
 		}
+		
 		holdingSpace = FlxG.keys.pressed.SPACE;
 		this.levelStats = Level.getLevelStats(this.curLevel);
 		victory = false;
@@ -417,7 +417,6 @@ class PlayState extends FlxState
 		for (button in activeButtons) {
 			add(button);
 			add(button.gate);
-
 		}
 	}
 
@@ -512,7 +511,9 @@ class PlayState extends FlxState
 				}
 			}
 			for (button in activeButtons) {
+				trace ("button present in stage " + this.curStage);
 				if (FlxG.pixelPerfectOverlap(knife, button, 0)) {
+					trace("hit detected");
 					unstuckKnives.remove(knife);
 					knife.stuck = true;
 					knife.body.type = BodyType.STATIC;

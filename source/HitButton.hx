@@ -16,7 +16,7 @@ class HitButton extends FlxSprite {
 
     public var addMe:Bool = false; // to add back to active buttons
     public var button_sound:FlxSound = FlxG.sound.load("assets/sounds/button.wav");
-    override public function new(x:Float, y:Float, gateX:Float, gateY:Float, angle:Float, timer:Float = 0) {
+    override public function new(x:Float, y:Float, gateX:Float, gateY:Float, angle:Float, timer:Float = 0, rotateGate:Bool=false) {
         super(x, y);
 		loadGraphic("assets/images/button.png", true, 32, 20);
         this.scale.set(2, 2);
@@ -31,7 +31,7 @@ class HitButton extends FlxSprite {
             this.timer = timer;
         }
 
-        gate = new Gate(gateX, gateY, this, this.timer);
+        gate = new Gate(gateX, gateY, this, this.timer, rotateGate);
     }
 
     override public function update(elapsed:Float):Void {
