@@ -3,7 +3,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 
 class Level {
-   public static var MAX_LEVEL:Int = 4;
+   public static var MAX_LEVEL:Int = 5;
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
@@ -28,6 +28,8 @@ class Level {
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 4:
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
+         case 5:
+            return new Thrower((FlxG.width / 2) - 16, (FlxG.height / 2) - 16);
          default: 
             return new Thrower(50, 50);
       }
@@ -70,6 +72,8 @@ class Level {
             return new LevelStats(3, 15, 15);
          case 4:
             return new LevelStats(3, 15, 22);
+         case 5:
+            return new LevelStats(5, 20, 25);
          default:
             return new LevelStats(1, 2, 3);
       }
@@ -85,6 +89,8 @@ class Level {
             return 3;
          case 4:
             return 3;
+         case 5:
+            return 5;
          default:
             return 1;
       }
@@ -225,6 +231,45 @@ class Level {
             ];
             velocities = null;
             bigBoys = null;
+
+         case 5:
+            coordinates = [
+               // stage 1
+               [coordinateCenterOffset(220, 10), coordinateCenterOffset(175, 175), coordinateCenterOffset(15, 215), coordinateCenterOffset(-145, 175), coordinateCenterOffset(-190, 10), coordinateCenterOffset(-145, -125), coordinateCenterOffset(15, -170), coordinateCenterOffset(175, -125)],
+               // stage 2
+               [[50, 30], [cast(FlxG.width / 2, Int), 30], [FlxG.width - 50, 30], [50, FlxG.height - 40], [cast(FlxG.width / 2, Int), FlxG.height - 40], [FlxG.width - 50, FlxG.height - 40]],
+               // stage 3
+               [],
+               // stage 4
+               [],
+               // stage 5
+               []
+            ];
+            rotations = [
+               // stage 1
+               [0, 45, 90, 135, 180, 225, 270, 315],
+               // stage 2
+               [225, 270, 315, 135, 90, 45, -90, 90],
+               // stage 3
+               [],
+               // stage 4
+               [],
+               // stage 5
+               []
+            ];
+            velocities = null;
+            bigBoys = [
+               // stage 1
+               [true, true, true, true, true, true, true, true],
+               // stage 2
+               [false, false, false, false, false, false, true, true],
+               // stage 3
+               [],
+               // stage 4
+               [],
+               // stage 5
+               []
+            ];
 
          default:
             coordinates = [];
