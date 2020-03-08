@@ -34,16 +34,16 @@ class MenuState extends FlxState
 		credits.x -= 140;
 
 		var menuY = 10;
-		var muteMusicIcon = new FlxSprite(FlxG.width - 120, menuY + 60);
+		var muteMusicIcon = new FlxSprite(10, menuY + 60);
 		muteMusicIcon.loadGraphic("assets/images/musicIcon.png", false, 32, 32);
 		add(muteMusicIcon);
-		var muteMusicButton = new FlxButton(FlxG.width - 100, menuY + 60, "Music", muteMusic);
+		var muteMusicButton = new FlxButton(30, menuY + 60, "Music", muteMusic);
 		add(muteMusicButton);
 
-		var muteSoundIcon = new FlxSprite(FlxG.width - 120, menuY + 90);
+		var muteSoundIcon = new FlxSprite(10, menuY + 90);
 		muteSoundIcon.loadGraphic("assets/images/soundIcon.png", false, 32, 32);
 		add(muteSoundIcon);
-		var muteSoundButton = new FlxButton(FlxG.width - 100, menuY + 90, "All Sound", muteSound);
+		var muteSoundButton = new FlxButton(30, menuY + 90, "All Sound", muteSound);
 		add(muteSoundButton);
 	}
 

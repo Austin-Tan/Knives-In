@@ -88,6 +88,8 @@ class PlayState extends FlxState
 	var timeStar:FlxSprite;
 	var timeIconVictory:FlxSprite;
 	var continueButton:FlxButton;
+	var grayKnivesStar:FlxSprite;
+	var grayTimeStar:FlxSprite;
 
 	// Congrats Screen
 	var congratsText1:flixel.text.FlxText;
@@ -224,6 +226,8 @@ class PlayState extends FlxState
 		remove(knivesStar);
 		remove(timeStar);
 		remove(timeIconVictory);
+		remove(grayKnivesStar);
+		remove(grayTimeStar);
 
 		remove(levelText);
 		remove(targetsLeftText);
@@ -504,6 +508,7 @@ class PlayState extends FlxState
 						knivesThrown: knivesThrown,
 						time: timer 
 					});
+					break;
 				}
 			}
 			for (button in activeButtons) {
@@ -614,17 +619,23 @@ class PlayState extends FlxState
 
 		completeStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/star.png");
 		knivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/star.png");
+		grayKnivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/grayStar.png");
 		timeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/star.png");
+		grayTimeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/grayStar.png");
 		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) - 60, "assets/images/stopwatch.png");
 	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
 		knivesStar.x = 15 + knivesText.x + knivesText.width;
+		grayKnivesStar.x = 15 + knivesText.x + knivesText.width;
 		timeStar.x = 15 + timeText.x + timeText.width;
+		grayTimeStar.x = 15 + timeText.x + timeText.width;
 
 		completeStar.scale.set(2, 2);
 		knivesStar.scale.set(2, 2);
 		timeStar.scale.set(2, 2);
 		timeIconVictory.scale.set(2, 2);
+		grayKnivesStar.scale.set(2, 2);
+		grayTimeStar.scale.set(2, 2);
 
 		add(continueButton);
 		add(winnerText);
@@ -640,10 +651,14 @@ class PlayState extends FlxState
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
 			add(timeStar);
 			Cookie.set(curLevel + "T", "", Main.expireDelay);
+		} else {
+			add(grayTimeStar);
 		}
 		if (this.knivesThrown <= this.levelStats.knivesPar) {
 			add(knivesStar);
 			Cookie.set(curLevel + "K", "", Main.expireDelay);
+		} else {
+			add(grayKnivesStar);
 		}
 		add(timeIconVictory);
 	}
