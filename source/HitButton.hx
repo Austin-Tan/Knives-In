@@ -18,7 +18,12 @@ class HitButton extends FlxSprite {
     public var button_sound:FlxSound = FlxG.sound.load("assets/sounds/button.wav");
     override public function new(x:Float, y:Float, gateX:Float, gateY:Float, angle:Float, timer:Float = 0) {
         super(x, y);
-		loadGraphic("assets/images/button.png", true, 32, 20);
+        trace('timer ' + timer);
+        if (timer == 0) {
+		    loadGraphic("assets/images/yellow-button.png", true, 32, 20);
+        } else {
+            loadGraphic("assets/images/button.png", true, 32, 20);
+        }
         this.scale.set(2, 2);
         this.updateHitbox();
         this.animation.add("unpressed", [0], 0, false);
