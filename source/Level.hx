@@ -72,24 +72,36 @@ class Level {
       // format LevelStats(#Stages, Knives Par, Time(Seconds) Par)
       switch(level) {
          case 1:
-            return new LevelStats(3, 16, 15);
+            // min knives is 12
+            return new LevelStats(3, 13, 10);
          case 2:
-            return new LevelStats(3, 18, 27);
+            // min knives is 15
+            return new LevelStats(3, 17, 25);
          case 3:
-            return new LevelStats(3, 15, 15);
+            // min knives is 9
+            return new LevelStats(3, 10, 10);
          case 4:
-            return new LevelStats(3, 15, 22);
+            // min knives is 8
+            return new LevelStats(3, 10, 12);
          case 5:
-            return new LevelStats(3, 24, 24);
+            // min is 24
+            return new LevelStats(3, 26, 22);
          case 6:
-            return new LevelStats(5, 20, 25);
+            // min is 102 (assuming only one knife per target opening)
+            // my min time is 20
+            return new LevelStats(5, 120, 50);
          case 7:
-            return new LevelStats(3, 13, 30);
+            // min knives is 10
+            // my min time is 13
+            return new LevelStats(3, 13, 20);
          case 8:
+            // min is 2, 2
             return new LevelStats(1, 2, 2);
          case 9:
+            // min is 5, 1
             return new LevelStats(1, 5, 1);
          case 10:
+            // min is 5, 1
             return new LevelStats(1, 5, 1);
          default:
             return new LevelStats(1, 2, 3);

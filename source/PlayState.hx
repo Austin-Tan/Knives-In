@@ -245,7 +245,7 @@ class PlayState extends FlxState
 		add(mashTutorialText);
 	}
 	public function showBonusTutorial() {
-		this.bonusTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "\t\t\t\tBONUS LEVELS:\nThese levels are easy to complete, but can be tricky to finish under par.", 16);
+		this.bonusTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tBONUS LEVELS:\nThese levels are easy to complete,\nbut can be tricky to finish under par.", 16);
 		bonusTutorialText.color = FlxColor.BLACK;
 		add(bonusTutorialText);
 	}
