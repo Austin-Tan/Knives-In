@@ -20,12 +20,10 @@ class HitButton extends FlxSprite {
         super(x, y);
         trace('timer ' + timer);
         if (timer == 0) {
-		    loadGraphic("assets/images/yellow-button.png", true, 32, 20);
+		    loadGraphic("assets/images/yellow-button.png", true, 64, 40);
         } else {
-            loadGraphic("assets/images/button.png", true, 32, 20);
+            loadGraphic("assets/images/button.png", true, 64, 40);
         }
-        this.scale.set(2, 2);
-        this.updateHitbox();
         this.animation.add("unpressed", [0], 0, false);
         this.animation.add("pressed", [1], 0, false);
         this.animation.play("unpressed");

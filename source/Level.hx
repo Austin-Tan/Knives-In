@@ -120,7 +120,7 @@ class Level {
                // stage 1
                [[500-50, 70]],
                // stage 2
-               [[-9, cast(FlxG.height / 2, Int) - 30]],
+               [[-6, cast(FlxG.height / 2, Int) -30]],
                // stage 3
                [[cast(FlxG.width /  2, Int) - 30, 5], [-9, cast(FlxG.height / 2, Int) - 30], [cast(FlxG.width / 2, Int) - 30, FlxG.height - 43]]
             ];

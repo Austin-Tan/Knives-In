@@ -513,9 +513,7 @@ class PlayState extends FlxState
 				}
 			}
 			for (button in activeButtons) {
-				trace ("button present in stage " + this.curStage);
 				if (FlxG.pixelPerfectOverlap(knife, button, 0)) {
-					trace("hit detected");
 					unstuckKnives.remove(knife);
 					knife.stuck = true;
 					knife.body.type = BodyType.STATIC;
