@@ -82,7 +82,7 @@ class Level {
          case 5:
             return new LevelStats(3, 24, 24);
          case 6:
-            return new LevelStats(5, 20, 25);
+            return new LevelStats(5, 130, 80);
          case 7:
             return new LevelStats(3, 13, 30);
          case 8:
