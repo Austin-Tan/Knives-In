@@ -149,9 +149,10 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
+		
+		removeItems();
 		if (curLevel > Level.MAX_LEVEL) {
 			removeTextItems();
-			removeItems();
 			showCongratsScreen();
 			return;
 		}
@@ -406,6 +407,7 @@ class PlayState extends FlxState
 	public function loadBackground():Void {
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, 750);
+
 		
 		if(this.platforms != null) {
 			for (platform in this.platforms) {
