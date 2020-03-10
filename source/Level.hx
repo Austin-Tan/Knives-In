@@ -3,7 +3,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 
 class Level {
-   public static var MAX_LEVEL:Int = 7;
+   public static var MAX_LEVEL:Int = 10;
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
@@ -33,8 +33,14 @@ class Level {
          case 6:
             return new Thrower((FlxG.width / 2) - 16, (FlxG.height / 2) - 16);
          case 7:
-            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), 100- (THROWER_HEIGHT / 2));
-         default: 
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), 100 - (THROWER_HEIGHT / 2));
+         case 8:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), (FlxG.height / 2) - 16);
+         case 9:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), 75 - (THROWER_HEIGHT / 2));
+         case 10:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), 75 - (THROWER_HEIGHT / 2));
+         default:
             return new Thrower(50, 50);
       }
    }
@@ -79,6 +85,12 @@ class Level {
             return new LevelStats(5, 20, 25);
          case 7:
             return new LevelStats(3, 13, 30);
+         case 8:
+            return new LevelStats(1, 2, 2);
+         case 9:
+            return new LevelStats(1, 5, 1);
+         case 10:
+            return new LevelStats(1, 5, 1);
          default:
             return new LevelStats(1, 2, 3);
       }
@@ -100,6 +112,12 @@ class Level {
             return 5;
          case 7:
             return 3;
+         case 8:
+            return 1;
+         case 9:
+            return 1;
+         case 10:
+            return 1;
          default:
             return 1;
       }
@@ -259,7 +277,6 @@ class Level {
                // stage 3
                [true, true]
             ];
-
          default:
             coordinates = [];
             rotations = [];
@@ -439,8 +456,7 @@ class Level {
             // stage 2
             [90],
             // stage 3
-            [90],
-        
+            [90]
          ];
          velocities = [
          // stage 1
@@ -448,8 +464,7 @@ class Level {
          // stage 2
             [[-100,0]],
          // stage 3
-            [[100,0]],
-     
+            [[100,0]]
          ];
          bigBoys = [
             // stage 1
@@ -457,9 +472,53 @@ class Level {
             // stage 2
             [false],
             // stage 3
-            [false],
-     
+            [false]     
          ];
+         case 8:
+            coordinates = [
+               // stage 1
+               [coordinateCenterOffset(200, -50), coordinateCenterOffset(160, -110)]
+            ];
+            rotations = [
+               // stage 1
+               [-25, -45]
+            ];
+            velocities = null;
+            bigBoys = null;
+         case 9:
+            coordinates = [
+               // stage 1
+               [coordinateCenterOffset(180, 100)]
+            ];
+            rotations = [
+               // stage 1
+               [90]
+            ];
+            velocities = [
+               // stage 1
+               [[-200, -200]]
+            ];
+            bigBoys = [
+               // stage 1
+               [true]
+            ];
+            case 10:
+            coordinates = [
+               // stage 1
+               [coordinateCenterOffset(200, 100)]
+            ];
+            rotations = [
+               // stage 1
+               [90]
+            ];
+            velocities = [
+               // stage 1
+               [[-200, 0]]
+            ];
+            bigBoys = [
+               // stage 1
+               [true]
+            ];
 
          default:
             coordinates = [];

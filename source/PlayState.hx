@@ -65,6 +65,8 @@ class PlayState extends FlxState
 	var muteSoundButton:FlxButton;
 	var timeTutorialText:FlxText;
 	var mashTutorialText:FlxText;
+	var bonusTutorialText:FlxText;
+
 
 
 	// Pause screen
@@ -90,11 +92,14 @@ class PlayState extends FlxState
 	var continueButton:FlxButton;
 	var grayKnivesStar:FlxSprite;
 	var grayTimeStar:FlxSprite;
+	var grayCompleteStar:FlxSprite;
 
 	// Congrats Screen
 	var congratsText1:flixel.text.FlxText;
 	var congratsText2:flixel.text.FlxText;
 	var selectButton2:FlxButton;
+
+	var skipped:Bool = false;
 
 	override public function create():Void {
 		super.create();
@@ -144,12 +149,14 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
-		trace(curLevel);
 		if (curLevel > Level.MAX_LEVEL) {
 			removeTextItems();
 			removeItems();
 			showCongratsScreen();
 			return;
+		}
+		if(curStage == 1) {
+			skipped = false;
 		}
 		
 		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
@@ -184,6 +191,10 @@ class PlayState extends FlxState
 			remove(mashTutorialText);
 			mashTutorialText = null;
 		}
+		if (bonusTutorialText != null) {
+			remove(bonusTutorialText);
+			bonusTutorialText = null;
+		}
 
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
@@ -192,6 +203,8 @@ class PlayState extends FlxState
 			showTimeTutorial();
 		} else if (this.curLevel == 5 && this.curStage == 1) {
 			showMashTutorial();
+		} else if (this.curLevel == 8 && this.curStage == 1) {
+			showBonusTutorial();
 		}
 	}
 
@@ -212,6 +225,11 @@ class PlayState extends FlxState
 		this.mashTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "Blue buttons take several hits to knock down,\ntry rapidly mashing space and clicking\nto destroy them quickly!", 16);
 		mashTutorialText.color = FlxColor.BLACK;
 		add(mashTutorialText);
+	}
+	public function showBonusTutorial() {
+		this.bonusTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "\t\t\t\tBONUS LEVELS:\nThese levels are easy to complete, but can be tricky to finish under par.", 16);
+		bonusTutorialText.color = FlxColor.BLACK;
+		add(bonusTutorialText);
 	}
 
 	public function removeTextItems() {
@@ -619,6 +637,7 @@ class PlayState extends FlxState
 		pressEnterText.color = FlxColor.BLACK;
 
 		completeStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/star.png");
+		grayCompleteStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/grayStar.png");
 		knivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/star.png");
 		grayKnivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/grayStar.png");
 		timeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/star.png");
@@ -626,12 +645,14 @@ class PlayState extends FlxState
 		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) - 60, "assets/images/stopwatch.png");
 	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
+		grayCompleteStar.x = 15 + winnerText.x + winnerText.width;
 		knivesStar.x = 15 + knivesText.x + knivesText.width;
 		grayKnivesStar.x = 15 + knivesText.x + knivesText.width;
 		timeStar.x = 15 + timeText.x + timeText.width;
 		grayTimeStar.x = 15 + timeText.x + timeText.width;
 
 		completeStar.scale.set(2, 2);
+		grayCompleteStar.scale.set(2, 2);
 		knivesStar.scale.set(2, 2);
 		timeStar.scale.set(2, 2);
 		timeIconVictory.scale.set(2, 2);
@@ -644,10 +665,15 @@ class PlayState extends FlxState
 		add(knivesText);
 		add(pressEnterText);
 
-		add(completeStar);
 		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
 		if(curLevel >= maxLevel) {
 			Cookie.set("MaxLevel", "" + (curLevel + 1), Main.expireDelay);
+		}
+		if (!skipped) {
+			Cookie.set(curLevel + "C", "", Main.expireDelay);
+			add(completeStar);
+		} else {
+			add(grayCompleteStar);
 		}
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
 			add(timeStar);
