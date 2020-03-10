@@ -101,6 +101,9 @@ class PlayState extends FlxState
 
 	var skipped:Bool = false;
 
+	var levelTime:Float;
+	var levelKnivesThrown:Int;
+
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.WHITE;
@@ -159,11 +162,25 @@ class PlayState extends FlxState
 		if(curStage == 1) {
 			skipped = false;
 		}
+
+		levelTime = 0;
+		levelKnivesThrown = 0;
+
+		var stageStr:String = curLevel+"-"+curStage + "-count";
+		if (!Cookie.exists(stageStr)) {
+			Cookie.set(stageStr, "0");
+		} else {
+			var prevCount:Int = Std.int(Std.parseFloat(Cookie.get(stageStr)));
+			Cookie.set(stageStr, Std.string(prevCount + 1));
+		}
 		
 		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
 			level: curLevel,
-			stage: curStage}
-		);
+			stage: curStage,
+			hasCompleted: Cookie.exists(curLevel + "C"),
+			replayCount: Cookie.get(stageStr)
+		});
+		
 
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
@@ -527,8 +544,13 @@ class PlayState extends FlxState
 					Main.LOGGER.logLevelAction(2, {
 						targetsLeft: numTargetsLeft,
 						knivesThrown: knivesThrown,
-						time: timer 
+						time: timer,
+						levelTime: levelTime,
+						levelKnivesThrown: levelKnivesThrown,
+						isBigTarget: target.isBig,
+						hp: target.hp
 					});
+
 					break;
 				}
 			}
@@ -566,14 +588,20 @@ class PlayState extends FlxState
 				initializeLevel();
 				Main.LOGGER.logLevelEnd({
 					knivesThrown: knivesThrown,
-					time: timer
+					time: timer,
+					levelTime: levelTime,
+					levelKnivesThrown: levelKnivesThrown
 				});
 			} else {
 				showVictoryScreen();
 				Main.LOGGER.logLevelEnd({
 					knivesThrown: knivesThrown,
 					time: timer,
+					levelTime: levelTime,
+					levelKnivesThrown: levelKnivesThrown,
 					completeStar: true,
+					timePar: Std.int(this.levelStats.timePar),
+					knivesPar: this.levelStats.knivesPar,
 					timeStar: Std.int(this.timer) <= Std.int(this.levelStats.timePar),
 					knivesStar: this.knivesThrown <= this.levelStats.knivesPar
 				});
@@ -596,7 +624,9 @@ class PlayState extends FlxState
 			Main.LOGGER.logLevelAction(1, {
 				targetsLeft: numTargetsLeft,
 				knivesThrown: knivesThrown,
-				time: timer 
+				time: timer,
+				levelTime: levelTime,
+				levelKnivesThrown: levelKnivesThrown
 			});
 		}
 
@@ -622,6 +652,7 @@ class PlayState extends FlxState
 		}
 
 		timer += elapsed;
+		this.levelTime += elapsed;
 
 		updateTexts();
 	}
