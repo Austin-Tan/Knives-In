@@ -100,6 +100,7 @@ class PlayState extends FlxState
 		super.create();
 		this.bgColor = FlxColor.WHITE;
 
+		// this.curLevel = 7; // for testing
 		this.curLevel = Main.passedLevel;
 		this.curStage = 1;
 
@@ -143,6 +144,7 @@ class PlayState extends FlxState
 
 	// to be called when loading a new level
 	public function initializeLevel() {
+		trace(curLevel);
 		if (curLevel > Level.MAX_LEVEL) {
 			removeTextItems();
 			removeItems();

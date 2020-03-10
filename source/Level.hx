@@ -3,7 +3,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 
 class Level {
-   public static var MAX_LEVEL:Int = 6;
+   public static var MAX_LEVEL:Int = 7;
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
@@ -15,8 +15,8 @@ class Level {
    }
 
    static var rand:FlxRandom = new FlxRandom();
-   static var THROWER_WIDTH:Int = 64;
-   static var THROWER_HEIGHT:Int = 64; // why?
+   static var THROWER_WIDTH:Int = 30;
+   static var THROWER_HEIGHT:Int = 9; 
 
    public static function getThrower(level:Int):Thrower {
       switch (level) {
@@ -32,13 +32,15 @@ class Level {
             return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2) - 8);
          case 6:
             return new Thrower((FlxG.width / 2) - 16, (FlxG.height / 2) - 16);
+         case 7:
+            return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2), 100- (THROWER_HEIGHT / 2));
          default: 
             return new Thrower(50, 50);
       }
    }
 
-   static var HALF_TARGET_WIDTH:Int = 16;
-   static var HALF_TARGET_HEIGHT:Int = 32;
+   static var HALF_TARGET_WIDTH:Int = 0;
+   static var HALF_TARGET_HEIGHT:Int = 0;
 
    public static function targetCoordinate(x:Int, y:Int):Array<Int> {
       return [cast(x - HALF_TARGET_WIDTH, Int), cast(y - HALF_TARGET_HEIGHT, Int)];
@@ -66,7 +68,7 @@ class Level {
          case 1:
             return new LevelStats(3, 16, 15);
          case 2:
-            return new LevelStats(3, 24, 24); // TODO
+            return new LevelStats(3, 18, 27);
          case 3:
             return new LevelStats(3, 15, 15);
          case 4:
@@ -75,6 +77,8 @@ class Level {
             return new LevelStats(3, 24, 24);
          case 6:
             return new LevelStats(5, 20, 25);
+         case 7:
+            return new LevelStats(3, 13, 30);
          default:
             return new LevelStats(1, 2, 3);
       }
@@ -94,6 +98,8 @@ class Level {
             return 3;
          case 6:
             return 5;
+         case 7:
+            return 3;
          default:
             return 1;
       }
@@ -116,7 +122,7 @@ class Level {
                // stage 2
                [[-9, cast(FlxG.height / 2, Int) - 30]],
                // stage 3
-               [[cast(FlxG.width / 2, Int) - 30, 5], [-9, cast(FlxG.height / 2, Int) - 30], [cast(FlxG.width / 2, Int) - 30, FlxG.height - 43]]
+               [[cast(FlxG.width /  2, Int) - 30, 5], [-9, cast(FlxG.height / 2, Int) - 30], [cast(FlxG.width / 2, Int) - 30, FlxG.height - 43]]
             ];
             rotations = [
                // stage 1
@@ -212,6 +218,47 @@ class Level {
                // stage 5
                []
             ];
+            case 7:
+            coordinates = [
+               // stage 1
+               [],
+               // stage 2
+               [[430, FlxG.height - 158]],
+               // stage 3
+               [[130, FlxG.height - 208], [430, FlxG.height - 208]],
+            ];
+            rotations = [
+               // stage 1
+               [],
+               // stage 2
+               [0],
+               // stage 3
+               [0, 0]
+            ];
+            gateCoordinates = [
+               // stage 1
+               [],
+               // stage 2
+               [[290, 311]],
+               // stage 3
+               [[290, 311], [290, 261]]
+            ];
+            timing = [
+               // stage 1
+               [],
+               // stage 2
+               [3],
+               // stage 3
+               [5,5]
+            ]; 
+            rotateGate = [
+               // stage 1
+               [],
+               // stage 2
+               [true],
+               // stage 3
+               [true, true]
+            ];
 
          default:
             coordinates = [];
@@ -265,7 +312,7 @@ class Level {
             coordinates = 
                [[polarCoordinate(400, -20, cx, cy), polarCoordinate(400, -10, cx, cy), polarCoordinate(400, 0, cx, cy),polarCoordinate(400, 10, cx, cy), polarCoordinate(400, 20, cx, cy)],
                [coordinateCenterOffset(70, -70), coordinateCenterOffset(115, -35), coordinateCenterOffset(160, 0), coordinateCenterOffset(205, 35), coordinateCenterOffset(250, 70)],
-               [coordinateCenterOffset(-270, 240), coordinateCenterOffset(-135, 240), coordinateCenterOffset(0, 240), coordinateCenterOffset(135, 240), coordinateCenterOffset(270, 240)]];
+               [coordinateCenterOffset(-270, 200), coordinateCenterOffset(-135, 200), coordinateCenterOffset(0, 200), coordinateCenterOffset(135, 200), coordinateCenterOffset(270, 200)]];
             rotations = 
                [[-20, -10, 0, 10, 20],
                [0, 0, 0, 0, 0],
@@ -375,10 +422,44 @@ class Level {
                // stage 5
                [true, true, true, true]
             ];
-         // case 6:
-         //    coordinates = [
-
-         //    ]
+         case 7:
+            var cx:Float = (FlxG.width / 2) - (THROWER_WIDTH / 2);
+            var cy:Float = 100- (THROWER_HEIGHT / 2);
+            coordinates = [
+               // stage 1
+               [coordinateCenterOffset(-200, -50), coordinateCenterOffset(250, 0), coordinateCenterOffset(-150, 50), coordinateCenterOffset(0, 100), coordinateCenterOffset(50, 150)],
+               // stage 2
+               [coordinateCenterOffset(50, 190)],
+               // stage 3
+               [coordinateCenterOffset(50, 190)]
+            ];
+         rotations = [
+            // stage 1
+            [90, 90, 90, 90, 90],
+            // stage 2
+            [90],
+            // stage 3
+            [90],
+        
+         ];
+         velocities = [
+         // stage 1
+            [[200,0], [-100,0], [-200,0], [100,0], [-150,0]],
+         // stage 2
+            [[-100,0]],
+         // stage 3
+            [[100,0]],
+     
+         ];
+         bigBoys = [
+            // stage 1
+            [false, false, false, false, false],
+            // stage 2
+            [false],
+            // stage 3
+            [false],
+     
+         ];
 
          default:
             coordinates = [];
@@ -445,8 +526,14 @@ class Level {
                // stage 5
                []
             ];
+         case 7:
+            properties = [
+               [], 
+               [[0, FlxG.height - 120, 248, 25], [370, FlxG.height - 120, 400, 25]],
+               [[0, FlxG.height - 120, 248, 25], [370, FlxG.height - 120, 400, 25], [0, FlxG.height - 170, 248, 25], [370, FlxG.height - 170, 400, 25]]
+            ];
          default:
-            properties = [];//[[320, 240, 50, 5]];
+            properties = [];
       }
       
 
