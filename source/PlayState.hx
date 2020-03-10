@@ -188,7 +188,7 @@ class PlayState extends FlxState
 			showTutorial();
 		} else if (this.curLevel == 4 && this.curStage == 2) {
 			showTimeTutorial();
-		} else if (this.curLevel == 2 && this.curStage == 1) {
+		} else if (this.curLevel == 5 && this.curStage == 1) {
 			showMashTutorial();
 		}
 	}

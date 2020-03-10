@@ -3,7 +3,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 
 class Level {
-   public static var MAX_LEVEL:Int = 5;
+   public static var MAX_LEVEL:Int = 6;
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
@@ -23,12 +23,14 @@ class Level {
          case 1: 
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 2:
-            return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2) - 8);
+            return new Thrower(100 - (THROWER_WIDTH / 2), (FlxG.height / 2) - (THROWER_HEIGHT / 2) - 8);
          case 3:
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 4:
             return new Thrower((FlxG.width / 2) - (THROWER_WIDTH / 2),  (FlxG.height / 2) - (THROWER_HEIGHT / 2));
          case 5:
+            return new Thrower(100, (FlxG.height / 2) - (THROWER_HEIGHT / 2) - 8);
+         case 6:
             return new Thrower((FlxG.width / 2) - 16, (FlxG.height / 2) - 16);
          default: 
             return new Thrower(50, 50);
@@ -51,14 +53,11 @@ class Level {
       }
    }
 
-   public static function polarCoordinate(r:Float, angle:Float, isTarget:Bool=true):Array<Int> {
-      var x:Int = Std.int((FlxG.width / 2) + r * Math.cos(angle * 2 * Math.PI / 360) - 15);
-      var y:Int = Std.int((FlxG.height / 2) + r * Math.sin(angle * 2 * Math.PI / 360) - 15);
-      if (isTarget) {
-         return targetCoordinate(x, y);
-      } else {
-         return [x, y];
-      }
+   public static function polarCoordinate(r:Float, angle:Float, cx:Float, cy:Float):Array<Int> {
+
+      var x:Int = Std.int(cx + r * Math.cos(angle * 2 * Math.PI / 360) - 15);
+      var y:Int = Std.int(cy + r * Math.sin(angle * 2 * Math.PI / 360) - 15);
+      return targetCoordinate(x, y);
    }
 
    public static function getLevelStats(level:Int):LevelStats {
@@ -67,12 +66,14 @@ class Level {
          case 1:
             return new LevelStats(3, 16, 15);
          case 2:
-            return new LevelStats(3, 24, 24);
+            return new LevelStats(3, 24, 24); // TODO
          case 3:
             return new LevelStats(3, 15, 15);
          case 4:
             return new LevelStats(3, 15, 22);
          case 5:
+            return new LevelStats(3, 24, 24);
+         case 6:
             return new LevelStats(5, 20, 25);
          default:
             return new LevelStats(1, 2, 3);
@@ -90,6 +91,8 @@ class Level {
          case 4:
             return 3;
          case 5:
+            return 3;
+         case 6:
             return 5;
          default:
             return 1;
@@ -148,7 +151,7 @@ class Level {
                [false, true, false],
             ];
 
-         case 5:
+         case 6:
             coordinates = [
                // stage 1
                [],
@@ -238,13 +241,15 @@ class Level {
       var bigBoys:Array<Array<Bool>>;
       switch (level) {
          case 1: 
+            var cx:Float = (FlxG.width / 2);
+            var cy:Float = (FlxG.height / 2);
             coordinates = 
                // stage 1
                [[coordinateCenterOffset(-104, -60), coordinateCenterOffset(104, -60), coordinateCenterOffset(0, 120)],
                // stage 2
                [coordinateCenterOffset(0, -130), coordinateCenterOffset(130, 0), coordinateCenterOffset(0, 130), coordinateCenterOffset(-130, 0)],
                // stage 3
-               [polarCoordinate(150, 0), polarCoordinate(150, 72), polarCoordinate(150, 72 * 2), polarCoordinate(150, 72 * 3), polarCoordinate(150, 72*4)]];
+               [polarCoordinate(150, 0, cx, cy), polarCoordinate(150, 72, cx, cy), polarCoordinate(150, 72 * 2, cx, cy), polarCoordinate(150, 72 * 3, cx, cy), polarCoordinate(150, 72*4, cx, cy)]];
             rotations = 
                // stage 1
                [[210, -30, 90],
@@ -255,28 +260,25 @@ class Level {
             velocities = null;
             bigBoys = null;
          case 2: 
+            var cx:Float = 100;
+            var cy:Float = (FlxG.height / 2);
             coordinates = 
-               [[polarCoordinate(100, -45), polarCoordinate(180, 0), polarCoordinate(100, 45)],
+               [[polarCoordinate(400, -20, cx, cy), polarCoordinate(400, -10, cx, cy), polarCoordinate(400, 0, cx, cy),polarCoordinate(400, 10, cx, cy), polarCoordinate(400, 20, cx, cy)],
                [coordinateCenterOffset(70, -70), coordinateCenterOffset(115, -35), coordinateCenterOffset(160, 0), coordinateCenterOffset(205, 35), coordinateCenterOffset(250, 70)],
-               [polarCoordinate(200, 30), polarCoordinate(150, 30), polarCoordinate(200, -30), polarCoordinate(150, -30)]];
+               [coordinateCenterOffset(-270, 240), coordinateCenterOffset(-135, 240), coordinateCenterOffset(0, 240), coordinateCenterOffset(135, 240), coordinateCenterOffset(270, 240)]];
             rotations = 
-               [[-45, 0, 45],
+               [[-20, -10, 0, 10, 20],
                [0, 0, 0, 0, 0],
-               [30, 30, -30, -30]];
+               [90, 90, 90, 90, 90]];
             velocities = null;
-            bigBoys = [
-               // stage 1
-               [false, true, false],
-               // stage 2
-               [false, false, false, false, false],
-               // stage 3
-               [true, false, true, false]
-            ];
+            bigBoys = null;
          case 3:
+            var cx:Float = (FlxG.width / 2);
+            var cy:Float = (FlxG.height / 2);
             coordinates = 
-               [[polarCoordinate(200, 0), polarCoordinate(-200, 0)],
+               [[polarCoordinate(200, 0, cx, cy), polarCoordinate(-200, 0, cx, cy)],
                [coordinateCenterOffset(-100, -100), coordinateCenterOffset(180, 210), coordinateCenterOffset(50, 160)],
-               [polarCoordinate(260, 0), polarCoordinate(200, 0), polarCoordinate(-200, 0), polarCoordinate(-260, 0)]];
+               [polarCoordinate(260, 0, cx, cy), polarCoordinate(200, 0, cx, cy), polarCoordinate(-200, 0, cx, cy), polarCoordinate(-260, 0, cx, cy)]];
                // [coordinateCenterOffset(-200, 50), coordinateCenterOffset(-50, 200), coordinateCenterOffset(200, 50), coordinateCenterOffset(50, -200)]];
             rotations =
                [[0, 180], 
@@ -303,8 +305,27 @@ class Level {
             ];
             velocities = null;
             bigBoys = null;
-
-         case 5:
+         case 5: 
+            var cx:Float = (FlxG.width / 2);
+            var cy:Float = (FlxG.height / 2);
+            coordinates = 
+               [[polarCoordinate(100, -45, cx, cy), polarCoordinate(180, 0, cx, cy), polarCoordinate(100, 45, cx, cy)],
+               [coordinateCenterOffset(70, -70), coordinateCenterOffset(115, -35), coordinateCenterOffset(160, 0), coordinateCenterOffset(205, 35), coordinateCenterOffset(250, 70)],
+               [polarCoordinate(200, 30, cx, cy), polarCoordinate(150, 30, cx, cy), polarCoordinate(200, -30, cx, cy), polarCoordinate(150, -30, cx, cy)]];
+            rotations = 
+               [[-45, 0, 45],
+               [0, 0, 0, 0, 0],
+               [30, 30, -30, -30]];
+            velocities = null;
+            bigBoys = [
+               // stage 1
+               [false, true, false],
+               // stage 2
+               [false, false, false, false, false],
+               // stage 3
+               [true, false, true, false]
+            ];
+         case 6:
             coordinates = [
                // stage 1
                [coordinateCenterOffset(220, 10), coordinateCenterOffset(175, 175), coordinateCenterOffset(15, 215), coordinateCenterOffset(-145, 175), coordinateCenterOffset(-190, 10), coordinateCenterOffset(-145, -125), coordinateCenterOffset(15, -170), coordinateCenterOffset(175, -125)],
@@ -354,6 +375,10 @@ class Level {
                // stage 5
                [true, true, true, true]
             ];
+         // case 6:
+         //    coordinates = [
+
+         //    ]
 
          default:
             coordinates = [];
@@ -408,6 +433,8 @@ class Level {
                [[500, 160, 200, 5], [500, 290, 200, 5], [cast(FlxG.width / 2, Int) - 68, 0, 5 , 94], [385, 0, 5, 94], [0, 160, 132, 5], [0, 290, 132, 5]]
             ];
          case 5:
+            properties = [];
+         case 6:
             properties = [
                [],
                [],
