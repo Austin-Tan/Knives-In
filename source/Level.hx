@@ -84,8 +84,8 @@ class Level {
             // min knives is 8
             return new LevelStats(3, 10, 12);
          case 5:
-            // min is 24
-            return new LevelStats(3, 26, 22);
+            // min is 26
+            return new LevelStats(3, 28, 24);
          case 6:
             // min is 102 (assuming only one knife per target opening)
             // my min time is 20
@@ -386,18 +386,18 @@ class Level {
             var cy:Float = (FlxG.height / 2);
             coordinates = 
                [[polarCoordinate(100, -45, cx, cy), polarCoordinate(180, 0, cx, cy), polarCoordinate(100, 45, cx, cy)],
-               [coordinateCenterOffset(70, -70), coordinateCenterOffset(115, -35), coordinateCenterOffset(160, 0), coordinateCenterOffset(205, 35), coordinateCenterOffset(250, 70)],
+               [coordinateCenterOffset(250, -70), coordinateCenterOffset(0, 0), coordinateCenterOffset(250, 70)],
                [polarCoordinate(200, 30, cx, cy), polarCoordinate(150, 30, cx, cy), polarCoordinate(200, -30, cx, cy), polarCoordinate(150, -30, cx, cy)]];
             rotations = 
                [[-45, 0, 45],
-               [0, 0, 0, 0, 0],
+               [0, 0, 0],
                [30, 30, -30, -30]];
             velocities = null;
             bigBoys = [
                // stage 1
                [false, true, false],
                // stage 2
-               [false, false, false, false, false],
+               [false, true, false],
                // stage 3
                [true, false, true, false]
             ];

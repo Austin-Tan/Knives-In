@@ -124,15 +124,16 @@ class PlayState extends FlxState
 		this.congratsText1.y -= 50;
 		add(congratsText1);
 
-		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\t\t\tDid you get all the stars?", 30);
+		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\n\t\t\t\t\t\tDid you get all the stars?", 30);
 		this.congratsText2.color = FlxColor.GRAY;
 		this.congratsText2.screenCenter();
+		this.congratsText2.y += 30;
 		add(congratsText2);
 
 
 		this.selectButton2 = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 		this.selectButton2.screenCenter();
-		this.selectButton2.y += 50;
+		this.selectButton2.y += 110;
 		add(selectButton2);
 	}
 
