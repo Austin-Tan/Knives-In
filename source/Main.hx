@@ -27,7 +27,7 @@ class Main extends Sprite
 		var gameId:Int = 202002;
 		var gameKey:String = "74be16979710d4c4e7c6647856088456";
 		var gameName:String = "knivesin";
-		var categoryId:Int = 3;
+		var categoryId:Int = 0;
 
 		Main.LOGGER = new CapstoneLogger(gameId, gameName, gameKey, categoryId);
 		var userId:String = Main.LOGGER.getSavedUserId();
@@ -40,10 +40,8 @@ class Main extends Sprite
 	}
 
 	private function onSessionReady(sessionReceived:Bool):Void {
-		// addChild(new FlxGame(0, 0, LevelSelect));
 		addChild(new FlxGame(0, 0, MenuState));
-		// addChild(new FlxGame(0, 0, PlayState));
-		blippy = FlxG.sound.load("assets/sounds/blippy.ogg", 0.6, true);
+		blippy = FlxG.sound.load("assets/sounds/blippy.ogg", 0.4, true);
 		blippy.persist = true;
 		blippy.play();
 	}

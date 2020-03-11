@@ -104,6 +104,8 @@ class PlayState extends FlxState
 	var levelTime:Float;
 	var levelKnivesThrown:Int;
 
+	var ticker:Float;
+
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.WHITE;
@@ -162,6 +164,15 @@ class PlayState extends FlxState
 		}
 		if(curStage == 1) {
 			skipped = false;
+			// beaten already 
+			if (Cookie.exists(curLevel + "C")) {
+				Thrower.speed = Thrower.baseSpeed;
+			}
+		}
+		if(Thrower.speed > Thrower.maxSpeed ) {
+			Thrower.speed = Thrower.maxSpeed;
+		} else if (Thrower.speed < Thrower.minSpeed) {
+			Thrower.speed = Thrower.minSpeed;
 		}
 
 		levelTime = 0;
@@ -225,6 +236,7 @@ class PlayState extends FlxState
 		} else if (this.curLevel == 8 && this.curStage == 1) {
 			showBonusTutorial();
 		}
+		ticker = levelStats.timePar;
 	}
 
 	public function showTutorial() {
@@ -488,10 +500,24 @@ class PlayState extends FlxState
 		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
 		if (FlxG.keys.justPressed.F) {
 			Thrower.speed += 5;
+			if(Thrower.speed > Thrower.maxSpeed) {
+				Thrower.speed = Thrower.maxSpeed;
+			}
 			trace("thrower speed is " + Thrower.speed);
 		} else if (FlxG.keys.justPressed.S) {
 			Thrower.speed -= 5;
+			if (Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
 			trace("thrower speed is " + Thrower.speed);
+		}
+		ticker -= elapsed;
+		if(ticker <= 0) {
+			ticker = levelStats.timePar;
+			Thrower.speed --;
+			if(Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
 		}
 
 		if(FlxG.keys.justReleased.SPACE) {
@@ -502,6 +528,10 @@ class PlayState extends FlxState
 		}
 		// restart level
 		if (FlxG.keys.justPressed.R) {
+				Thrower.speed --;
+			if(Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
 			this.curStage = 1;
 			initializeLevel();
 		}
@@ -623,8 +653,12 @@ class PlayState extends FlxState
 		
 		// update knife
 		if (!victory && (FlxG.keys.justPressed.SPACE || FlxG.mouse.justPressed) && !holdingSpace) {
-
-			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 2) / 180);
+			if (Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			} else if (Thrower.speed > Thrower.maxSpeed) {
+				Thrower.speed = Thrower.maxSpeed;
+			}
+			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 1																																												) / 180);
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
 			knives.push(newKnife);
@@ -641,6 +675,18 @@ class PlayState extends FlxState
 				levelTime: levelTime,
 				levelKnivesThrown: levelKnivesThrown
 			});
+			if(knivesThrown == this.levelStats.knivesPar + 10) {
+				Thrower.speed -= 2;
+				if(Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
+			} else if (knivesThrown > this.levelStats.knivesPar && knivesThrown % this.levelStats.knivesPar == 0) {
+				Thrower.speed --;
+				if(Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
+				
+			}
 		}
 
 		// targets
@@ -729,10 +775,13 @@ class PlayState extends FlxState
 		if (!skipped) {
 			Cookie.set(curLevel + "C", "", Main.expireDelay);
 			add(completeStar);
+			Thrower.speed ++;
 		} else {
+			Thrower.speed -= 3;
 			add(grayCompleteStar);
 		}
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
+			Thrower.speed += 3;
 			add(timeStar);
 			Cookie.set(curLevel + "T", "", Main.expireDelay);
 			if (this.knivesThrown <= this.levelStats.knivesPar) {
@@ -742,12 +791,27 @@ class PlayState extends FlxState
 			}
 		} else {
 			add(grayTimeStar);
+			if (Std.int(this.timer) <= 20 + Std.int(this.levelStats.timePar)) {
+				Thrower.speed += 2;
+			} else if (Std.int(this.timer) <= 4 *Std.int(this.levelStats.timePar)){
+				Thrower.speed --;
+			} else {
+				Thrower.speed -=2;
+			}
 		}
 		if (this.knivesThrown <= this.levelStats.knivesPar) {
+			Thrower.speed += 3;
 			add(knivesStar);
 			Cookie.set(curLevel + "K", "", Main.expireDelay);
 		} else {
 			add(grayKnivesStar);
+			if (this.knivesThrown <=  10 +this.levelStats.knivesPar) {
+				Thrower.speed += 2;
+			} else if (this.knivesThrown <=  4 * this.levelStats.knivesPar) {
+				Thrower.speed --;
+			} else {
+				Thrower.speed -= 2;
+			}
 		}
 		add(timeIconVictory);
 	}

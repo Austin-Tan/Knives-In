@@ -175,9 +175,9 @@ class Level {
                // stage 1
                [],
                // stage 2
-               [1],
+               [1.7],
                // stage 3
-               [2.25, 2.25, 2.25]
+               [3, 3, 3]
             ];
             rotateGate = [
                // stage 1
