@@ -190,7 +190,8 @@ class PlayState extends FlxState
 			level: curLevel,
 			stage: curStage,
 			hasCompleted: Cookie.exists(curLevel + "C"),
-			replayCount: Cookie.get(stageStr)
+			replayCount: Cookie.get(stageStr),
+			throwerSpeed: Thrower.speed
 		});
 		
 
@@ -498,19 +499,19 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
-		if (FlxG.keys.justPressed.F) {
-			Thrower.speed += 5;
-			if(Thrower.speed > Thrower.maxSpeed) {
-				Thrower.speed = Thrower.maxSpeed;
-			}
-			trace("thrower speed is " + Thrower.speed);
-		} else if (FlxG.keys.justPressed.S) {
-			Thrower.speed -= 5;
-			if (Thrower.speed < Thrower.minSpeed) {
-				Thrower.speed = Thrower.minSpeed;
-			}
-			trace("thrower speed is " + Thrower.speed);
-		}
+		// if (FlxG.keys.justPressed.F) {
+		// 	Thrower.speed += 5;
+		// 	if(Thrower.speed > Thrower.maxSpeed) {
+		// 		Thrower.speed = Thrower.maxSpeed;
+		// 	}
+		// 	trace("thrower speed is " + Thrower.speed);
+		// } else if (FlxG.keys.justPressed.S) {
+		// 	Thrower.speed -= 5;
+		// 	if (Thrower.speed < Thrower.minSpeed) {
+		// 		Thrower.speed = Thrower.minSpeed;
+		// 	}
+		// 	trace("thrower speed is " + Thrower.speed);
+		// }
 		ticker -= elapsed;
 		if(ticker <= 0) {
 			ticker = levelStats.timePar;
@@ -633,7 +634,8 @@ class PlayState extends FlxState
 					knivesThrown: knivesThrown,
 					time: timer,
 					levelTime: levelTime,
-					levelKnivesThrown: levelKnivesThrown
+					levelKnivesThrown: levelKnivesThrown,
+					throwerSpeed: Thrower.speed
 				});
 			} else {
 				showVictoryScreen();
@@ -642,6 +644,7 @@ class PlayState extends FlxState
 					time: timer,
 					levelTime: levelTime,
 					levelKnivesThrown: levelKnivesThrown,
+					throwerSpeed: Thrower.speed,
 					completeStar: true,
 					timePar: Std.int(this.levelStats.timePar),
 					knivesPar: this.levelStats.knivesPar,
@@ -667,14 +670,6 @@ class PlayState extends FlxState
 
 			knivesThrown += 1;
 
-			// 1 for throwing knife
-			Main.LOGGER.logLevelAction(1, {
-				targetsLeft: numTargetsLeft,
-				knivesThrown: knivesThrown,
-				time: timer,
-				levelTime: levelTime,
-				levelKnivesThrown: levelKnivesThrown
-			});
 			if(knivesThrown == this.levelStats.knivesPar + 10) {
 				Thrower.speed -= 2;
 				if(Thrower.speed < Thrower.minSpeed) {
@@ -687,6 +682,15 @@ class PlayState extends FlxState
 				}
 				
 			}
+			// 1 for throwing knife
+			Main.LOGGER.logLevelAction(1, {
+				targetsLeft: numTargetsLeft,
+				knivesThrown: knivesThrown,
+				time: timer,
+				levelTime: levelTime,
+				levelKnivesThrown: levelKnivesThrown,
+				throwerSpeed: Thrower.speed
+			});
 		}
 
 		// targets
