@@ -10,10 +10,11 @@ class LevelSelect extends FlxState {
     var leftButtonX:Int = -350;
     override public function create():Void {
         super.create();
-        this.bgColor = FlxColor.BLACK;
+        this.bgColor = FlxColor.WHITE;
         
 		// Welcome text
-		var text = new flixel.text.FlxText(0, 0, 0, "Level Select", 64);
+        var text = new flixel.text.FlxText(0, 0, 0, "Level Select", 64);
+        text.color = FlxColor.BLACK;
         text.screenCenter();
         text.y -= 200;
 		add(text);
@@ -21,38 +22,42 @@ class LevelSelect extends FlxState {
         // Buttons to Select
         var i = 1;
         var buttonX:Int = leftButtonX;
-        var buttonY:Int = -100;
+        var buttonY:Int = -200;
         var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
         while (i < 25 && i <= maxLevel && i <= Level.MAX_LEVEL) {
             var x = i;
             if((i - 1) % 5 == 0) {
-                buttonY += 50;
+                buttonY += 80;
                 buttonX = leftButtonX;
             }
             buttonX += 100;
             var playButton = new FlxButton((FlxG.width / 2 + buttonX), (FlxG.height / 2) + buttonY, "Level " + (i), ()->{clickPlay(x);});
-            add(playButton);
 
             var j:Int = 0;
-            while (j < 3) {
+            while (j < 4) {
                 if (maxLevel == i) {
-
-                } else if (j == 0 && Cookie.exists(i + "C")) {
-                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
+                } else if (j == 0 && Cookie.exists(i + "M")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 19, playButton.y + 3, "assets/images/kunai.png");
+                    star.angle = 40;
+                    star.scale.set(3, 3);
                     add(star);
-                } else if (j == 1 && Cookie.exists(i + "T")) {
-                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
+                } else if (j == 1 && Cookie.exists(i + "C")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * (j - 1)), playButton.y - 15, "assets/images/star.png");
                     add(star);
-                } else if (j == 2 && Cookie.exists(i + "K")) {
-                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/star.png");
+                } else if (j == 2 && Cookie.exists(i + "T")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * (j - 1)), playButton.y - 15, "assets/images/star.png");
                     add(star);
-                } else {
-                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * j), playButton.y - 15, "assets/images/grayStar.png");
+                } else if (j == 3 && Cookie.exists(i + "K")) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * (j - 1)), playButton.y - 15, "assets/images/star.png");
+                    add(star);
+                } else if (j != 0) {
+                    var star:FlxSprite = new FlxSprite(playButton.x + 4 + (25 * (j - 1)), playButton.y - 15, "assets/images/grayStar.png");
                     add(star);
                 }
                 j++;
             }
             i++;
+            add(playButton);
         }
 
         var clearButton = new FlxButton(FlxG.width - 120, FlxG.height - 30, "Clear all data", clearData);

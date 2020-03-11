@@ -267,6 +267,8 @@ class PlayState extends FlxState
 		remove(timeIconVictory);
 		remove(grayKnivesStar);
 		remove(grayTimeStar);
+		remove(marksmanStar);
+		remove(marksmanText);
 
 		remove(levelText);
 		remove(targetsLeftText);
@@ -658,17 +660,23 @@ class PlayState extends FlxState
 		updateTexts();
 	}
 	
+	var marksmanStar:FlxSprite;
+	var marksmanText:FlxText;
 	function showVictoryScreen() {
 		victory = true;
 		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 130, 0, "Level " + (this.curLevel) + " Complete!", 45);
 		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2) - 70, 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
 		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 30, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
-		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 230, (FlxG.height / 2) + 25, 0, "\t\t\t\t\t\tOr press ENTER", 25);
-		continueButton = new FlxButton((FlxG.width / 2) - 260, (FlxG.height / 2) + 30, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
+		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 230, (FlxG.height / 2) + 50, 0, "\t\t\t\t\t\tOr press ENTER", 25);
+		continueButton = new FlxButton((FlxG.width / 2) - 260, (FlxG.height / 2) + 55, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
+		marksmanText = new flixel.text.FlxText(0, 0, "MARKSMAN", 20);
+		marksmanText.screenCenter();
+		marksmanText.y += 25;
 		winnerText.color = FlxColor.BLACK;
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
 		pressEnterText.color = FlxColor.BLACK;
+		marksmanText.color = FlxColor.GREEN;
 
 		completeStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/star.png");
 		grayCompleteStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/grayStar.png");
@@ -677,6 +685,7 @@ class PlayState extends FlxState
 		timeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/star.png");
 		grayTimeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/grayStar.png");
 		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) - 60, "assets/images/stopwatch.png");
+		marksmanStar = new FlxSprite(0, (FlxG.height / 2) + 23, "assets/images/kunai.png");
 	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
 		grayCompleteStar.x = 15 + winnerText.x + winnerText.width;
@@ -684,6 +693,8 @@ class PlayState extends FlxState
 		grayKnivesStar.x = 15 + knivesText.x + knivesText.width;
 		timeStar.x = 15 + timeText.x + timeText.width;
 		grayTimeStar.x = 15 + timeText.x + timeText.width;
+		marksmanStar.x = marksmanText.x + marksmanText.width - 5;
+
 
 		completeStar.scale.set(2, 2);
 		grayCompleteStar.scale.set(2, 2);
@@ -692,6 +703,8 @@ class PlayState extends FlxState
 		timeIconVictory.scale.set(2, 2);
 		grayKnivesStar.scale.set(2, 2);
 		grayTimeStar.scale.set(2, 2);
+		marksmanStar.scale.set(2, 2);
+		marksmanStar.angle = -25;
 
 		add(continueButton);
 		add(winnerText);
@@ -712,6 +725,11 @@ class PlayState extends FlxState
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
 			add(timeStar);
 			Cookie.set(curLevel + "T", "", Main.expireDelay);
+			if (this.knivesThrown <= this.levelStats.knivesPar) {
+				add(marksmanStar);
+				add(marksmanText);
+				Cookie.set(curLevel + "M", "", Main.expireDelay);
+			}
 		} else {
 			add(grayTimeStar);
 		}

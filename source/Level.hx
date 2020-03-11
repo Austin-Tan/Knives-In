@@ -85,7 +85,8 @@ class Level {
             return new LevelStats(3, 10, 12);
          case 5:
             // min is 26
-            return new LevelStats(3, 28, 24);
+            // my min time is 15
+            return new LevelStats(3, 28, 18);
          case 6:
             // min is 102 (assuming only one knife per target opening)
             // my min time is 20
