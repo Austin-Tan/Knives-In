@@ -813,6 +813,13 @@ class PlayState extends FlxState
 				Thrower.speed -= 2;
 			}
 		}
+
+		if (Thrower.speed <= Thrower.minSpeed + 15) {
+			Thrower.speed = Thrower.minSpeed + 15;
+		} else if (Thrower.speed > Thrower.maxSpeed) {
+			Thrower.speed = Thrower.maxSpeed;
+		}
+		
 		add(timeIconVictory);
 	}
 
