@@ -484,6 +484,16 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
+		if (FlxG.keys.justPressed.F) {
+			Thrower.speed += 5;
+			trace("thrower speed is " + Thrower.speed);
+		} else if (FlxG.keys.justPressed.S) {
+			Thrower.speed -= 5;
+			trace("thrower speed is " + Thrower.speed);
+		}
+
 		if(FlxG.keys.justReleased.SPACE) {
 			holdingSpace = false;
 		}
