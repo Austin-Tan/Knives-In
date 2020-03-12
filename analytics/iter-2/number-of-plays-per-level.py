@@ -70,7 +70,7 @@ with open(OUT_FILE, 'w') as f:
    writer = csv.DictWriter(f, fieldnames=fieldsnames)
    writer.writeheader()
    for level, count_map in sorted(plays_per_level_map.items()):
-      for k,v in count_map.items():
+      for k,v in sorted(count_map.items()):
          writer.writerow({'level': level, 'number-of-plays': k, 'count':v})
 
 
