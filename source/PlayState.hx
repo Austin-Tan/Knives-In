@@ -499,19 +499,20 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
-		// if (FlxG.keys.justPressed.F) {
-		// 	Thrower.speed += 5;
-		// 	if(Thrower.speed > Thrower.maxSpeed) {
-		// 		Thrower.speed = Thrower.maxSpeed;
-		// 	}
-		// 	trace("thrower speed is " + Thrower.speed);
-		// } else if (FlxG.keys.justPressed.S) {
-		// 	Thrower.speed -= 5;
-		// 	if (Thrower.speed < Thrower.minSpeed) {
-		// 		Thrower.speed = Thrower.minSpeed;
-		// 	}
-		// 	trace("thrower speed is " + Thrower.speed);
-		// }
+		if (FlxG.keys.justPressed.F) {
+			Thrower.speed += 5;
+			if(Thrower.speed > Thrower.maxSpeed) {
+				Thrower.speed = Thrower.maxSpeed;
+			}
+			trace("thrower speed is " + Thrower.speed);
+		} else if (FlxG.keys.justPressed.S) {
+			Thrower.speed -= 5;
+			if (Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
+			trace("thrower speed is " + Thrower.speed);
+		}
+
 		ticker -= elapsed;
 		if(ticker <= 0) {
 			ticker = levelStats.timePar;
