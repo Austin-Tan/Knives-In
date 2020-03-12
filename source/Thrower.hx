@@ -11,18 +11,22 @@ class Thrower extends FlxSprite {
         curSpeed = 0;
     }
 
-    var maxSpeed:Float = 225;
+    public static var minSpeed:Float = 185;
+    public static var maxSpeed:Float = 250;
+    public static var baseSpeed:Float = 225;
+    public static var speed:Float = 225;
     var curSpeed:Float;
     override public function update(elapsed:Float):Void {
         super.update(elapsed);
         if(this.visible) {
             this.angle += curSpeed * elapsed;
-            if (curSpeed < maxSpeed) {
+            if (curSpeed < speed) {
                 curSpeed += 150 * elapsed;
+            } else if (curSpeed > speed) {
+                curSpeed -= 150 * elapsed;
             }
         } else {
             this.angle -= 4 * elapsed;
         }
-        // thrownAngle = this.angle;
     }
 }

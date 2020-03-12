@@ -56,15 +56,24 @@ class PlayState extends FlxState
 	var menuX:Int = 10;
 	var menuY:Int = 10;
 	var pressR:FlxSprite;
-	var pressRText:FlxText;
+	var pressRButton:FlxButton;
 	var pressP:FlxSprite;
-	var pressPText:FlxText;
+	var pressPButton:FlxButton;
+	var muteMusicIcon:FlxSprite;
+	var muteMusicButton:FlxButton;
+	var muteSoundIcon:FlxSprite;
+	var muteSoundButton:FlxButton;
 	var timeTutorialText:FlxText;
+	var mashTutorialText:FlxText;
+	var bonusTutorialText:FlxText;
+
+
 
 	// Pause screen
 	var holdingSpace:Bool = false;
 	var paused:Bool = false;
 	var selectButton:FlxButton;
+	var resumeButton:FlxButton;
 	var pauseText:flixel.text.FlxText;
 
 	// Tutorial
@@ -80,16 +89,28 @@ class PlayState extends FlxState
 	var knivesStar:FlxSprite;
 	var timeStar:FlxSprite;
 	var timeIconVictory:FlxSprite;
+	var continueButton:FlxButton;
+	var grayKnivesStar:FlxSprite;
+	var grayTimeStar:FlxSprite;
+	var grayCompleteStar:FlxSprite;
 
 	// Congrats Screen
 	var congratsText1:flixel.text.FlxText;
 	var congratsText2:flixel.text.FlxText;
 	var selectButton2:FlxButton;
 
+	var skipped:Bool = false;
+
+	var levelTime:Float;
+	var levelKnivesThrown:Int;
+
+	var ticker:Float;
+
 	override public function create():Void {
 		super.create();
 		this.bgColor = FlxColor.WHITE;
 
+		// this.curLevel = 7; // for testing
 		this.curLevel = Main.passedLevel;
 		this.curStage = 1;
 
@@ -105,15 +126,16 @@ class PlayState extends FlxState
 		this.congratsText1.y -= 50;
 		add(congratsText1);
 
-		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME", 30);
+		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\n\t\t\t\t\t\tDid you get all the stars?", 30);
 		this.congratsText2.color = FlxColor.GRAY;
 		this.congratsText2.screenCenter();
+		this.congratsText2.y += 30;
 		add(congratsText2);
 
 
 		this.selectButton2 = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 		this.selectButton2.screenCenter();
-		this.selectButton2.y += 50;
+		this.selectButton2.y += 110;
 		add(selectButton2);
 	}
 
@@ -125,27 +147,58 @@ class PlayState extends FlxState
 		
 		this.selectButton = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
 		this.selectButton.screenCenter();
+		this.selectButton.y += 5;
+		this.resumeButton = new FlxButton(0, 0, "Resume", pauseGame);
+		this.resumeButton.screenCenter();
+		this.resumeButton.y -= 30;
 	}
 
 	// to be called when loading a new level
 	public function initializeLevel() {
-
+		
+		removeItems();
 		if (curLevel > Level.MAX_LEVEL) {
 			removeTextItems();
-			removeItems();
 			showCongratsScreen();
 			return;
 		}
+		if(curStage == 1) {
+			skipped = false;
+			// beaten already 
+			if (Cookie.exists(curLevel + "C")) {
+				Thrower.speed = Thrower.baseSpeed;
+			}
+		}
+		if(Thrower.speed > Thrower.maxSpeed ) {
+			Thrower.speed = Thrower.maxSpeed;
+		} else if (Thrower.speed < Thrower.minSpeed) {
+			Thrower.speed = Thrower.minSpeed;
+		}
+
+		levelTime = 0;
+		levelKnivesThrown = 0;
+
+		var stageStr:String = curLevel+"-"+curStage + "-count";
+		if (!Cookie.exists(stageStr)) {
+			Cookie.set(stageStr, "0");
+		} else {
+			var prevCount:Int = Std.int(Std.parseFloat(Cookie.get(stageStr)));
+			Cookie.set(stageStr, Std.string(prevCount + 1));
+		}
 		
-		trace("Level: " + curLevel + ". Stage: " + curStage);
 		Main.LOGGER.logLevelStart(Level.getStageId(curLevel, curStage), {
 			level: curLevel,
-			stage: curStage}
-		);
+			stage: curStage,
+			hasCompleted: Cookie.exists(curLevel + "C"),
+			replayCount: Cookie.get(stageStr),
+			throwerSpeed: Thrower.speed
+		});
+		
 
 		if(FlxNapeSpace.space != null) {	// this clears old bodies
 			FlxNapeSpace.space.clear();
 		}
+		
 		holdingSpace = FlxG.keys.pressed.SPACE;
 		this.levelStats = Level.getLevelStats(this.curLevel);
 		victory = false;
@@ -165,13 +218,26 @@ class PlayState extends FlxState
 			remove(timeTutorialText);
 			timeTutorialText = null;
 		}
+		if (mashTutorialText != null) {
+			remove(mashTutorialText);
+			mashTutorialText = null;
+		}
+		if (bonusTutorialText != null) {
+			remove(bonusTutorialText);
+			bonusTutorialText = null;
+		}
 
 		// tutorial
 		if (this.curLevel == 1 && this.curStage == 1) {
 			showTutorial();
 		} else if (this.curLevel == 4 && this.curStage == 2) {
 			showTimeTutorial();
+		} else if (this.curLevel == 5 && this.curStage == 1) {
+			showMashTutorial();
+		} else if (this.curLevel == 8 && this.curStage == 1) {
+			showBonusTutorial();
 		}
+		ticker = levelStats.timePar;
 	}
 
 	public function showTutorial() {
@@ -182,11 +248,20 @@ class PlayState extends FlxState
 		pressSpace.animation.play("static");
 		add(pressSpace);
 	}
-
 	public function showTimeTutorial() {
 		this.timeTutorialText = new flixel.text.FlxText(FlxG.width - 350, FlxG.height - 100, 0, "Some buttons\nare timed!", 22);
 		timeTutorialText.color = FlxColor.BLACK;
 		add(timeTutorialText);
+	}
+	public function showMashTutorial() {
+		this.mashTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "Blue buttons take several hits to knock down,\ntry rapidly mashing space and clicking\nto destroy them quickly!", 16);
+		mashTutorialText.color = FlxColor.BLACK;
+		add(mashTutorialText);
+	}
+	public function showBonusTutorial() {
+		this.bonusTutorialText = new flixel.text.FlxText(FlxG.width - 550, FlxG.height - 100, 0, "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tBONUS LEVELS:\nThese levels are easy to complete,\nbut can be tricky to finish under par.", 16);
+		bonusTutorialText.color = FlxColor.BLACK;
+		add(bonusTutorialText);
 	}
 
 	public function removeTextItems() {
@@ -198,10 +273,15 @@ class PlayState extends FlxState
 		remove(timeText);
 		remove(knivesText);
 		remove(pressEnterText);
+		remove(continueButton);
 		remove(completeStar);
 		remove(knivesStar);
 		remove(timeStar);
 		remove(timeIconVictory);
+		remove(grayKnivesStar);
+		remove(grayTimeStar);
+		remove(marksmanStar);
+		remove(marksmanText);
 
 		remove(levelText);
 		remove(targetsLeftText);
@@ -210,9 +290,13 @@ class PlayState extends FlxState
 		remove(timerText);
 
 		remove(pressR);
-		remove(pressRText);
+		remove(pressRButton);
 		remove(pressP);
-		remove(pressPText);
+		remove(pressPButton);
+		remove(muteMusicButton);
+		remove(muteMusicIcon);
+		remove(muteSoundButton);
+		remove(muteSoundIcon);
 	}
 
 	public function createLevelMenu():Void {
@@ -244,19 +328,41 @@ class PlayState extends FlxState
 		add(timerText);
 		add(timeIcon);
 
-		pressR = new FlxSprite(FlxG.width - 100, menuY);
+		pressR = new FlxSprite(FlxG.width - 120, menuY);
 		pressR.loadGraphic("assets/images/RButton-2.png", false, 32, 32);
 		add(pressR);
-		pressRText = new flixel.text.FlxText(FlxG.width - 83, menuY, " Restart", 12);
-		pressRText.color = FlxColor.BLACK;
-		add(pressRText);
+		pressRButton = new FlxButton(FlxG.width - 100, menuY, "Restart", ()->{this.curStage = 1;initializeLevel();});
+		add(pressRButton);
 
-		pressP = new FlxSprite(FlxG.width - 100, menuY + 20);
+		pressP = new FlxSprite(FlxG.width - 120, menuY + 30);
 		pressP.loadGraphic("assets/images/PButton.png", false, 32, 32);
 		add(pressP);
-		pressPText = new flixel.text.FlxText(FlxG.width - 83, menuY + 20, " Pause", 12);
-		pressPText.color = FlxColor.BLACK;
-		add(pressPText);
+		pressPButton = new FlxButton(FlxG.width - 100, menuY + 30, "Pause", pauseGame);
+		add(pressPButton);
+
+		muteMusicIcon = new FlxSprite(FlxG.width - 120, menuY + 60);
+		muteMusicIcon.loadGraphic("assets/images/musicIcon.png", false, 32, 32);
+		add(muteMusicIcon);
+		muteMusicButton = new FlxButton(FlxG.width - 100, menuY + 60, "Music", muteMusic);
+		add(muteMusicButton);
+
+		muteSoundIcon = new FlxSprite(FlxG.width - 120, menuY + 90);
+		muteSoundIcon.loadGraphic("assets/images/soundIcon.png", false, 32, 32);
+		add(muteSoundIcon);
+		muteSoundButton = new FlxButton(FlxG.width - 100, menuY + 90, "All Sound", muteSound);
+		add(muteSoundButton);
+	}
+
+	public function muteMusic():Void {
+		if (Main.blippy.playing) {
+			Main.blippy.pause();
+		} else {
+			Main.blippy.resume();
+		}
+	}
+	
+	public function muteSound():Void {
+		FlxG.sound.toggleMuted();
 	}
 
 	public function removeItems():Void {
@@ -316,7 +422,6 @@ class PlayState extends FlxState
 		add(thrower);
 		// this.cooldown = 0;
 
-		trace("In playstate, curStage is " + this.curStage);
 		this.activeTargets = Level.getTargets(this.curLevel, this.curStage);
 
 		// game status
@@ -335,6 +440,7 @@ class PlayState extends FlxState
 	public function loadBackground():Void {
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, 750);
+
 		
 		if(this.platforms != null) {
 			for (platform in this.platforms) {
@@ -366,14 +472,69 @@ class PlayState extends FlxState
 		for (button in activeButtons) {
 			add(button);
 			add(button.gate);
+		}
+	}
 
+	function pauseGame():Void {
+		paused = !paused;
+		if (paused) {
+			add(pauseText);
+			add(resumeButton);
+			add(selectButton);
+			thrower.visible = false;
+			FlxNapeSpace.space.gravity.setxy(0, 0);
+		} else {
+			remove(pauseText);
+			remove(resumeButton);
+			remove(selectButton);
+			thrower.visible = true;
+			FlxNapeSpace.space.gravity.setxy(0, 400);
+		}
+		for (target in activeTargets) {
+			target.pauseMe(paused);
 		}
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
+		// if (FlxG.keys.justPressed.F) {
+		// 	Thrower.speed += 5;
+		// 	if(Thrower.speed > Thrower.maxSpeed) {
+		// 		Thrower.speed = Thrower.maxSpeed;
+		// 	}
+		// 	trace("thrower speed is " + Thrower.speed);
+		// } else if (FlxG.keys.justPressed.S) {
+		// 	Thrower.speed -= 5;
+		// 	if (Thrower.speed < Thrower.minSpeed) {
+		// 		Thrower.speed = Thrower.minSpeed;
+		// 	}
+		// 	trace("thrower speed is " + Thrower.speed);
+		// }
+		ticker -= elapsed;
+		if(ticker <= 0) {
+			ticker = levelStats.timePar;
+			Thrower.speed --;
+			if(Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
+		}
+
 		if(FlxG.keys.justReleased.SPACE) {
 			holdingSpace = false;
+		}
+		if (FlxG.keys.justPressed.M) {
+			muteSound();
+		}
+		// restart level
+		if (FlxG.keys.justPressed.R) {
+				Thrower.speed --;
+			if(Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
+			this.curStage = 1;
+			initializeLevel();
 		}
 		if(victory) {
 			if (FlxG.keys.pressed.ENTER) {
@@ -383,33 +544,16 @@ class PlayState extends FlxState
 			}
 			return;
 		}
-
-		// pause menu
-		if (FlxG.keys.justPressed.P || FlxG.keys.justPressed.ESCAPE) {
-			paused = !paused;
-			if (paused) {
-				add(pauseText);
-				add(selectButton);
-				thrower.visible = false;
-				FlxNapeSpace.space.gravity.setxy(0, 0);
-			} else {
-				remove(pauseText);
-				remove(selectButton);
-				thrower.visible = true;
-				FlxNapeSpace.space.gravity.setxy(0, 400);
-			}
-			for (target in activeTargets) {
-				target.pauseMe(paused);
-			}
-		}
-		if (paused) {
+		if (pressRButton.pressed || pressPButton.pressed || muteSoundButton.pressed || muteMusicButton.pressed) {
 			return;
 		}
 
-		// restart level
-		if (FlxG.keys.justPressed.R) {
-			this.curStage = 1;
-			initializeLevel();
+		// pause menu
+		if (FlxG.keys.justPressed.P || FlxG.keys.justPressed.ESCAPE) {
+			pauseGame();
+		}
+		if (paused) {
+			return;
 		}
 
 		for (knife in unstuckKnives) {
@@ -417,11 +561,19 @@ class PlayState extends FlxState
 				continue;
 			}
 			for (target in activeTargets) {
-				if (FlxG.pixelPerfectOverlap(knife, target, 0)) {
+				if (target.isBig ? FlxG.pixelPerfectOverlap(knife, target, 10) : FlxG.pixelPerfectOverlap(knife, target, 0)) {
 					unstuckKnives.remove(knife);
+
 					if (!target.hit) {
-						numTargetsLeft --;
-						target.hit = true;
+						target.hp --;
+						if (target.hp == 0) {
+							target.hit = true;
+							numTargetsLeft --;
+      						target.body.type = BodyType.DYNAMIC;
+						}
+						if (target.isBig) {
+							target.animation.play("" + target.hp);
+						}
 					}
 					updateTexts();
 					
@@ -436,8 +588,14 @@ class PlayState extends FlxState
 					Main.LOGGER.logLevelAction(2, {
 						targetsLeft: numTargetsLeft,
 						knivesThrown: knivesThrown,
-						time: timer 
+						time: timer,
+						levelTime: levelTime,
+						levelKnivesThrown: levelKnivesThrown,
+						isBigTarget: target.isBig,
+						hp: target.hp
 					});
+
+					break;
 				}
 			}
 			for (button in activeButtons) {
@@ -469,22 +627,41 @@ class PlayState extends FlxState
 		}
 
 		if (numTargetsLeft == 0) {
-			Main.LOGGER.logLevelEnd({
-				knivesThrown: knivesThrown,
-				time: timer
-			});
 			if(curStage != levelStats.numStages) {
 				curStage ++;
 				initializeLevel();
+				Main.LOGGER.logLevelEnd({
+					knivesThrown: knivesThrown,
+					time: timer,
+					levelTime: levelTime,
+					levelKnivesThrown: levelKnivesThrown,
+					throwerSpeed: Thrower.speed
+				});
 			} else {
 				showVictoryScreen();
+				Main.LOGGER.logLevelEnd({
+					knivesThrown: knivesThrown,
+					time: timer,
+					levelTime: levelTime,
+					levelKnivesThrown: levelKnivesThrown,
+					throwerSpeed: Thrower.speed,
+					completeStar: true,
+					timePar: Std.int(this.levelStats.timePar),
+					knivesPar: this.levelStats.knivesPar,
+					timeStar: Std.int(this.timer) <= Std.int(this.levelStats.timePar),
+					knivesStar: this.knivesThrown <= this.levelStats.knivesPar
+				});
 			}
 		}
 		
 		// update knife
 		if (!victory && (FlxG.keys.justPressed.SPACE || FlxG.mouse.justPressed) && !holdingSpace) {
-
-			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 2) / 180);
+			if (Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			} else if (Thrower.speed > Thrower.maxSpeed) {
+				Thrower.speed = Thrower.maxSpeed;
+			}
+			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 1																																												) / 180);
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
 			knives.push(newKnife);
@@ -493,11 +670,26 @@ class PlayState extends FlxState
 
 			knivesThrown += 1;
 
+			if(knivesThrown == this.levelStats.knivesPar + 10) {
+				Thrower.speed -= 2;
+				if(Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
+			} else if (knivesThrown > this.levelStats.knivesPar && knivesThrown % this.levelStats.knivesPar == 0) {
+				Thrower.speed --;
+				if(Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
+				
+			}
 			// 1 for throwing knife
 			Main.LOGGER.logLevelAction(1, {
 				targetsLeft: numTargetsLeft,
 				knivesThrown: knivesThrown,
-				time: timer 
+				time: timer,
+				levelTime: levelTime,
+				levelKnivesThrown: levelKnivesThrown,
+				throwerSpeed: Thrower.speed
 			});
 		}
 
@@ -523,53 +715,115 @@ class PlayState extends FlxState
 		}
 
 		timer += elapsed;
+		this.levelTime += elapsed;
 
 		updateTexts();
 	}
 	
+	var marksmanStar:FlxSprite;
+	var marksmanText:FlxText;
 	function showVictoryScreen() {
 		victory = true;
-		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 80, 0, "Level " + (this.curLevel) + " Complete!", 45);
-		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2), 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
-		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) + 40, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
-		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 250, (FlxG.height / 2) + 100, 0, "Press Enter to continue", 25);
+		winnerText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 130, 0, "Level " + (this.curLevel) + " Complete!", 45);
+		timeText = new flixel.text.FlxText((FlxG.width / 2)- 252, (FlxG.height / 2) - 70, 0, "    : " + Std.int(this.timer) + "s. Par: " + Std.int(this.levelStats.timePar) + " s.", 30);
+		knivesText = new flixel.text.FlxText((FlxG.width / 2)- 250, (FlxG.height / 2) - 30, 0, "Knives Thrown: " + this.knivesThrown + ". Par: " + this.levelStats.knivesPar + ".", 30);
+		pressEnterText = new flixel.text.FlxText((FlxG.width / 2) - 230, (FlxG.height / 2) + 50, 0, "\t\t\t\t\t\tOr press ENTER", 25);
+		continueButton = new FlxButton((FlxG.width / 2) - 260, (FlxG.height / 2) + 55, "CONTINUE", ()->{curStage = 1;curLevel ++;initializeLevel();});
+		marksmanText = new flixel.text.FlxText(0, 0, "MARKSMAN", 20);
+		marksmanText.screenCenter();
+		marksmanText.y += 25;
 		winnerText.color = FlxColor.BLACK;
 		timeText.color = FlxColor.BLACK;
 		knivesText.color = FlxColor.BLACK;
 		pressEnterText.color = FlxColor.BLACK;
+		marksmanText.color = FlxColor.GREEN;
 
-		completeStar = new FlxSprite(0, (FlxG.height / 2) - 64, "assets/images/star.png");
-		knivesStar = new FlxSprite(0, (FlxG.height / 2) + 50, "assets/images/star.png");
-		timeStar = new FlxSprite(0, (FlxG.height / 2) + 10, "assets/images/star.png");
-		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) + 10, "assets/images/stopwatch.png");
+		completeStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/star.png");
+		grayCompleteStar = new FlxSprite(0, (FlxG.height / 2) - 110, "assets/images/grayStar.png");
+		knivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/star.png");
+		grayKnivesStar = new FlxSprite(0, (FlxG.height / 2) - 20, "assets/images/grayStar.png");
+		timeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/star.png");
+		grayTimeStar = new FlxSprite(0, (FlxG.height / 2) - 60, "assets/images/grayStar.png");
+		timeIconVictory = new FlxSprite((FlxG.width / 2)- 240, (FlxG.height / 2) - 60, "assets/images/stopwatch.png");
+		marksmanStar = new FlxSprite(0, (FlxG.height / 2) + 23, "assets/images/kunai.png");
 	
 		completeStar.x = 15 + winnerText.x + winnerText.width;
+		grayCompleteStar.x = 15 + winnerText.x + winnerText.width;
 		knivesStar.x = 15 + knivesText.x + knivesText.width;
+		grayKnivesStar.x = 15 + knivesText.x + knivesText.width;
 		timeStar.x = 15 + timeText.x + timeText.width;
+		grayTimeStar.x = 15 + timeText.x + timeText.width;
+		marksmanStar.x = marksmanText.x + marksmanText.width - 5;
+
 
 		completeStar.scale.set(2, 2);
+		grayCompleteStar.scale.set(2, 2);
 		knivesStar.scale.set(2, 2);
 		timeStar.scale.set(2, 2);
 		timeIconVictory.scale.set(2, 2);
+		grayKnivesStar.scale.set(2, 2);
+		grayTimeStar.scale.set(2, 2);
+		marksmanStar.scale.set(2, 2);
+		marksmanStar.angle = -25;
 
+		add(continueButton);
 		add(winnerText);
 		add(timeText);
 		add(knivesText);
 		add(pressEnterText);
 
-		add(completeStar);
 		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
 		if(curLevel >= maxLevel) {
 			Cookie.set("MaxLevel", "" + (curLevel + 1), Main.expireDelay);
 		}
+		if (!skipped) {
+			Cookie.set(curLevel + "C", "", Main.expireDelay);
+			add(completeStar);
+			Thrower.speed ++;
+		} else {
+			Thrower.speed -= 3;
+			add(grayCompleteStar);
+		}
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
+			Thrower.speed += 3;
 			add(timeStar);
 			Cookie.set(curLevel + "T", "", Main.expireDelay);
+			if (this.knivesThrown <= this.levelStats.knivesPar) {
+				add(marksmanStar);
+				add(marksmanText);
+				Cookie.set(curLevel + "M", "", Main.expireDelay);
+			}
+		} else {
+			add(grayTimeStar);
+			if (Std.int(this.timer) <= 20 + Std.int(this.levelStats.timePar)) {
+				Thrower.speed += 2;
+			} else if (Std.int(this.timer) <= 4 *Std.int(this.levelStats.timePar)){
+				Thrower.speed --;
+			} else {
+				Thrower.speed -=2;
+			}
 		}
 		if (this.knivesThrown <= this.levelStats.knivesPar) {
+			Thrower.speed += 3;
 			add(knivesStar);
 			Cookie.set(curLevel + "K", "", Main.expireDelay);
+		} else {
+			add(grayKnivesStar);
+			if (this.knivesThrown <=  10 +this.levelStats.knivesPar) {
+				Thrower.speed += 2;
+			} else if (this.knivesThrown <=  4 * this.levelStats.knivesPar) {
+				Thrower.speed --;
+			} else {
+				Thrower.speed -= 2;
+			}
 		}
+
+		if (Thrower.speed <= Thrower.minSpeed + 15) {
+			Thrower.speed = Thrower.minSpeed + 15;
+		} else if (Thrower.speed > Thrower.maxSpeed) {
+			Thrower.speed = Thrower.maxSpeed;
+		}
+		
 		add(timeIconVictory);
 	}
 

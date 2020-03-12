@@ -16,10 +16,14 @@ class Gate extends FlxSprite {
     public var open:Bool = false;
 
     var releaseKnives:Array<Knife>;
-    override public function new(x:Float, y:Float, button:HitButton, timer:Float) {
+    override public function new(x:Float, y:Float, button:HitButton, timer:Float, rotate:Bool=false) {
         super(x, y);
         this.button = button;
-		loadGraphic("assets/images/barrier.png", true, 32, 128);
+        if (timer == null) {
+            loadGraphic("assets/images/barrier.png", true, 32, 128);
+        } else {
+            loadGraphic("assets/images/red-barrier.png", true, 32, 128);
+        }
         this.animation.add("closed", [0], 0, false);
         this.animation.add("opened", [4], 0, false);
         this.animation.add("opening", [0, 1, 2, 3, 4], 20, false);
@@ -30,7 +34,7 @@ class Gate extends FlxSprite {
             timed = true;
             this.timer = timer;
         }
-        if (x == cast(FlxG.width / 2, Int) - 15) {
+        if (rotate) {
             this.angle = 90;
         }
     }

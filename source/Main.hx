@@ -1,5 +1,6 @@
 package;
 
+import flixel.system.FlxSound;
 import js.Cookie;
 import flixel.FlxGame;
 import openfl.display.Sprite;
@@ -12,6 +13,8 @@ class Main extends Sprite
 	public static var LOGGER:CapstoneLogger;
 	
 	public static var expireDelay:Int = 2628000;
+	public static var blippy:FlxSound;
+
 	public function new()
 	{
 		super();
@@ -24,7 +27,7 @@ class Main extends Sprite
 		var gameId:Int = 202002;
 		var gameKey:String = "74be16979710d4c4e7c6647856088456";
 		var gameName:String = "knivesin";
-		var categoryId:Int = 2;
+		var categoryId:Int = 0;
 
 		Main.LOGGER = new CapstoneLogger(gameId, gameName, gameKey, categoryId);
 		var userId:String = Main.LOGGER.getSavedUserId();
@@ -34,15 +37,12 @@ class Main extends Sprite
 		}
 		Main.LOGGER.startNewSession(userId, this.onSessionReady);
 
-
-		// addChild(new FlxGame(0, 0, MenuState));
-
 	}
 
 	private function onSessionReady(sessionReceived:Bool):Void {
-		// addChild(new FlxGame(0, 0, LevelSelect));
 		addChild(new FlxGame(0, 0, MenuState));
-		// addChild(new FlxGame(0, 0, PlayState));
-		FlxG.sound.volume = 0.5;
+		blippy = FlxG.sound.load("assets/sounds/blippy.ogg", 0.4, true);
+		blippy.persist = true;
+		blippy.play();
 	}
 }
