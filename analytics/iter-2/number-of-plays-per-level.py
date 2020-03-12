@@ -70,14 +70,8 @@ with open(OUT_FILE, 'w') as f:
    writer = csv.DictWriter(f, fieldnames=fieldsnames)
    writer.writeheader()
    for level, count_map in sorted(plays_per_level_map.items()):
-      # pdb.set_trace()
-      highest_count = max(count_map.keys())
-      for i in range(1, highest_count + 1):
-         writer.writerow({
-            'level': level, 
-            'number-of-plays': i, 
-            'count':count_map[i] if i in count_map.keys() else 0
-         })
+      for k,v in sorted(count_map.items()):
+         writer.writerow({'level': level, 'number-of-plays': k, 'count':v})
 
 
 
