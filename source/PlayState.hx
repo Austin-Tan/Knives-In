@@ -771,12 +771,12 @@ class PlayState extends FlxState
 	function skipLevel() {
 		// log the skip action here
 		skipped = true;
-		curLevel ++;
 		curStage = 1;
 		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
 		if(curLevel >= maxLevel) {
 			Cookie.set("MaxLevel", "" + (curLevel + 1), Main.expireDelay);
 		}
+		curLevel ++;
 		initializeLevel();
 	}
 	
