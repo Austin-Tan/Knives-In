@@ -641,7 +641,6 @@ class PlayState extends FlxState
 
 		if (numTargetsLeft == 0) {
 			if(curStage != levelStats.numStages) {
-				curStage ++;
 				Main.LOGGER.logLevelEnd({
 					level: curLevel,
 					stage: curStage,
@@ -651,9 +650,9 @@ class PlayState extends FlxState
 					levelKnivesThrown: levelKnivesThrown,
 					throwerSpeed: Thrower.speed
 				});
+				curStage ++;
 				initializeLevel();
 			} else {
-				showVictoryScreen();
 				Main.LOGGER.logLevelEnd({
 					level: curLevel,
 					stage: curStage,
@@ -668,6 +667,7 @@ class PlayState extends FlxState
 					timeStar: Std.int(this.timer) <= Std.int(this.levelStats.timePar),
 					knivesStar: this.knivesThrown <= this.levelStats.knivesPar
 				});
+				showVictoryScreen();
 			}
 		}
 		
