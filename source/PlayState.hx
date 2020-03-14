@@ -584,9 +584,11 @@ class PlayState extends FlxState
 					var pivotJoint = new WeldJoint(knife.body, target.body, anchor1, anchor2, phase);
 					FlxNapeSpace.space.constraints.add(pivotJoint);
 					knife.stickTarget(target);
-					
+
 					// logging: 2 for hitting target
 					Main.LOGGER.logLevelAction(2, {
+						level: curLevel,
+						stage: curStage,
 						targetsLeft: numTargetsLeft,
 						knivesThrown: knivesThrown,
 						time: timer,
@@ -631,6 +633,8 @@ class PlayState extends FlxState
 			if(curStage != levelStats.numStages) {
 				curStage ++;
 				Main.LOGGER.logLevelEnd({
+					level: curLevel,
+					stage: curStage,
 					knivesThrown: knivesThrown,
 					time: timer,
 					levelTime: levelTime,
@@ -641,6 +645,8 @@ class PlayState extends FlxState
 			} else {
 				showVictoryScreen();
 				Main.LOGGER.logLevelEnd({
+					level: curLevel,
+					stage: curStage,
 					knivesThrown: knivesThrown,
 					time: timer,
 					levelTime: levelTime,
@@ -670,6 +676,7 @@ class PlayState extends FlxState
 			add(newKnife);
 
 			knivesThrown += 1;
+			levelKnivesThrown += 1;
 
 			if(knivesThrown == this.levelStats.knivesPar + 10) {
 				Thrower.speed -= 2;
@@ -685,6 +692,8 @@ class PlayState extends FlxState
 			}
 			// 1 for throwing knife
 			Main.LOGGER.logLevelAction(1, {
+				level: curLevel,
+				stage: curStage,
 				targetsLeft: numTargetsLeft,
 				knivesThrown: knivesThrown,
 				time: timer,

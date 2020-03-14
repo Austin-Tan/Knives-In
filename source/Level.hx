@@ -7,8 +7,8 @@ class Level {
 
    public static function getStageId(level:Int, stage:Int):Int {
       var id:Int = 0;
-      for (i in 0...level) {
-         id += getNumStages(level);
+      for (i in 1...level) {
+         id += getNumStages(i);
       }
       id += stage;
       return id;
