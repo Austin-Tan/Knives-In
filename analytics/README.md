@@ -3,4 +3,4 @@ versioning (category id)
 * iteration 2: 2, -3
 * iteration 3: 3 (no knife speed change), 4 (knife speed change)
 
-* development: 0
+* development: 0, -1, -2

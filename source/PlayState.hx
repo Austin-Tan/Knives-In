@@ -165,14 +165,19 @@ class PlayState extends FlxState
 		if(curStage == 1) {
 			skipped = false;
 			// beaten already 
-			if (Cookie.exists(curLevel + "C")) {
-				Thrower.speed = Thrower.baseSpeed;
+			if (Cookie.get("version") == "2") {
+				if (Cookie.exists(curLevel + "C")) {
+					Thrower.speed = Thrower.baseSpeed;
+				}
 			}
 		}
-		if(Thrower.speed > Thrower.maxSpeed ) {
-			Thrower.speed = Thrower.maxSpeed;
-		} else if (Thrower.speed < Thrower.minSpeed) {
-			Thrower.speed = Thrower.minSpeed;
+
+		if (Cookie.get("version") == "2") {
+			if(Thrower.speed > Thrower.maxSpeed ) {
+				Thrower.speed = Thrower.maxSpeed;
+			} else if (Thrower.speed < Thrower.minSpeed) {
+				Thrower.speed = Thrower.minSpeed;
+			}
 		}
 
 		levelTime = 0;
@@ -498,27 +503,15 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		// DEV USE ONLY -- COMMENT THIS BEFORE UPLOADING
-		if (FlxG.keys.justPressed.F) {
-			Thrower.speed += 5;
-			if(Thrower.speed > Thrower.maxSpeed) {
-				Thrower.speed = Thrower.maxSpeed;
-			}
-			trace("thrower speed is " + Thrower.speed);
-		} else if (FlxG.keys.justPressed.S) {
-			Thrower.speed -= 5;
-			if (Thrower.speed < Thrower.minSpeed) {
-				Thrower.speed = Thrower.minSpeed;
-			}
-			trace("thrower speed is " + Thrower.speed);
-		}
-
 		ticker -= elapsed;
 		if(ticker <= 0) {
 			ticker = levelStats.timePar;
-			Thrower.speed --;
-			if(Thrower.speed < Thrower.minSpeed) {
-				Thrower.speed = Thrower.minSpeed;
+
+			if (Cookie.get("version") == "2") {
+				Thrower.speed --;
+				if(Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
 			}
 		}
 
@@ -530,9 +523,12 @@ class PlayState extends FlxState
 		}
 		// restart level
 		if (FlxG.keys.justPressed.R) {
+
+			if (Cookie.get("version") == "2") {
 				Thrower.speed --;
-			if(Thrower.speed < Thrower.minSpeed) {
-				Thrower.speed = Thrower.minSpeed;
+				if (Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				}
 			}
 			this.curStage = 1;
 			initializeLevel();
@@ -663,11 +659,15 @@ class PlayState extends FlxState
 		
 		// update knife
 		if (!victory && (FlxG.keys.justPressed.SPACE || FlxG.mouse.justPressed) && !holdingSpace) {
-			if (Thrower.speed < Thrower.minSpeed) {
-				Thrower.speed = Thrower.minSpeed;
-			} else if (Thrower.speed > Thrower.maxSpeed) {
-				Thrower.speed = Thrower.maxSpeed;
+
+			if (Cookie.get("version") == "2") {
+				if (Thrower.speed < Thrower.minSpeed) {
+					Thrower.speed = Thrower.minSpeed;
+				} else if (Thrower.speed > Thrower.maxSpeed) {
+					Thrower.speed = Thrower.maxSpeed;
+				}
 			}
+
 			var newKnife = new Knife(thrower.x + 12, thrower.y + 9, Math.PI * (thrower.angle - 1																																												) / 180);
 			newKnife.body.space = FlxNapeSpace.space;
 			newKnife.visible = true;
@@ -678,17 +678,19 @@ class PlayState extends FlxState
 			knivesThrown += 1;
 			levelKnivesThrown += 1;
 
-			if(knivesThrown == this.levelStats.knivesPar + 10) {
-				Thrower.speed -= 2;
-				if(Thrower.speed < Thrower.minSpeed) {
-					Thrower.speed = Thrower.minSpeed;
+
+			if (Cookie.get("version") == "2") {
+				if(knivesThrown == this.levelStats.knivesPar + 10) {
+					Thrower.speed -= 2;
+					if(Thrower.speed < Thrower.minSpeed) {
+						Thrower.speed = Thrower.minSpeed;
+					}
+				} else if (knivesThrown > this.levelStats.knivesPar && knivesThrown % this.levelStats.knivesPar == 0) {
+					Thrower.speed --;
+					if(Thrower.speed < Thrower.minSpeed) {
+						Thrower.speed = Thrower.minSpeed;
+					}
 				}
-			} else if (knivesThrown > this.levelStats.knivesPar && knivesThrown % this.levelStats.knivesPar == 0) {
-				Thrower.speed --;
-				if(Thrower.speed < Thrower.minSpeed) {
-					Thrower.speed = Thrower.minSpeed;
-				}
-				
 			}
 			// 1 for throwing knife
 			Main.LOGGER.logLevelAction(1, {
@@ -789,13 +791,16 @@ class PlayState extends FlxState
 		if (!skipped) {
 			Cookie.set(curLevel + "C", "", Main.expireDelay);
 			add(completeStar);
-			Thrower.speed ++;
+			if (Cookie.get("version") == "2")
+				Thrower.speed ++;
 		} else {
-			Thrower.speed -= 3;
+			if (Cookie.get("version") == "2")
+				Thrower.speed -= 3;
 			add(grayCompleteStar);
 		}
 		if (Std.int(this.timer) <= Std.int(this.levelStats.timePar)) {
-			Thrower.speed += 3;
+			if (Cookie.get("version") == "2")
+				Thrower.speed += 3;
 			add(timeStar);
 			Cookie.set(curLevel + "T", "", Main.expireDelay);
 			if (this.knivesThrown <= this.levelStats.knivesPar) {
@@ -805,33 +810,42 @@ class PlayState extends FlxState
 			}
 		} else {
 			add(grayTimeStar);
-			if (Std.int(this.timer) <= 20 + Std.int(this.levelStats.timePar)) {
-				Thrower.speed += 2;
-			} else if (Std.int(this.timer) <= 4 *Std.int(this.levelStats.timePar)){
-				Thrower.speed --;
-			} else {
-				Thrower.speed -=2;
+			if (Cookie.get("version") == "2") {
+				if (Std.int(this.timer) <= 20 + Std.int(this.levelStats.timePar)) {
+					Thrower.speed += 2;
+				} else if (Std.int(this.timer) <= 4 *Std.int(this.levelStats.timePar)){
+					Thrower.speed --;
+				} else {
+					Thrower.speed -=2;
+				}
 			}
 		}
 		if (this.knivesThrown <= this.levelStats.knivesPar) {
-			Thrower.speed += 3;
+
+			if (Cookie.get("version") == "2")
+				Thrower.speed += 3;
 			add(knivesStar);
 			Cookie.set(curLevel + "K", "", Main.expireDelay);
 		} else {
 			add(grayKnivesStar);
-			if (this.knivesThrown <=  10 +this.levelStats.knivesPar) {
-				Thrower.speed += 2;
-			} else if (this.knivesThrown <=  4 * this.levelStats.knivesPar) {
-				Thrower.speed --;
-			} else {
-				Thrower.speed -= 2;
+
+			if (Cookie.get("version") == "2") {
+				if (this.knivesThrown <=  10 +this.levelStats.knivesPar) {
+					Thrower.speed += 2;
+				} else if (this.knivesThrown <=  4 * this.levelStats.knivesPar) {
+					Thrower.speed --;
+				} else {
+					Thrower.speed -= 2;
+				}
 			}
 		}
 
-		if (Thrower.speed <= Thrower.minSpeed + 15) {
-			Thrower.speed = Thrower.minSpeed + 15;
-		} else if (Thrower.speed > Thrower.maxSpeed) {
-			Thrower.speed = Thrower.maxSpeed;
+		if (Cookie.get("version") == "2") {
+			if (Thrower.speed <= Thrower.minSpeed + 15) {
+				Thrower.speed = Thrower.minSpeed + 15;
+			} else if (Thrower.speed > Thrower.maxSpeed) {
+				Thrower.speed = Thrower.maxSpeed;
+			}
 		}
 		
 		add(timeIconVictory);
