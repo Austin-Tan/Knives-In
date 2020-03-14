@@ -773,6 +773,10 @@ class PlayState extends FlxState
 		skipped = true;
 		curLevel ++;
 		curStage = 1;
+		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));
+		if(curLevel >= maxLevel) {
+			Cookie.set("MaxLevel", "" + (curLevel + 1), Main.expireDelay);
+		}
 		initializeLevel();
 	}
 	
