@@ -95,9 +95,9 @@ class PlayState extends FlxState
 	var grayCompleteStar:FlxSprite;
 
 	// Congrats Screen
-	var congratsText1:flixel.text.FlxText;
-	var congratsText2:flixel.text.FlxText;
-	var selectButton2:FlxButton;
+	// var congratsText1:flixel.text.FlxText;
+	// var congratsText2:flixel.text.FlxText;
+	// var selectButton2:FlxButton;
 
 	var skipped:Bool = false;
 
@@ -120,23 +120,24 @@ class PlayState extends FlxState
 	}
 
 	public function showCongratsScreen() {
-		this.congratsText1 =  new flixel.text.FlxText(0, 0, 0, "CONGRATS!", 30);
-		this.congratsText1.color = FlxColor.BLACK;
-		this.congratsText1.screenCenter();
-		this.congratsText1.y -= 50;
-		add(congratsText1);
+		FlxG.switchState(new CongratsScreen());
+		// this.congratsText1 =  new flixel.text.FlxText(0, 0, 0, "CONGRATS!", 30);
+		// this.congratsText1.color = FlxColor.BLACK;
+		// this.congratsText1.screenCenter();
+		// this.congratsText1.y -= 50;
+		// add(congratsText1);
 
-		this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\n\t\t\t\t\t\tDid you get all the stars?", 30);
-		this.congratsText2.color = FlxColor.GRAY;
-		this.congratsText2.screenCenter();
-		this.congratsText2.y += 30;
-		add(congratsText2);
+		// this.congratsText2 =  new flixel.text.FlxText(0, 0, 0, "YOU HAVE COMPLETED THE GAME\n\n\t\t\t\t\t\tDid you get all the stars?", 30);
+		// this.congratsText2.color = FlxColor.GRAY;
+		// this.congratsText2.screenCenter();
+		// this.congratsText2.y += 30;
+		// add(congratsText2);
 
 
-		this.selectButton2 = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
-		this.selectButton2.screenCenter();
-		this.selectButton2.y += 110;
-		add(selectButton2);
+		// this.selectButton2 = new FlxButton(280, 320, "Level Select", ()->{FlxG.switchState(new LevelSelect());});
+		// this.selectButton2.screenCenter();
+		// this.selectButton2.y += 110;
+		// add(selectButton2);
 	}
 
 	public function initializePauseScreen() {
@@ -270,9 +271,9 @@ class PlayState extends FlxState
 	}
 
 	public function removeTextItems() {
-		remove(congratsText1);
-		remove(congratsText2);
-		remove(selectButton2);
+		// remove(congratsText1);
+		// remove(congratsText2);
+		// remove(selectButton2);
 
 		remove(winnerText);
 		remove(timeText);
@@ -591,7 +592,8 @@ class PlayState extends FlxState
 						levelTime: levelTime,
 						levelKnivesThrown: levelKnivesThrown,
 						isBigTarget: target.isBig,
-						hp: target.hp
+						hp: target.hp,
+						throwerSpeed: Thrower.speed
 					});
 
 					break;
@@ -609,6 +611,18 @@ class PlayState extends FlxState
 					button.animation.play("pressed");
 					button.gate.toggleGate();
 					button.startTimer();
+
+					// logging: 3 for hitting button
+					Main.LOGGER.logLevelAction(3, {
+						level: curLevel,
+						stage: curStage,
+						targetsLeft: numTargetsLeft,
+						knivesThrown: knivesThrown,
+						time: timer,
+						levelTime: levelTime,
+						levelKnivesThrown: levelKnivesThrown,
+						throwerSpeed: Thrower.speed
+					});
 				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 2)) {
 					trace("hit detected on gate");
 					unstuckKnives.remove(knife);
