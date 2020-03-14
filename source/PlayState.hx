@@ -27,9 +27,8 @@ class PlayState extends FlxState
 	var timer:Float;
 
 	// Level Stats
-	var knivesPar:Int;
-	var timePar:Float;
 	var victory:Bool = false;
+	var skipCount:Int;
 
 	// Sprites
 	var thrower:Thrower;
@@ -66,6 +65,10 @@ class PlayState extends FlxState
 	var timeTutorialText:FlxText;
 	var mashTutorialText:FlxText;
 	var bonusTutorialText:FlxText;
+	var skipText:FlxText;
+	var skipButton:FlxButton;
+	var dismissButton:FlxButton;
+
 
 
 
@@ -100,6 +103,7 @@ class PlayState extends FlxState
 	// var selectButton2:FlxButton;
 
 	var skipped:Bool = false;
+	var skipOffered:Bool = false;
 
 	var levelTime:Float;
 	var levelKnivesThrown:Int;
@@ -165,6 +169,7 @@ class PlayState extends FlxState
 		}
 		if(curStage == 1) {
 			skipped = false;
+			this.skipCount = Level.getSkipCount(curLevel);
 			// beaten already 
 			if (Cookie.get("version") == "2") {
 				if (Cookie.exists(curLevel + "C")) {
@@ -183,6 +188,7 @@ class PlayState extends FlxState
 
 		levelTime = 0;
 		levelKnivesThrown = 0;
+		skipOffered = false;
 
 		var stageStr:String = curLevel+"-"+curStage + "-count";
 		if (!Cookie.exists(stageStr)) {
@@ -406,7 +412,9 @@ class PlayState extends FlxState
 				pressedButtons.remove(button);
 			}
 		}
-
+		remove(skipText);
+		remove(skipButton);
+		remove(dismissButton);
 	}
 
 	public function loadItems():Void {
@@ -691,7 +699,10 @@ class PlayState extends FlxState
 
 			knivesThrown += 1;
 			levelKnivesThrown += 1;
-
+			if (!skipOffered && skipCount != -1 && levelKnivesThrown >= skipCount && levelTime > 20) {
+				skipOffered = true;
+				offerSkip();
+			}
 
 			if (Cookie.get("version") == "2") {
 				if(knivesThrown == this.levelStats.knivesPar + 10) {
@@ -744,6 +755,25 @@ class PlayState extends FlxState
 		this.levelTime += elapsed;
 
 		updateTexts();
+	}
+
+	function offerSkip() {
+		// log skip offer here
+		skipText = new flixel.text.FlxText((FlxG.width / 2) - 260, (FlxG.height / 2) + 100, 0, "Having trouble?\nMove on and come back later!", 22);
+		skipText.color = FlxColor.BLACK;
+		skipButton = new FlxButton((FlxG.width / 2) - 260, (FlxG.height / 2) + 160, "Skip", skipLevel);
+		dismissButton = new FlxButton(skipButton.x + skipButton.width + 5, (FlxG.height / 2) + 160, "Dismiss", ()->{remove(skipText); remove(skipButton); remove(dismissButton);});
+		add(skipText);
+		add(skipButton);
+		add(dismissButton);
+	}
+
+	function skipLevel() {
+		// log the skip action here
+		skipped = true;
+		curLevel ++;
+		curStage = 1;
+		initializeLevel();
 	}
 	
 	var marksmanStar:FlxSprite;

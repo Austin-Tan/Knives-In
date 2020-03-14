@@ -45,6 +45,25 @@ class Level {
       }
    }
 
+   public static function getSkipCount(level:Int):Int {
+      switch (level) {
+         case 2:
+            return 25;
+         case 3:
+            return 20;
+         case 4:
+            return 25;
+         case 5:
+            return 25;
+         case 6:
+            return 60;
+         case 7:
+            return 45;
+         default:
+            return -1;
+      }
+   }
+
    static var HALF_TARGET_WIDTH:Int = 0;
    static var HALF_TARGET_HEIGHT:Int = 0;
 
