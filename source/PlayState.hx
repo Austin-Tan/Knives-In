@@ -780,7 +780,7 @@ class PlayState extends FlxState
 	}
 
 	function skipLevel() {
-		Main.LOGGER.logLevelAction(4, {
+		Main.LOGGER.logLevelAction(5, {
 			level: curLevel,
 			stage: curStage,
 			targetsLeft: numTargetsLeft,
