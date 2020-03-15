@@ -40,9 +40,9 @@ class Main extends Sprite
 		// version 1: no adaptive knife speed 
 		// version 2: with adaptive knife speed 
 		if (Cookie.get("version") == "1") {
-			categoryId = 5;
+			categoryId = 7;
 		} else if (Cookie.get("version") == "2") {
-			categoryId = 6;
+			categoryId = 8;
 		} else {
 			categoryId = 0;
 		}

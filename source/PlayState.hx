@@ -632,7 +632,7 @@ class PlayState extends FlxState
 						throwerSpeed: Thrower.speed
 					});
 				} else if (!button.gate.open && FlxG.pixelPerfectOverlap(knife, button.gate, 2)) {
-					trace("hit detected on gate");
+					// trace("hit detected on gate");
 					unstuckKnives.remove(knife);
 					button.gate.embedKnife(knife);
 

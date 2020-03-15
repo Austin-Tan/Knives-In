@@ -18,7 +18,7 @@ class HitButton extends FlxSprite {
     public var button_sound:FlxSound = FlxG.sound.load("assets/sounds/button.wav");
     override public function new(x:Float, y:Float, gateX:Float, gateY:Float, angle:Float, timer:Float = 0, rotateGate:Bool=false) {
         super(x, y);
-        trace('timer ' + timer);
+        // trace('timer ' + timer);
         if (timer == 0) {
 		    loadGraphic("assets/images/yellow-button.png", true, 64, 40);
         } else {
