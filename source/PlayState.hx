@@ -190,7 +190,7 @@ class PlayState extends FlxState
 		levelKnivesThrown = 0;
 		skipOffered = false;
 
-		var stageStr:String = curLevel+"-"+curStage + "-count";
+		var stageStr:String = curLevel+"-"+curStage + "-iter4-count";
 		if (!Cookie.exists(stageStr)) {
 			Cookie.set(stageStr, "0");
 		} else {
@@ -758,6 +758,17 @@ class PlayState extends FlxState
 	}
 
 	function offerSkip() {
+		Main.LOGGER.logLevelAction(4, {
+			level: curLevel,
+			stage: curStage,
+			targetsLeft: numTargetsLeft,
+			knivesThrown: knivesThrown,
+			time: timer,
+			levelTime: levelTime,
+			levelKnivesThrown: levelKnivesThrown,
+			throwerSpeed: Thrower.speed,
+			skipOffered: true
+		});
 		// log skip offer here
 		skipText = new flixel.text.FlxText((FlxG.width / 2) - 260, (FlxG.height / 2) + 100, 0, "Having trouble?\nMove on and come back later!", 22);
 		skipText.color = FlxColor.BLACK;
@@ -769,7 +780,19 @@ class PlayState extends FlxState
 	}
 
 	function skipLevel() {
-		// log the skip action here
+		Main.LOGGER.logLevelAction(4, {
+			level: curLevel,
+			stage: curStage,
+			targetsLeft: numTargetsLeft,
+			knivesThrown: knivesThrown,
+			time: timer,
+			levelTime: levelTime,
+			levelKnivesThrown: levelKnivesThrown,
+			throwerSpeed: Thrower.speed,
+			skipOffered: true,
+			skipped: true
+		});
+
 		skipped = true;
 		curStage = 1;
 		var maxLevel:Int = Std.parseInt(Cookie.get("MaxLevel"));

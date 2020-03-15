@@ -37,6 +37,8 @@ class Main extends Sprite
 		var gameName:String = "knivesin";
 		var categoryId:Int;
 
+		// version 1: no adaptive knife speed 
+		// version 2: with adaptive knife speed 
 		if (Cookie.get("version") == "1") {
 			categoryId = -1;
 		} else if (Cookie.get("version") == "2") {
@@ -51,14 +53,38 @@ class Main extends Sprite
 			userId = Main.LOGGER.generateUuid();
 			Main.LOGGER.setSavedUserId(userId);
 		}
-		Main.LOGGER.startNewSession(userId, this.onSessionReady);
 
+		Main.LOGGER.startNewSession(userId, this.onSessionReady);
 	}
 
 	private function onSessionReady(sessionReceived:Bool):Void {
+		if (!Cookie.exists("iteration4")) {
+			clearData();
+			Main.LOGGER.logActionWithNoLevel(0, {
+				"iteration4": 1
+			});
+			Cookie.set("iteration4", "1", expireDelay);
+		} else {
+			var iter:String = Cookie.get("iteration4");
+			var count:Int = Std.parseInt(iter) + 1;
+			Main.LOGGER.logActionWithNoLevel(0, {
+				"iteration4": count
+			});
+			Cookie.set("iteration4", Std.string(count), expireDelay);
+			
+		}
+
 		addChild(new FlxGame(0, 0, MenuState));
 		blippy = FlxG.sound.load("assets/sounds/blippy.ogg", 0.4, true);
 		blippy.persist = true;
 		blippy.play();
 	}
+
+	function clearData():Void {
+		var cookies = Cookie.all();
+		for (cookie in cookies.keys()) {
+			 Cookie.remove(cookie);
+		}
+		Cookie.set("MaxLevel", "1", expireDelay);
+  }
 }
