@@ -2,8 +2,8 @@ import csv
 import sys
 import pdb
 
-IN_FILE = 'results/drop-off-rate-by-time-B.out'
-OUT_FILE = 'csv/drop-off-rate-by-time-B.csv'
+IN_FILE = 'results/drop-off-rate-by-time-A.out'
+OUT_FILE = 'csv/drop-off-rate-by-time-A.csv'
 index = {
    'cid': 0,
    'uid': 1,
